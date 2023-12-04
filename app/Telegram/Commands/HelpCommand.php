@@ -5,10 +5,10 @@ namespace App\Telegram\Commands;
 use App\Enums\KeyBoardData;
 use Telegram\Bot\Commands\Command;
 
-class StartCommand extends Command
+class HelpCommand extends Command
 {
     //主要命令
-    protected string $name = 'start';
+    protected string $name = 'help';
 
     //或者
     protected array $aliases = [
@@ -16,8 +16,11 @@ class StartCommand extends Command
     ];
 
     //命令描述
-    protected string $description = 'Start Command to get you started';
+    protected string $description = 'Help Command to get you started';
 
+    /**
+     * @inheritDoc
+     */
     public function handle(): void
     {
         $this->replyWithMessage([
