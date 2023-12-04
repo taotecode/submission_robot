@@ -281,24 +281,89 @@ class SubmissionService
             case 'photo':
                 $messageCache = Cache::tags($this->cacheTag.'.'.$chatId)->get('photo');
                 $messageId = $messageCache['message_id'] ?? '';
+                if (
+                    !isset($messageCache['caption']) || empty($messageCache['caption'])||
+                    !isset($messageCache['photo'][0]['file_id']) || empty($messageCache['photo'][0]['file_id'])
+                ) {
+                    $telegram->sendMessage([
+                        'chat_id' => $chatId,
+                        'reply_to_message_id' => $messageId,
+                        'text' => "您还没有输入任何内容，请重新输入！",
+                        'parse_mode' => 'MarkdownV2',
+                        'reply_markup' => json_encode(KeyBoardData::START_SUBMISSION),
+                    ]);
+                    return 'ok';
+                }
                 break;
             case 'media_group_photo':
                 $media_group_id = Cache::tags($this->cacheTag.'.'.$chatId)->get('photo:media_group_photo');
                 $messageCache = Cache::tags($this->cacheTag.'.'.$chatId)->get('photo:media_group_photo:'.$media_group_id);
                 $messageId = $messageCache[0]['message_id'] ?? '';
+                if (
+                    !isset($messageCache[0]['caption']) || empty($messageCache[0]['caption'])||
+                    !isset($messageCache[0]['photo'][0]['file_id']) || empty($messageCache[0]['photo'][0]['file_id'])
+                ) {
+                    $telegram->sendMessage([
+                        'chat_id' => $chatId,
+                        'reply_to_message_id' => $messageId,
+                        'text' => "您还没有输入任何内容，请重新输入！",
+                        'parse_mode' => 'MarkdownV2',
+                        'reply_markup' => json_encode(KeyBoardData::START_SUBMISSION),
+                    ]);
+                    return 'ok';
+                }
                 break;
             case 'video':
                 $messageCache = Cache::tags($this->cacheTag.'.'.$chatId)->get('video');
                 $messageId = $messageCache['message_id'] ?? '';
+                if (
+                    !isset($messageCache['caption']) || empty($messageCache['caption'])||
+                    !isset($messageCache['video']['file_id']) || empty($messageCache['video']['file_id'])
+                ) {
+                    $telegram->sendMessage([
+                        'chat_id' => $chatId,
+                        'reply_to_message_id' => $messageId,
+                        'text' => "您还没有输入任何内容，请重新输入！",
+                        'parse_mode' => 'MarkdownV2',
+                        'reply_markup' => json_encode(KeyBoardData::START_SUBMISSION),
+                    ]);
+                    return 'ok';
+                }
                 break;
             case 'media_group_video':
                 $media_group_id = Cache::tags($this->cacheTag.'.'.$chatId)->get('video:media_group_video');
                 $messageCache = Cache::tags($this->cacheTag.'.'.$chatId)->get('video:media_group_video:'.$media_group_id);
                 $messageId = $messageCache[0]['message_id'] ?? '';
+                if (
+                    !isset($messageCache[0]['caption']) || empty($messageCache[0]['caption'])||
+                    !isset($messageCache[0]['video']['file_id']) || empty($messageCache[0]['video']['file_id'])
+                ) {
+                    $telegram->sendMessage([
+                        'chat_id' => $chatId,
+                        'reply_to_message_id' => $messageId,
+                        'text' => "您还没有输入任何内容，请重新输入！",
+                        'parse_mode' => 'MarkdownV2',
+                        'reply_markup' => json_encode(KeyBoardData::START_SUBMISSION),
+                    ]);
+                    return 'ok';
+                }
                 break;
             case 'audio':
                 $messageCache = Cache::tags($this->cacheTag.'.'.$chatId)->get('audio');
                 $messageId = $messageCache['message_id'] ?? '';
+                if (
+                    !isset($messageCache['caption']) || empty($messageCache['caption'])||
+                    !isset($messageCache['audio']['file_id']) || empty($messageCache['audio']['file_id'])
+                ) {
+                    $telegram->sendMessage([
+                        'chat_id' => $chatId,
+                        'reply_to_message_id' => $messageId,
+                        'text' => "您还没有输入任何内容，请重新输入！",
+                        'parse_mode' => 'MarkdownV2',
+                        'reply_markup' => json_encode(KeyBoardData::START_SUBMISSION),
+                    ]);
+                    return 'ok';
+                }
                 break;
             case 'media_group_audio':
                 //特殊情况，需要先判断有没有文字，如果有，那就是文字+多音频
@@ -317,6 +382,15 @@ class SubmissionService
                     $messageId = $messageCache[0]['message_id'] ?? '';
                 }
                 break;
+            default:
+                $telegram->sendMessage([
+                    'chat_id' => $chatId,
+                    'reply_to_message_id' => $messageId,
+                    'text' => "您还没有输入任何内容，请重新输入！",
+                    'parse_mode' => 'MarkdownV2',
+                    'reply_markup' => json_encode(KeyBoardData::START_SUBMISSION),
+                ]);
+                return 'ok';
         }
 
         try {
