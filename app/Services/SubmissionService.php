@@ -33,6 +33,8 @@ class SubmissionService
         $message = $updateData->getMessage();
         $messageId = $message->messageId;
         $objectType = $message->objectType();
+        $forwardFrom = $message->forwardFrom ?? '';
+        $forwardSignature = $message->forwardSignature ?? '';
         //        dd($message->toArray(),$objectType);
 
         switch ($objectType) {
