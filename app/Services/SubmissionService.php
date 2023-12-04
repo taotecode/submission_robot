@@ -267,6 +267,16 @@ class SubmissionService
             case 'text':
                 $messageCache = Cache::tags($this->cacheTag.'.'.$chatId)->get('text');
                 $messageId = $messageCache['message_id'] ?? '';
+                if (!isset($messageCache['text']) || empty($messageCache['text'])) {
+                    $telegram->sendMessage([
+                        'chat_id' => $chatId,
+                        'reply_to_message_id' => $messageId,
+                        'text' => "您还没有输入任何内容，请重新输入！",
+                        'parse_mode' => 'MarkdownV2',
+                        'reply_markup' => json_encode(KeyBoardData::START_SUBMISSION),
+                    ]);
+                    return 'ok';
+                }
                 break;
             case 'photo':
                 $messageCache = Cache::tags($this->cacheTag.'.'.$chatId)->get('photo');
