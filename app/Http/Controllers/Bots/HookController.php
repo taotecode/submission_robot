@@ -50,9 +50,9 @@ class HookController extends Controller
 
         $updateData = $telegram->commandsHandler(true);
 
-        Log::info('forwardData', $updateData->getMessage()->forwardSignature);
-        Log::info('forwardFrom', $updateData->getMessage()->forwardFromChat);
-        Log::info('Message', $updateData->getMessage());
+        Log::info('forwardData', [$updateData->getMessage()->forwardSignature]);
+        Log::info('forwardFrom', $updateData->getMessage()->forwardFromChat->toArray());
+        Log::info('Message', $updateData->getMessage()->toArray());
 
         //进入投稿服务
         if ($updateData->objectType() === 'message' && ! $updateData->getMessage()->hasCommand()) {
