@@ -35,6 +35,16 @@ class SubmissionService
         $objectType = $message->objectType();
         $forwardFrom = $message->forwardFrom ?? '';
         $forwardSignature = $message->forwardSignature ?? '';
+
+        $text = $message->text ?? '';
+        $entities = $message->entities ?? '';
+        $caption = $message->caption ?? '';
+        Log::info('message_type:',[
+            'objectType'=>$objectType,
+            'text'=>$text,
+            'entities'=>$entities,
+            'caption'=>$caption,
+        ]);
         //        dd($message->toArray(),$objectType);
 
         switch ($objectType) {
