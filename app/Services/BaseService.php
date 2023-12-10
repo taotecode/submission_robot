@@ -56,7 +56,7 @@ class BaseService
             ];
             $params = [
                 'commands' => $commands,
-                'scope' => $scope,
+//                'scope' => $scope,
             ];
             $telegram = new Api($token);
             return $telegram->setMyCommands($params);
