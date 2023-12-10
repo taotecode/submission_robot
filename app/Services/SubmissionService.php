@@ -200,10 +200,12 @@ class SubmissionService
             Cache::tags($this->cacheTag.'.'.$chatId)->put('objectType', $objectType, now()->addDay());
         } else {
 
-            if (!empty($message->caption)) {
+            $messageCacheData= $message->toArray();
+
+            if (!empty($messageCacheData['caption'])) {
                 //消息文字预处理
-                $message->caption= telegram_message_pre_process($message->caption, $message->captionEntities);
-                Log::info('消息文字预处理', [$message->caption]);
+                $messageCacheData['caption']= telegram_message_pre_process($messageCacheData['caption'], $messageCacheData['captionEntities']);
+                Log::info('消息文字预处理', [$messageCacheData['caption']]);
             }
 
             if (Cache::tags($this->cacheTag.'.'.$chatId)->has($cacheKey)) {
@@ -211,7 +213,7 @@ class SubmissionService
             } else {
                 $text = get_config('submission.start_text_tips');
             }
-            Cache::tags($this->cacheTag.'.'.$chatId)->put($cacheKey, $message->toArray(), now()->addDay());
+            Cache::tags($this->cacheTag.'.'.$chatId)->put($cacheKey, $messageCacheData, now()->addDay());
             Cache::tags($this->cacheTag.'.'.$chatId)->put('objectType', $objectType, now()->addDay());
         }
 
