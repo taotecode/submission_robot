@@ -185,21 +185,21 @@ class SubmissionService
             if (!empty($messageCacheData['caption'])) {
                 //消息文字预处理
                 $messageCacheData['caption'] = htmlspecialchars($messageCacheData['caption'], ENT_QUOTES, 'UTF-8');
+                Log::info('消息文字预处理', [$messageCacheData['caption']]);
             }
 
             //存入缓存，等待所有图片接收完毕
             if (Cache::tags($this->cacheTag.'.'.$chatId)->has($cacheKeyGroupId)) {
                 //如果存在缓存，则将消息合并
                 $messageCache = Cache::tags($this->cacheTag.'.'.$chatId)->get($cacheKeyGroupId);
-                $messageCache[] = $message->toArray();
+                $messageCache[] = $messageCacheData;
                 $text = get_config('submission.start_update_text_tips');
             } else {
-                $messageCache = [$message->toArray()];
+                $messageCache = [$messageCacheData];
                 $text = get_config('submission.start_text_tips');
             }
             Cache::tags($this->cacheTag.'.'.$chatId)->put($cacheKeyGroup, $media_group_id, now()->addDay());
             Cache::tags($this->cacheTag.'.'.$chatId)->put($cacheKeyGroupId, $messageCache, now()->addDay());
-            Cache::tags($this->cacheTag.'.'.$chatId)->put('objectType', $objectType, now()->addDay());
         } else {
 
             $messageCacheData= $message->toArray();
@@ -215,8 +215,8 @@ class SubmissionService
                 $text = get_config('submission.start_text_tips');
             }
             Cache::tags($this->cacheTag.'.'.$chatId)->put($cacheKey, $messageCacheData, now()->addDay());
-            Cache::tags($this->cacheTag.'.'.$chatId)->put('objectType', $objectType, now()->addDay());
         }
+        Cache::tags($this->cacheTag.'.'.$chatId)->put('objectType', $objectType, now()->addDay());
 
         try {
             $telegram->sendMessage([
