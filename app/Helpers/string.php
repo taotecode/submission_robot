@@ -21,9 +21,9 @@ function get_posted_by($data)
 function telegram_message_pre_process($text,$entities)
 {
     foreach ($entities as $entity) {
-        $offset = $entity->offset();
-        $length = $entity->length();
-        $type = $entity->type();
+        $offset = $entity['offset'];
+        $length = $entity['length'];
+        $type = $entity['type'];
         // 提取出这个实体对应的文本
         $entityText = substr($text, $offset, $length);
         switch ($type) {
