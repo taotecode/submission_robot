@@ -6,7 +6,7 @@
 
 更新日志及开发进度：[CHANGELOG.md](https://github.com/taotecode/submission_robot/blob/master/CHANGELOG.md)
 
-# 最新功能更新日期：2023年12月4日
+# 最新功能更新日期：2023年12月10日
 
 联系：[@laocheng_user_bot](https://t.me/laocheng_user_bot)
 
@@ -16,6 +16,7 @@
 - [x] 支持多视频投稿
 - [x] 支持文字/图片/音频/视频投稿
 - [x] 支持匿名投稿
+- [x] 支持稿件尾部追加文字
 - [ ] 支持直接发布投稿
 - [ ] 支持编辑标签
 - [ ] 支持过滤标签
@@ -39,3 +40,6 @@
 - [telegram bots](https://core.telegram.org/bots)
 
 - [laravel](https://laravel.com/)
+
+- [dcat-admin](https://github.com/jqhph/dcat-admin)
+- [kitloong/laravel-migrations-generator](https://github.com/kitloong/laravel-migrations-generator)
