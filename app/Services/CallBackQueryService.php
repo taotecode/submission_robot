@@ -95,7 +95,6 @@ class CallBackQueryService
         if ($approvedNum >= $review_num) {
             try {
                 $manuscript->status = 1;
-                $manuscript->save();
 
                 $telegram->editMessageReplyMarkup([
                     'chat_id' => $chatId,
@@ -103,8 +102,12 @@ class CallBackQueryService
                     'reply_markup' => json_encode(KeyBoardData::REVIEW_GROUP_APPROVED),
                 ]);
 
-                $this->sendChannelMessage($telegram, $botInfo, $manuscript);
+                $channelMessageId=$this->sendChannelMessage($telegram, $botInfo, $manuscript);
                 $this->sendPostedByMessage($telegram, $manuscript, 1);
+
+                $manuscript->message_id=$channelMessageId;
+
+                $manuscript->save();
 
                 return 'ok';
             } catch (TelegramSDKException $telegramSDKException) {
@@ -217,7 +220,6 @@ class CallBackQueryService
                 $manuscript->approved = $approved;
                 $manuscript->reject = $reject;
                 $manuscript->status = 1;
-                $manuscript->save();
 
                 $telegram->editMessageReplyMarkup([
                     'chat_id' => $chatId,
@@ -225,8 +227,11 @@ class CallBackQueryService
                     'reply_markup' => json_encode(KeyBoardData::REVIEW_GROUP_APPROVED),
                 ]);
 
-                $this->sendChannelMessage($telegram, $botInfo, $manuscript);
+                $channelMessageId=$this->sendChannelMessage($telegram, $botInfo, $manuscript);
                 $this->sendPostedByMessage($telegram, $manuscript, 1);
+
+                $manuscript->message_id=$channelMessageId;
+                $manuscript->save();
 
                 return 'ok';
             } catch (TelegramSDKException $telegramSDKException) {
@@ -406,7 +411,6 @@ class CallBackQueryService
         if ($approvedNum >= $review_num) {
             try {
                 $manuscript->status = 1;
-                $manuscript->save();
 
                 $telegram->editMessageReplyMarkup([
                     'chat_id' => $chatId,
@@ -414,8 +418,11 @@ class CallBackQueryService
                     'reply_markup' => json_encode(KeyBoardData::REVIEW_GROUP_APPROVED),
                 ]);
 
-                $this->sendChannelMessage($telegram, $botInfo, $manuscript);
+                $channelMessageId=$this->sendChannelMessage($telegram, $botInfo, $manuscript);
                 $this->sendPostedByMessage($telegram, $manuscript, 1);
+
+                $manuscript->message_id=$channelMessageId;
+                $manuscript->save();
 
                 return 'ok';
             } catch (TelegramSDKException $telegramSDKException) {

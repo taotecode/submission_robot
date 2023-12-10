@@ -64,16 +64,17 @@ trait SendChannelMessageService
 
                 $caption .= PHP_EOL.PHP_EOL.$botInfo->tail_content;
                 try {
+                    $channelMessageId = [];
                     foreach ($channelListData as $channelUsername) {
-                        $telegram->sendPhoto([
+                        $channelMessageId[$channelUsername] = $telegram->sendPhoto([
                             'chat_id' => '@'.$channelUsername,
                             'photo' => $file_id,
                             'caption' => $caption,
                             'parse_mode' => 'HTML',
-                        ]);
+                        ])->messageId;
                     }
 
-                    return 'ok';
+                    return $channelMessageId;
                 } catch (TelegramSDKException $telegramSDKException) {
                     Log::error($telegramSDKException);
 
@@ -109,14 +110,15 @@ trait SendChannelMessageService
                     }
                 }
                 try {
+                    $channelMessageId = [];
                     foreach ($channelListData as $channelUsername) {
-                        $telegram->sendMediaGroup([
+                        $channelMessageId[$channelUsername] = $telegram->sendMediaGroup([
                             'chat_id' => '@'.$channelUsername,
                             'media' => json_encode($media),
-                        ]);
+                        ])->messageId;
                     }
 
-                    return 'ok';
+                    return $channelMessageId;
                 } catch (TelegramSDKException $telegramSDKException) {
                     Log::error($telegramSDKException);
 
@@ -139,8 +141,9 @@ trait SendChannelMessageService
 
                 $caption .= PHP_EOL.PHP_EOL.$botInfo->tail_content;
                 try {
+                    $channelMessageId = [];
                     foreach ($channelListData as $channelUsername) {
-                        $telegram->sendVideo([
+                        $channelMessageId[$channelUsername] = $telegram->sendVideo([
                             'chat_id' => '@'.$channelUsername,
                             'video' => $file_id,
                             'duration' => $duration,
@@ -148,10 +151,10 @@ trait SendChannelMessageService
                             'height' => $height,
                             'caption' => $caption,
                             'parse_mode' => 'HTML',
-                        ]);
+                        ])->messageId;
                     }
 
-                    return 'ok';
+                    return $channelMessageId;
                 } catch (TelegramSDKException $telegramSDKException) {
                     Log::error($telegramSDKException);
 
@@ -193,14 +196,15 @@ trait SendChannelMessageService
                     }
                 }
                 try {
+                    $channelMessageId = [];
                     foreach ($channelListData as $channelUsername) {
-                        $telegram->sendMediaGroup([
+                        $channelMessageId[$channelUsername] = $telegram->sendMediaGroup([
                             'chat_id' => '@'.$channelUsername,
                             'media' => json_encode($media),
-                        ]);
+                        ])->messageId;
                     }
 
-                    return 'ok';
+                    return $channelMessageId;
                 } catch (TelegramSDKException $telegramSDKException) {
                     Log::error($telegramSDKException);
 
@@ -222,18 +226,19 @@ trait SendChannelMessageService
 
                 $caption .= PHP_EOL.PHP_EOL.$botInfo->tail_content;
                 try {
+                    $channelMessageId = [];
                     foreach ($channelListData as $channelUsername) {
-                        $telegram->sendAudio([
+                        $channelMessageId[$channelUsername] = $telegram->sendAudio([
                             'chat_id' => '@'.$channelUsername,
                             'audio' => $file_id,
                             'duration' => $duration,
                             'caption' => $caption,
                             'title' => $title,
                             'parse_mode' => 'HTML',
-                        ]);
+                        ])->messageId;
                     }
 
-                    return 'ok';
+                    return $channelMessageId;
                 } catch (TelegramSDKException $telegramSDKException) {
                     Log::error($telegramSDKException);
 
@@ -265,19 +270,20 @@ trait SendChannelMessageService
                     //加入自定义尾部内容
                     $text .= PHP_EOL.PHP_EOL.$botInfo->tail_content;
                     try {
+                        $channelMessageId = [];
                         foreach ($channelListData as $channelUsername) {
-                            $telegram->sendMessage([
+                            $channelMessageId[$channelUsername] = $telegram->sendMessage([
                                 'chat_id' => '@'.$channelUsername,
                                 'text' => $text,
                                 'parse_mode' => 'HTML',
-                            ]);
+                            ])->messageId;
                             $telegram->sendMediaGroup([
                                 'chat_id' => '@'.$channelUsername,
                                 'media' => json_encode($media),
                             ]);
                         }
 
-                        return 'ok';
+                        return $channelMessageId;
                     } catch (TelegramSDKException $telegramSDKException) {
                         Log::error($telegramSDKException);
 
@@ -294,14 +300,15 @@ trait SendChannelMessageService
                         ];
                     }
                     try {
+                        $channelMessageId = [];
                         foreach ($channelListData as $channelUsername) {
-                            $telegram->sendMediaGroup([
+                            $channelMessageId[$channelUsername] = $telegram->sendMediaGroup([
                                 'chat_id' => '@'.$channelUsername,
                                 'media' => json_encode($media),
-                            ]);
+                            ])->messageId;
                         }
 
-                        return 'ok';
+                        return $channelMessageId;
                     } catch (TelegramSDKException $telegramSDKException) {
                         Log::error($telegramSDKException);
 
