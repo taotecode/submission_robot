@@ -10,15 +10,6 @@ trait SendPreviewMessageService
 {
     public function sendPreviewMessage(Api $telegram, $botInfo, $chatId, $message, $objectType): ?string
     {
-        $botInfo->tail_content=<<<HTML
-
-
-<a href="https://maomaoyun.vip/index.php#/register?code=fne](https://t.me/jingpingfang)KexVv">🚀高速机场VPN解锁流媒体10元120GB翻墙看片不再卡顿</a>
-频道： @jingpingfang
-群组： @jingpingfang_chat
-投稿： @jingpingfang_bot
-HTML;
-
         switch ($objectType) {
             case 'text':
                 $text = $message['text'];
