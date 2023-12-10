@@ -246,6 +246,16 @@ class SubmissionService
                 'text' => $text,
                 'parse_mode' => 'MarkdownV2',
             ]);
+
+            if (!empty($message->text)) {
+                //消息文字预处理
+                $message->text= telegram_message_pre_process($message->text, $message->entities);
+            }
+            if (!empty($message->caption)) {
+                //消息文字预处理
+                $message->caption= telegram_message_pre_process($message->caption, $message->captionEntities);
+            }
+
             Cache::tags($this->cacheTag.'.'.$chatId)->put('text', $message->toArray(), now()->addDay());
             Cache::tags($this->cacheTag.'.'.$chatId)->put('objectType', 'text', now()->addDay());
 
