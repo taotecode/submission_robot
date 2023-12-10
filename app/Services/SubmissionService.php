@@ -224,6 +224,7 @@ class SubmissionService
                 'reply_to_message_id' => $messageId,
                 'text' => $text,
                 'parse_mode' => 'MarkdownV2',
+                'reply_markup' => json_encode(KeyBoardData::START_SUBMISSION),
             ]);
 
             return 'ok';
@@ -277,6 +278,7 @@ class SubmissionService
                 'reply_to_message_id' => $messageId,
                 'text' => $text,
                 'parse_mode' => 'MarkdownV2',
+                'reply_markup' => json_encode(KeyBoardData::START_SUBMISSION),
             ]);
 
             return 'ok';
