@@ -19,7 +19,7 @@ class HelpCommand extends Command
     protected string $description = 'Help Command to get you started';
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function handle(): void
     {

@@ -50,30 +50,30 @@ class CallBackQueryService
 
         switch ($command) {
             case 'text_approved_submission':
-                $this->text_submission($telegram, $botInfo, $manuscript, $chatId, $from, $messageId, true,$callbackQuery);
+                $this->text_submission($telegram, $botInfo, $manuscript, $chatId, $from, $messageId, true, $callbackQuery);
                 break;
             case 'text_reject_submission':
-                $this->text_submission($telegram, $botInfo, $manuscript, $chatId, $from, $messageId, false,$callbackQuery);
+                $this->text_submission($telegram, $botInfo, $manuscript, $chatId, $from, $messageId, false, $callbackQuery);
                 break;
             case 'text_approved_submission_quick':
-                $this->submission_quick($telegram, $botInfo, $manuscript, $chatId, $from, $messageId, true,$callbackQuery);
+                $this->submission_quick($telegram, $botInfo, $manuscript, $chatId, $from, $messageId, true, $callbackQuery);
                 break;
             case 'text_reject_submission_quick':
-                $this->submission_quick($telegram, $botInfo, $manuscript, $chatId, $from, $messageId, false,$callbackQuery);
+                $this->submission_quick($telegram, $botInfo, $manuscript, $chatId, $from, $messageId, false, $callbackQuery);
                 break;
             case 'private_message':
-                $this->private_message($telegram,$botInfo, $manuscript, $chatId,$from,$callbackQuery);
+                $this->private_message($telegram, $botInfo, $manuscript, $chatId, $from, $callbackQuery);
                 break;
             case 'approved_submission':
-                $this->approvedOrRejectSubmission($telegram,true,$callbackQuery);
+                $this->approvedOrRejectSubmission($telegram, true, $callbackQuery);
                 break;
             case 'reject_submission':
-                $this->approvedOrRejectSubmission($telegram,false,$callbackQuery);
+                $this->approvedOrRejectSubmission($telegram, false, $callbackQuery);
                 break;
         }
     }
 
-    public function text_submission(Api $telegram, Bot $botInfo, Manuscript $manuscript, $chatId,User $from, $messageId,bool $isApproved,CallbackQuery $callbackQuery): string
+    public function text_submission(Api $telegram, Bot $botInfo, Manuscript $manuscript, $chatId, User $from, $messageId, bool $isApproved, CallbackQuery $callbackQuery): string
     {
         //获取审核群组信息
         $reviewGroup = $botInfo->review_group;
@@ -136,32 +136,36 @@ class CallBackQueryService
             }
         }
 
-        $auditors=Auditor::where(['userId'=>$from->id])->first();
-        if(!$auditors){
+        $auditors = Auditor::where(['userId' => $from->id])->first();
+        if (! $auditors) {
             try {
                 $telegram->answerCallbackQuery([
                     'callback_query_id' => $callbackQuery->id,
                     'text' => '您不是审核组成员，无法操作！',
                     'show_alert' => true,
                 ]);
+
                 return 'ok';
             } catch (TelegramSDKException $telegramSDKException) {
                 Log::error($telegramSDKException);
+
                 return 'error';
             }
         }
 
-        $reviewGroupAuditor=ReviewGroupAuditor::where(['review_group_id'=>$reviewGroup->id,'auditor_id'=>$auditors->id])->first();
-        if(!$reviewGroupAuditor){
+        $reviewGroupAuditor = ReviewGroupAuditor::where(['review_group_id' => $reviewGroup->id, 'auditor_id' => $auditors->id])->first();
+        if (! $reviewGroupAuditor) {
             try {
                 $telegram->answerCallbackQuery([
                     'callback_query_id' => $callbackQuery->id,
                     'text' => '您不是审核组成员，无法操作！',
                     'show_alert' => true,
                 ]);
+
                 return 'ok';
             } catch (TelegramSDKException $telegramSDKException) {
                 Log::error($telegramSDKException);
+
                 return 'error';
             }
         }
@@ -289,52 +293,58 @@ class CallBackQueryService
         }
     }
 
-    private function private_message(Api $telegram,Bot $botInfo, Manuscript $manuscript, $chatId,User $from,CallbackQuery $callbackQuery): string
+    private function private_message(Api $telegram, Bot $botInfo, Manuscript $manuscript, $chatId, User $from, CallbackQuery $callbackQuery): string
     {
         //获取审核群组信息
         $reviewGroup = $botInfo->review_group;
 
         //检查有没有快捷操作权限
-        $auditors=Auditor::where(['userId'=>$from->id])->first();
-        if(!$auditors){
+        $auditors = Auditor::where(['userId' => $from->id])->first();
+        if (! $auditors) {
             try {
                 $telegram->answerCallbackQuery([
                     'callback_query_id' => $callbackQuery->id,
                     'text' => '您不是审核组成员，无法操作！',
                     'show_alert' => true,
                 ]);
+
                 return 'ok';
             } catch (TelegramSDKException $telegramSDKException) {
                 Log::error($telegramSDKException);
+
                 return 'error';
             }
         }
 
-        $reviewGroupAuditor=ReviewGroupAuditor::where(['review_group_id'=>$reviewGroup->id,'auditor_id'=>$auditors->id])->first();
-        if(!$reviewGroupAuditor){
+        $reviewGroupAuditor = ReviewGroupAuditor::where(['review_group_id' => $reviewGroup->id, 'auditor_id' => $auditors->id])->first();
+        if (! $reviewGroupAuditor) {
             try {
                 $telegram->answerCallbackQuery([
                     'callback_query_id' => $callbackQuery->id,
                     'text' => '您不是审核组成员，无法操作！',
                     'show_alert' => true,
                 ]);
+
                 return 'ok';
             } catch (TelegramSDKException $telegramSDKException) {
                 Log::error($telegramSDKException);
+
                 return 'error';
             }
         }
 
-        if (!in_array(3,$auditors->role)){
+        if (! in_array(3, $auditors->role)) {
             try {
                 $telegram->answerCallbackQuery([
                     'callback_query_id' => $callbackQuery->id,
                     'text' => '您没有快捷操作权限！',
                     'show_alert' => true,
                 ]);
+
                 return 'ok';
             } catch (TelegramSDKException $telegramSDKException) {
                 Log::error($telegramSDKException);
+
                 return 'error';
             }
         }
@@ -376,7 +386,7 @@ class CallBackQueryService
         }
     }
 
-    private function submission_quick(Api $telegram, Bot $botInfo, Manuscript $manuscript, $chatId,User $from, $messageId,bool $isApproved,CallbackQuery $callbackQuery): string
+    private function submission_quick(Api $telegram, Bot $botInfo, Manuscript $manuscript, $chatId, User $from, $messageId, bool $isApproved, CallbackQuery $callbackQuery): string
     {
         //获取审核群组信息
         $reviewGroup = $botInfo->review_group;
@@ -438,46 +448,52 @@ class CallBackQueryService
         }
 
         //检查有没有快捷操作权限
-        $auditors=Auditor::where(['userId'=>$from->id])->first();
-        if(!$auditors){
+        $auditors = Auditor::where(['userId' => $from->id])->first();
+        if (! $auditors) {
             try {
                 $telegram->answerCallbackQuery([
                     'callback_query_id' => $callbackQuery->id,
                     'text' => '您不是审核组成员，无法操作！',
                     'show_alert' => true,
                 ]);
+
                 return 'ok';
             } catch (TelegramSDKException $telegramSDKException) {
                 Log::error($telegramSDKException);
+
                 return 'error';
             }
         }
 
-        $reviewGroupAuditor=ReviewGroupAuditor::where(['review_group_id'=>$reviewGroup->id,'auditor_id'=>$auditors->id])->first();
-        if(!$reviewGroupAuditor){
+        $reviewGroupAuditor = ReviewGroupAuditor::where(['review_group_id' => $reviewGroup->id, 'auditor_id' => $auditors->id])->first();
+        if (! $reviewGroupAuditor) {
             try {
                 $telegram->answerCallbackQuery([
                     'callback_query_id' => $callbackQuery->id,
                     'text' => '您不是本审核组成员，无法操作！',
                     'show_alert' => true,
                 ]);
+
                 return 'ok';
             } catch (TelegramSDKException $telegramSDKException) {
                 Log::error($telegramSDKException);
+
                 return 'error';
             }
         }
 
-        if (!in_array(1,$auditors->role)||!in_array(2,$auditors->role)){
+        if (! in_array(1, $auditors->role) || ! in_array(2, $auditors->role)) {
             try {
                 $telegram->answerCallbackQuery([
                     'callback_query_id' => $callbackQuery->id,
                     'text' => '您没有快捷操作权限！',
                     'show_alert' => true,
                 ]);
+
                 return 'ok';
             } catch (TelegramSDKException $telegramSDKException) {
                 Log::error($telegramSDKException);
+
                 return 'error';
             }
         }
@@ -514,22 +530,24 @@ class CallBackQueryService
         }
     }
 
-    private function approvedOrRejectSubmission(Api $telegram,bool $isApproved,CallbackQuery $callbackQuery): string
+    private function approvedOrRejectSubmission(Api $telegram, bool $isApproved, CallbackQuery $callbackQuery): string
     {
         try {
-            if ($isApproved){
-                $text="该稿件已通过审核！请勿再点击！";
-            }else{
-                $text="该稿件已被拒绝！请勿再点击！";
+            if ($isApproved) {
+                $text = '该稿件已通过审核！请勿再点击！';
+            } else {
+                $text = '该稿件已被拒绝！请勿再点击！';
             }
             $telegram->answerCallbackQuery([
                 'callback_query_id' => $callbackQuery->id,
                 'text' => $text,
                 'show_alert' => true,
             ]);
+
             return 'ok';
         } catch (TelegramSDKException $telegramSDKException) {
             Log::error($telegramSDKException);
+
             return 'error';
         }
     }

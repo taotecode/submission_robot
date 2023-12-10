@@ -39,13 +39,15 @@ trait SendGroupMessageService
             case 'text':
                 $text = $message['text'];
                 //加入自定义尾部内容
-                $text .= PHP_EOL.PHP_EOL.$botInfo->tail_content;
+                if (! empty($botInfo->tail_content)) {
+                    $text .= PHP_EOL.PHP_EOL.$botInfo->tail_content;
+                }
                 try {
                     $telegram->sendMessage([
                         'chat_id' => $chatId,
                         'text' => $text,
                         'reply_markup' => json_encode($inline_keyboard),
-                        'parse_mode' => 'MarkdownV2',
+                        'parse_mode' => 'HTML',
                     ]);
 
                     return $text;
@@ -58,14 +60,17 @@ trait SendGroupMessageService
             case 'photo':
                 $file_id = $message['photo'][0]['file_id'];
                 $caption = $message['caption'] ?? '';
-                $caption .= PHP_EOL.PHP_EOL.$botInfo->tail_content;
+                //加入自定义尾部内容
+                if (! empty($botInfo->tail_content)) {
+                    $caption .= PHP_EOL.PHP_EOL.$botInfo->tail_content;
+                }
                 try {
                     $telegram->sendPhoto([
                         'chat_id' => $chatId,
                         'photo' => $file_id,
                         'caption' => $caption,
                         'reply_markup' => json_encode($inline_keyboard),
-                        'parse_mode' => 'MarkdownV2',
+                        'parse_mode' => 'HTML',
                     ]);
 
                     return $caption;
@@ -81,12 +86,15 @@ trait SendGroupMessageService
                 foreach ($message as $key => $item) {
                     if ($key == 0) {
                         $caption = $item['caption'] ?? '';
-                        $caption .= PHP_EOL.PHP_EOL.$botInfo->tail_content;
+                        //加入自定义尾部内容
+                        if (! empty($botInfo->tail_content)) {
+                            $caption .= PHP_EOL.PHP_EOL.$botInfo->tail_content;
+                        }
                         $media[] = [
                             'type' => 'photo',
                             'media' => $item['photo'][0]['file_id'],
                             'caption' => $caption,
-                            'parse_mode' => 'MarkdownV2',
+                            'parse_mode' => 'HTML',
                         ];
                     } else {
                         $media[] = [
@@ -96,17 +104,17 @@ trait SendGroupMessageService
                     }
                 }
                 try {
-                    $telegramMessage=$telegram->sendMediaGroup([
+                    $telegramMessage = $telegram->sendMediaGroup([
                         'chat_id' => $chatId,
                         'media' => json_encode($media),
                     ]);
 
                     $telegram->sendMessage([
                         'chat_id' => $chatId,
-                        'text' => "收到包含多张图片的提交 👆",
+                        'text' => '收到包含多张图片的提交 👆',
                         'reply_to_message_id' => $telegramMessage[0]['message_id'],
                         'reply_markup' => json_encode($inline_keyboard),
-                        'parse_mode' => 'MarkdownV2',
+                        'parse_mode' => 'HTML',
                     ]);
 
                     return $caption;
@@ -122,7 +130,10 @@ trait SendGroupMessageService
                 $width = $message['video']['width'];
                 $height = $message['video']['height'];
                 $caption = $message['caption'];
-                $caption .= PHP_EOL.PHP_EOL.$botInfo->tail_content;
+                //加入自定义尾部内容
+                if (! empty($botInfo->tail_content)) {
+                    $caption .= PHP_EOL.PHP_EOL.$botInfo->tail_content;
+                }
                 try {
                     $telegram->sendVideo([
                         'chat_id' => $chatId,
@@ -132,7 +143,7 @@ trait SendGroupMessageService
                         'height' => $height,
                         'caption' => $caption,
                         'reply_markup' => json_encode($inline_keyboard),
-                        'parse_mode' => 'MarkdownV2',
+                        'parse_mode' => 'HTML',
                     ]);
 
                     return $caption;
@@ -148,7 +159,10 @@ trait SendGroupMessageService
                 foreach ($message as $key => $item) {
                     if ($key == 0) {
                         $caption = $item['caption'] ?? '';
-                        $caption .= PHP_EOL.PHP_EOL.$botInfo->tail_content;
+                        //加入自定义尾部内容
+                        if (! empty($botInfo->tail_content)) {
+                            $caption .= PHP_EOL.PHP_EOL.$botInfo->tail_content;
+                        }
                         $media[] = [
                             'type' => 'video',
                             'media' => $item['video']['file_id'],
@@ -156,7 +170,7 @@ trait SendGroupMessageService
                             'width' => $item['video']['width'],
                             'height' => $item['video']['height'],
                             'caption' => $caption,
-                            'parse_mode' => 'MarkdownV2',
+                            'parse_mode' => 'HTML',
                         ];
                     } else {
                         $media[] = [
@@ -169,17 +183,17 @@ trait SendGroupMessageService
                     }
                 }
                 try {
-                    $telegramMessage=$telegram->sendMediaGroup([
+                    $telegramMessage = $telegram->sendMediaGroup([
                         'chat_id' => $chatId,
                         'media' => json_encode($media),
                     ]);
 
                     $telegram->sendMessage([
                         'chat_id' => $chatId,
-                        'text' => "收到包含多个视频的提交 👆",
+                        'text' => '收到包含多个视频的提交 👆',
                         'reply_to_message_id' => $telegramMessage[0]['message_id'],
                         'reply_markup' => json_encode($inline_keyboard),
-                        'parse_mode' => 'MarkdownV2',
+                        'parse_mode' => 'HTML',
                     ]);
 
                     return $caption;
@@ -194,7 +208,10 @@ trait SendGroupMessageService
                 $duration = $message['audio']['duration'];
                 $title = $message['audio']['file_name'];
                 $caption = $message['caption'];
-                $caption .= PHP_EOL.PHP_EOL.$botInfo->tail_content;
+                //加入自定义尾部内容
+                if (! empty($botInfo->tail_content)) {
+                    $caption .= PHP_EOL.PHP_EOL.$botInfo->tail_content;
+                }
                 try {
                     $telegram->sendAudio([
                         'chat_id' => $chatId,
@@ -203,7 +220,7 @@ trait SendGroupMessageService
                         'caption' => $caption,
                         'title' => $title,
                         'reply_markup' => json_encode($inline_keyboard),
-                        'parse_mode' => 'MarkdownV2',
+                        'parse_mode' => 'HTML',
                     ]);
 
                     return $caption;
@@ -228,25 +245,27 @@ trait SendGroupMessageService
                     }
                     $text = $textMessage['text'];
                     //加入自定义尾部内容
-                    $text .= PHP_EOL.PHP_EOL.$botInfo->tail_content;
+                    if (! empty($botInfo->tail_content)) {
+                        $text .= PHP_EOL.PHP_EOL.$botInfo->tail_content;
+                    }
                     try {
                         $telegram->sendMessage([
                             'chat_id' => $chatId,
                             'text' => $text,
-                            'parse_mode' => 'MarkdownV2',
+                            'parse_mode' => 'HTML',
                         ]);
 
-                        $telegramMessage=$telegram->sendMediaGroup([
+                        $telegramMessage = $telegram->sendMediaGroup([
                             'chat_id' => $chatId,
                             'media' => json_encode($media),
                         ]);
 
                         $telegram->sendMessage([
                             'chat_id' => $chatId,
-                            'text' => "收到包含多个音频的提交 👆",
+                            'text' => '收到包含多个音频的提交 👆',
                             'reply_to_message_id' => $telegramMessage[0]['message_id'],
                             'reply_markup' => json_encode($inline_keyboard),
-                            'parse_mode' => 'MarkdownV2',
+                            'parse_mode' => 'HTML',
                         ]);
 
                         return $text;
@@ -266,17 +285,17 @@ trait SendGroupMessageService
                         ];
                     }
                     try {
-                        $telegramMessage=$telegram->sendMediaGroup([
+                        $telegramMessage = $telegram->sendMediaGroup([
                             'chat_id' => $chatId,
                             'media' => json_encode($media),
                         ]);
 
                         $telegram->sendMessage([
                             'chat_id' => $chatId,
-                            'text' => "收到包含多个音频的提交 👆",
+                            'text' => '收到包含多个音频的提交 👆',
                             'reply_to_message_id' => $telegramMessage[0]['message_id'],
                             'reply_markup' => json_encode($inline_keyboard),
-                            'parse_mode' => 'MarkdownV2',
+                            'parse_mode' => 'HTML',
                         ]);
 
                         return '';

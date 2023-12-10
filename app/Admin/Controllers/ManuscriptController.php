@@ -29,8 +29,8 @@ class ManuscriptController extends AdminController
             })->expand(function () {
                 // 返回显示的详情
                 $uid = $this->posted_by['id'];
-                $first_name = $this->posted_by['first_name']??'';
-                $last_name = $this->posted_by['last_name']??'';
+                $first_name = $this->posted_by['first_name'] ?? '';
+                $last_name = $this->posted_by['last_name'] ?? '';
                 $username = $this->posted_by['username'] ?? '';
 
                 return "<div style='padding:10px 10px'><p>UID: $uid</p><p>first name: $first_name</p><p>last name: $last_name</p><p>用户名: $username</p></div>";
@@ -60,9 +60,9 @@ class ManuscriptController extends AdminController
                 return count($one_approved);
             })->expand(function () {
                 // 返回显示的详情
-                $uid = $this->one_approved['id']??'';
-                $first_name = $this->one_approved['first_name']??'';
-                $last_name = $this->one_approved['last_name']??'';
+                $uid = $this->one_approved['id'] ?? '';
+                $first_name = $this->one_approved['first_name'] ?? '';
+                $last_name = $this->one_approved['last_name'] ?? '';
                 $username = $this->one_approved['username'] ?? '';
 
                 return "<div style='padding:10px 10px'><p>UID: $uid</p><p>first name: $first_name</p><p>last name: $last_name</p><p>用户名: $username</p></div>";
@@ -71,9 +71,9 @@ class ManuscriptController extends AdminController
                 return count($one_reject);
             })->expand(function () {
                 // 返回显示的详情
-                $uid = $this->one_reject['id']??'';
-                $first_name = $this->one_reject['first_name']??'';
-                $last_name = $this->one_reject['last_name']??'';
+                $uid = $this->one_reject['id'] ?? '';
+                $first_name = $this->one_reject['first_name'] ?? '';
+                $last_name = $this->one_reject['last_name'] ?? '';
                 $username = $this->one_reject['username'] ?? '';
 
                 return "<div style='padding:10px 10px'><p>UID: $uid</p><p>first name: $first_name</p><p>last name: $last_name</p><p>用户名: $username</p></div>";

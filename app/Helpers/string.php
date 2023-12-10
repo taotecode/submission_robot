@@ -12,21 +12,22 @@ function get_posted_by($data)
     return '未知';
 }
 
-function escapeMarkdownV2($text) {
+function escapeMarkdownV2($text)
+{
     $escapeChars = str_split('_*[]()~`>#+-=|{}.!');
     foreach ($escapeChars as $char) {
-        $text = str_replace($char, '\\' . $char, $text);
+        $text = str_replace($char, '\\'.$char, $text);
     }
+
     return $text;
 }
 
 /**
  * telegram消息预处理
- * @param $text
- * @param $entities
+ *
  * @return mixed
  */
-function telegram_message_pre_process($text,$entities)
+function telegram_message_pre_process($text, $entities)
 {
     foreach ($entities as $entity) {
         $offset = $entity['offset'];
@@ -49,7 +50,7 @@ function telegram_message_pre_process($text,$entities)
                 $text = substr_replace($text, $escapedHashtag, $offset, $length);
                 //$text = str_replace($entityText, "\\{$entityText}", $text);
                 break;
-            // 其他你想要处理的类型...
+                // 其他你想要处理的类型...
         }
     }
 

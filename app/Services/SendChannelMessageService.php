@@ -31,14 +31,14 @@ trait SendChannelMessageService
                 }
 
                 //加入自定义尾部内容
-                $text .= PHP_EOL.PHP_EOL.$botInfo->tail_content."_";
+                $text .= PHP_EOL.PHP_EOL.$botInfo->tail_content.'_';
 
                 try {
                     foreach ($channelListData as $channelUsername) {
                         $telegram->sendMessage([
                             'chat_id' => '@'.$channelUsername,
                             'text' => $text,
-                            'parse_mode' => 'MarkdownV2',
+                            'parse_mode' => 'HTML',
                         ]);
                     }
 
@@ -68,7 +68,7 @@ trait SendChannelMessageService
                             'chat_id' => '@'.$channelUsername,
                             'photo' => $file_id,
                             'caption' => $caption,
-                            'parse_mode' => 'MarkdownV2',
+                            'parse_mode' => 'HTML',
                         ]);
                     }
 
@@ -98,7 +98,7 @@ trait SendChannelMessageService
                             'type' => 'photo',
                             'media' => $item['photo'][0]['file_id'],
                             'caption' => $caption,
-                            'parse_mode' => 'MarkdownV2',
+                            'parse_mode' => 'HTML',
                         ];
                     } else {
                         $media[] = [
@@ -146,7 +146,7 @@ trait SendChannelMessageService
                             'width' => $width,
                             'height' => $height,
                             'caption' => $caption,
-                            'parse_mode' => 'MarkdownV2',
+                            'parse_mode' => 'HTML',
                         ]);
                     }
 
@@ -179,7 +179,7 @@ trait SendChannelMessageService
                             'width' => $item['video']['width'],
                             'height' => $item['video']['height'],
                             'caption' => $caption,
-                            'parse_mode' => 'MarkdownV2',
+                            'parse_mode' => 'HTML',
                         ];
                     } else {
                         $media[] = [
@@ -228,7 +228,7 @@ trait SendChannelMessageService
                             'duration' => $duration,
                             'caption' => $caption,
                             'title' => $title,
-                            'parse_mode' => 'MarkdownV2',
+                            'parse_mode' => 'HTML',
                         ]);
                     }
 
@@ -268,7 +268,7 @@ trait SendChannelMessageService
                             $telegram->sendMessage([
                                 'chat_id' => '@'.$channelUsername,
                                 'text' => $text,
-                                'parse_mode' => 'MarkdownV2',
+                                'parse_mode' => 'HTML',
                             ]);
                             $telegram->sendMediaGroup([
                                 'chat_id' => '@'.$channelUsername,
