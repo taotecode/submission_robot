@@ -36,7 +36,7 @@ trait SendChannelMessageService
                 try {
                     $channelMessageId = [];
                     foreach ($channelListData as $channelUsername) {
-                        $channelMessageId[] = $telegram->sendMessage([
+                        $channelMessageId[$channelUsername] = $telegram->sendMessage([
                             'chat_id' => '@'.$channelUsername,
                             'text' => $text,
                             'parse_mode' => 'HTML',
