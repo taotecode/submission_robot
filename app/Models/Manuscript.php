@@ -9,7 +9,12 @@ class Manuscript extends Model
 {
     use HasDateTimeFormatter;
 
+    /**
+     * @var array|mixed|string|null
+     */
+
     protected $fillable = [
+        'message_id',
         'type',
         'text',
         'posted_by',
@@ -26,6 +31,7 @@ class Manuscript extends Model
     ];
 
     protected $casts = [
+        'message_id' => 'json',
         'posted_by' => 'json',
         'data' => 'json',
         'appendix' => 'json',

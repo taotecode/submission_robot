@@ -34,15 +34,16 @@ trait SendChannelMessageService
                 $text .= PHP_EOL.PHP_EOL.$botInfo->tail_content.'_';
 
                 try {
+                    $channelMessageId = [];
                     foreach ($channelListData as $channelUsername) {
-                        $telegram->sendMessage([
+                        $channelMessageId[] = $telegram->sendMessage([
                             'chat_id' => '@'.$channelUsername,
                             'text' => $text,
                             'parse_mode' => 'HTML',
-                        ]);
+                        ])->messageId;
                     }
 
-                    return 'ok';
+                    return $channelMessageId;
                 } catch (TelegramSDKException $telegramSDKException) {
                     Log::error($text);
                     Log::error($telegramSDKException);

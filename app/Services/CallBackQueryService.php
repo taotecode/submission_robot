@@ -502,14 +502,15 @@ class CallBackQueryService
             if ($isApproved) {
                 $manuscript->one_approved = $from->toArray();
                 $manuscript->status = 1;
-                $manuscript->save();
-                $this->sendChannelMessage($telegram, $botInfo, $manuscript);
+                $channelMessageId=$this->sendChannelMessage($telegram, $botInfo, $manuscript);
                 $this->sendPostedByMessage($telegram, $manuscript, 1);
                 $telegram->editMessageReplyMarkup([
                     'chat_id' => $chatId,
                     'message_id' => $messageId,
                     'reply_markup' => json_encode(KeyBoardData::REVIEW_GROUP_APPROVED),
                 ]);
+                $manuscript->message_id=$channelMessageId;
+                $manuscript->save();
             } else {
                 $manuscript->one_reject = $from->toArray();
                 $manuscript->status = 2;
