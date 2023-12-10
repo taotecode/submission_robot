@@ -240,12 +240,6 @@ class SubmissionService
             $text = get_config('submission.start_update_text_tips');
         }
         try {
-            $telegram->sendMessage([
-                'chat_id' => $chatId,
-                'reply_to_message_id' => $messageId,
-                'text' => $text,
-                'parse_mode' => 'MarkdownV2',
-            ]);
 
             if (!empty($message->text)) {
                 //消息文字预处理
@@ -262,6 +256,13 @@ class SubmissionService
 
             Cache::tags($this->cacheTag.'.'.$chatId)->put('text', $message->toArray(), now()->addDay());
             Cache::tags($this->cacheTag.'.'.$chatId)->put('objectType', 'text', now()->addDay());
+
+            $telegram->sendMessage([
+                'chat_id' => $chatId,
+                'reply_to_message_id' => $messageId,
+                'text' => $text,
+                'parse_mode' => 'MarkdownV2',
+            ]);
 
             return 'ok';
         } catch (TelegramSDKException $telegramSDKException) {
