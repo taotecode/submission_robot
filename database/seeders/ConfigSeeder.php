@@ -115,6 +115,9 @@ class ConfigSeeder extends Seeder
                 'updated_at'=>'2023-11-23 21:13:00',
             ]
         ];
-        DB::table('config')->insert($data);
+//        DB::table('config')->insert($data);
+        foreach ($data as $item) {
+            DB::table('config')->updateOrInsert(['id' => $item['id']], $item);
+        }
     }
 }
