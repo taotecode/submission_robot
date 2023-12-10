@@ -51,7 +51,13 @@ class HookController extends Controller
         $updateData = $telegram->commandsHandler(true);
 
         //进入投稿服务
-        if ($updateData->objectType() === 'message' && ! $updateData->getMessage()->hasCommand()) {
+        if (
+            $updateData->objectType() === 'message' &&
+            ! $updateData->getMessage()->hasCommand() &&
+            ! $updateData->getChat()->has('group') &&
+            ! $updateData->getChat()->has('supergroup') &&
+            ! $updateData->getChat()->has('getChat')
+        ) {
             if ($updateData->getChat()->type != 'private') {
                 return 'ok';
             }
