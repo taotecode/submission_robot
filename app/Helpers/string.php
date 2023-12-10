@@ -37,7 +37,9 @@ function telegram_message_pre_process($text,$entities)
                 break;
             case 'hashtag':
                 // 处理 #tag
-                $text = str_replace($entityText, "\\{$entityText}", $text);
+                $escapedHashtag = str_replace('#', '\#', $entityText);
+                $text = substr_replace($text, $escapedHashtag, $offset, $length);
+                //$text = str_replace($entityText, "\\{$entityText}", $text);
                 break;
             // 其他你想要处理的类型...
         }
