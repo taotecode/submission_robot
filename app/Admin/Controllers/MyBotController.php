@@ -3,6 +3,7 @@
 namespace App\Admin\Controllers;
 
 use App\Admin\Repositories\Bot;
+use App\Admin\RowActions\MyBot\SetCommands;
 use App\Admin\RowActions\MyBot\SetWebHook;
 use App\Models\Channel;
 use Dcat\Admin\Form;
@@ -34,6 +35,7 @@ class MyBotController extends AdminController
             $grid->actions(function (Grid\Displayers\Actions $actions) {
                 // append一个操作
                 $actions->append(new SetWebHook());
+                $actions->append(new SetCommands());
             });
 
             $grid->filter(function (Grid\Filter $filter) {

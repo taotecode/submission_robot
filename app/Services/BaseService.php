@@ -34,4 +34,27 @@ class BaseService
             throw new Exception($e);
         }
     }
+
+    public function setCommands($botId,$token)
+    {
+        try {
+            $commands=[
+                [
+                    'command' => 'start',
+                    'description' => '开始使用',
+                ],
+                [
+                    'command' => 'help',
+                    'description' => '帮助',
+                ],
+            ];
+            $scope = [
+                'type' => 'all_private_chats',
+            ];
+            $telegram = new Api($token);
+            return $telegram->setMyCommands($commands,$scope);
+        } catch (TelegramSDKException $e) {
+            throw new Exception($e);
+        }
+    }
 }
