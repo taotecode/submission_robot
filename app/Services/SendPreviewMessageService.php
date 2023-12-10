@@ -14,7 +14,9 @@ trait SendPreviewMessageService
             case 'text':
                 $text = $message['text'];
                 //加入自定义尾部内容
-                $text .= PHP_EOL.PHP_EOL.$botInfo->tail_content;
+                if (!empty($botInfo->tail_content)) {
+                    $text .= PHP_EOL.PHP_EOL.$botInfo->tail_content;
+                }
                 try {
                     $telegram->sendMessage([
                         'chat_id' => $chatId,
@@ -33,7 +35,9 @@ trait SendPreviewMessageService
             case 'photo':
                 $file_id = $message['photo'][0]['file_id'];
                 $caption = $message['caption'] ?? '';
-                $caption .= PHP_EOL.PHP_EOL.$botInfo->tail_content;
+                if (!empty($botInfo->tail_content)) {
+                    $caption .= PHP_EOL . PHP_EOL . $botInfo->tail_content;
+                }
                 try {
                     $telegram->sendPhoto([
                         'chat_id' => $chatId,
@@ -54,7 +58,9 @@ trait SendPreviewMessageService
                 foreach ($message as $key => $item) {
                     if ($key == 0) {
                         $caption = $item['caption'] ?? '';
-                        $caption .= PHP_EOL.PHP_EOL.$botInfo->tail_content;
+                        if (!empty($botInfo->tail_content)) {
+                            $caption .= PHP_EOL . PHP_EOL . $botInfo->tail_content;
+                        }
                         $media[] = [
                             'type' => 'photo',
                             'media' => $item['photo'][0]['file_id'],
@@ -87,7 +93,9 @@ trait SendPreviewMessageService
                 $width = $message['video']['width'];
                 $height = $message['video']['height'];
                 $caption = $message['caption'];
-                $caption .= PHP_EOL.PHP_EOL.$botInfo->tail_content;
+                if (!empty($botInfo->tail_content)) {
+                    $caption .= PHP_EOL . PHP_EOL . $botInfo->tail_content;
+                }
                 try {
                     $telegram->sendVideo([
                         'chat_id' => $chatId,
@@ -111,7 +119,9 @@ trait SendPreviewMessageService
                 foreach ($message as $key => $item) {
                     if ($key == 0) {
                         $caption = $item['caption'] ?? '';
-                        $caption .= PHP_EOL.PHP_EOL.$botInfo->tail_content;
+                        if (!empty($botInfo->tail_content)) {
+                            $caption .= PHP_EOL . PHP_EOL . $botInfo->tail_content;
+                        }
                         $media[] = [
                             'type' => 'video',
                             'media' => $item['video']['file_id'],
@@ -149,7 +159,9 @@ trait SendPreviewMessageService
                 $duration = $message['audio']['duration'];
                 $title = $message['audio']['file_name'];
                 $caption = $message['caption'];
-                $caption .= PHP_EOL.PHP_EOL.$botInfo->tail_content;
+                if (!empty($botInfo->tail_content)) {
+                    $caption .= PHP_EOL . PHP_EOL . $botInfo->tail_content;
+                }
                 try {
                     $telegram->sendAudio([
                         'chat_id' => $chatId,
@@ -182,7 +194,9 @@ trait SendPreviewMessageService
                     }
                     $text = $textMessage['text'];
                     //加入自定义尾部内容
-                    $text .= PHP_EOL.PHP_EOL.$botInfo->tail_content;
+                    if (!empty($botInfo->tail_content)) {
+                        $text .= PHP_EOL . PHP_EOL . $botInfo->tail_content;
+                    }
                     try {
                         $telegram->sendMessage([
                             'chat_id' => $chatId,
@@ -224,6 +238,8 @@ trait SendPreviewMessageService
                     }
                 }
                 break;
+            default:
+                return 'error';
         }
     }
 

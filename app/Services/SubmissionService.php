@@ -169,7 +169,7 @@ class SubmissionService
         }
     }
 
-    private function media(Api $telegram, $chatId, $messageId, Collection $message, $type)
+    private function media(Api $telegram, $chatId, $messageId, Collection $message, $type): string
     {
         $media_group_id = $message->media_group_id ?? '';
         $cacheKey = $type;
@@ -179,10 +179,12 @@ class SubmissionService
         if (! empty($media_group_id)) {
             $objectType = 'media_group_'.$type;
 
-            if (!empty($message->caption)) {
+            $messageCacheData= $message->toArray();
+            Log::info('消息实体', $messageCacheData);
+
+            if (!empty($messageCacheData['caption'])) {
                 //消息文字预处理
-                $message->caption= telegram_message_pre_process($message->caption, $message->captionEntities);
-                Log::info('消息文字预处理', [$message->caption]);
+                $messageCacheData['caption'] = htmlspecialchars($messageCacheData['caption'], ENT_QUOTES, 'UTF-8');
             }
 
             //存入缓存，等待所有图片接收完毕
@@ -201,13 +203,10 @@ class SubmissionService
         } else {
 
             $messageCacheData= $message->toArray();
-            Log::info('消息实体', $messageCacheData);
 
             if (!empty($messageCacheData['caption'])) {
                 //消息文字预处理
-//                $messageCacheData['caption']= telegram_message_pre_process($messageCacheData['caption'], $messageCacheData['caption_entities']);
                 $messageCacheData['caption'] = htmlspecialchars($messageCacheData['caption'], ENT_QUOTES, 'UTF-8');
-                Log::info('消息文字预处理', [$messageCacheData['caption']]);
             }
 
             if (Cache::tags($this->cacheTag.'.'.$chatId)->has($cacheKey)) {
