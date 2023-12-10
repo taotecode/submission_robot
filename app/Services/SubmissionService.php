@@ -258,6 +258,8 @@ class SubmissionService
                 Log::info('消息文字预处理', [$message->caption]);
             }
 
+            Log::info('消息实体', $message->toArray());
+
             Cache::tags($this->cacheTag.'.'.$chatId)->put('text', $message->toArray(), now()->addDay());
             Cache::tags($this->cacheTag.'.'.$chatId)->put('objectType', 'text', now()->addDay());
 
