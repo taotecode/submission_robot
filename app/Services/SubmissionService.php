@@ -250,10 +250,12 @@ class SubmissionService
             if (!empty($message->text)) {
                 //消息文字预处理
                 $message->text= telegram_message_pre_process($message->text, $message->entities);
+                Log::info('消息文字预处理', [$message->text]);
             }
             if (!empty($message->caption)) {
                 //消息文字预处理
                 $message->caption= telegram_message_pre_process($message->caption, $message->captionEntities);
+                Log::info('消息文字预处理', [$message->caption]);
             }
 
             Cache::tags($this->cacheTag.'.'.$chatId)->put('text', $message->toArray(), now()->addDay());
