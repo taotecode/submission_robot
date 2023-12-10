@@ -12,6 +12,14 @@ function get_posted_by($data)
     return '未知';
 }
 
+function escapeMarkdownV2($text) {
+    $escapeChars = str_split('_*[]()~`>#+-=|{}.!');
+    foreach ($escapeChars as $char) {
+        $text = str_replace($char, '\\' . $char, $text);
+    }
+    return $text;
+}
+
 /**
  * telegram消息预处理
  * @param $text
@@ -45,5 +53,5 @@ function telegram_message_pre_process($text,$entities)
         }
     }
 
-    return $text;
+    return escapeMarkdownV2($text);
 }
