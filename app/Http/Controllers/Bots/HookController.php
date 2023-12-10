@@ -57,7 +57,7 @@ class HookController extends Controller
         Log::info('message_type:',[
             'objectType'=>$updateData->objectType(),
             'text'=>$text,
-            'entities'=>$entities->toArray(),
+            'entities'=>$entities,
             'caption'=>$caption,
         ]);
 
