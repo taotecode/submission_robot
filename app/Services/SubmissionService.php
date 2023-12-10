@@ -205,7 +205,8 @@ class SubmissionService
 
             if (!empty($messageCacheData['caption'])) {
                 //消息文字预处理
-                $messageCacheData['caption']= telegram_message_pre_process($messageCacheData['caption'], $messageCacheData['caption_entities']);
+//                $messageCacheData['caption']= telegram_message_pre_process($messageCacheData['caption'], $messageCacheData['caption_entities']);
+                $messageCacheData['caption'] = htmlspecialchars($messageCacheData['caption'], ENT_QUOTES, 'UTF-8');
                 Log::info('消息文字预处理', [$messageCacheData['caption']]);
             }
 

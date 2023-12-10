@@ -19,7 +19,7 @@ trait SendPreviewMessageService
                     $telegram->sendMessage([
                         'chat_id' => $chatId,
                         'text' => $text,
-                        'parse_mode' => 'MarkdownV2',
+                        'parse_mode' => 'HTML',
                     ]);
 
                     return 'ok';
@@ -39,7 +39,7 @@ trait SendPreviewMessageService
                         'chat_id' => $chatId,
                         'photo' => $file_id,
                         'caption' => $caption,
-                        'parse_mode' => 'MarkdownV2',
+                        'parse_mode' => 'HTML',
                     ]);
 
                     return 'ok';
@@ -59,7 +59,7 @@ trait SendPreviewMessageService
                             'type' => 'photo',
                             'media' => $item['photo'][0]['file_id'],
                             'caption' => $caption,
-                            'parse_mode' => 'MarkdownV2',
+                            'parse_mode' => 'HTML',
                         ];
                     } else {
                         $media[] = [
@@ -96,7 +96,7 @@ trait SendPreviewMessageService
                         'width' => $width,
                         'height' => $height,
                         'caption' => $caption,
-                        'parse_mode' => 'MarkdownV2',
+                        'parse_mode' => 'HTML',
                     ]);
 
                     return 'ok';
@@ -119,7 +119,7 @@ trait SendPreviewMessageService
                             'width' => $item['video']['width'],
                             'height' => $item['video']['height'],
                             'caption' => $caption,
-                            'parse_mode' => 'MarkdownV2',
+                            'parse_mode' => 'HTML',
                         ];
                     } else {
                         $media[] = [
@@ -157,7 +157,7 @@ trait SendPreviewMessageService
                         'duration' => $duration,
                         'caption' => $caption,
                         'title' => $title,
-                        'parse_mode' => 'MarkdownV2',
+                        'parse_mode' => 'HTML',
                     ]);
 
                     return 'ok';
@@ -187,7 +187,7 @@ trait SendPreviewMessageService
                         $telegram->sendMessage([
                             'chat_id' => $chatId,
                             'text' => $text,
-                            'parse_mode' => 'MarkdownV2',
+                            'parse_mode' => 'HTML',
                         ]);
                         $telegram->sendMediaGroup([
                             'chat_id' => $chatId,
