@@ -84,7 +84,9 @@ class ManuscriptController extends AdminController
 
                 return "<div style='padding:10px 10px'><p>UID: $uid</p><p>first name: $first_name</p><p>last name: $last_name</p><p>用户名: $username</p></div>";
             });
-            $grid->column('status');
+            $grid->column('status')->display(function ($status) {
+                return \App\Enums\ManuscriptStatus::DATA[$status];
+            })->label();
             $grid->column('created_at');
             $grid->column('updated_at')->sortable();
 
