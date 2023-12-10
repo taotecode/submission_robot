@@ -75,7 +75,7 @@ class MyBotController extends AdminController
             $form->password('token')->help('通过@BotFather创建机器人获取')->required();
             $form->number('review_num')->min(1)->max(30)->default(1)->required()
                 ->help('每条投稿消息的审核数量。如：设置1，那么只需要一个人就可以通过或拒绝。设置2，那么就需要两个人就可以通过或拒绝。<br>最小值为：1');
-            $form->textarea('tail_content')->help('每条投稿消息的尾部内容，支持html格式。');
+            $form->textarea('tail_content')->help("每条投稿消息的尾部内容，支持html格式(参考<a href='https://core.telegram.org/bots/api#html-style' target='_blank'>https://core.telegram.org/bots/api#html-style</a>)。");
 
             $form->checkbox('channel_ids', '发布频道')
                 ->options(Channel::all()->pluck('appellation', 'id'))
