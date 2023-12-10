@@ -178,8 +178,13 @@ class SubmissionService
         $objectType = $type;
         if (! empty($media_group_id)) {
             $objectType = 'media_group_'.$type;
-        }
-        if (! empty($media_group_id)) {
+
+            if (!empty($message->caption)) {
+                //消息文字预处理
+                $message->caption= telegram_message_pre_process($message->caption, $message->captionEntities);
+                Log::info('消息文字预处理', [$message->caption]);
+            }
+
             //存入缓存，等待所有图片接收完毕
             if (Cache::tags($this->cacheTag.'.'.$chatId)->has($cacheKeyGroupId)) {
                 //如果存在缓存，则将消息合并
@@ -194,6 +199,13 @@ class SubmissionService
             Cache::tags($this->cacheTag.'.'.$chatId)->put($cacheKeyGroupId, $messageCache, now()->addDay());
             Cache::tags($this->cacheTag.'.'.$chatId)->put('objectType', $objectType, now()->addDay());
         } else {
+
+            if (!empty($message->caption)) {
+                //消息文字预处理
+                $message->caption= telegram_message_pre_process($message->caption, $message->captionEntities);
+                Log::info('消息文字预处理', [$message->caption]);
+            }
+
             if (Cache::tags($this->cacheTag.'.'.$chatId)->has($cacheKey)) {
                 $text = get_config('submission.start_update_text_tips');
             } else {
