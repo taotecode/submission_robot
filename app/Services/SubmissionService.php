@@ -201,6 +201,7 @@ class SubmissionService
         } else {
 
             $messageCacheData= $message->toArray();
+            Log::info('消息实体', $messageCacheData);
 
             if (!empty($messageCacheData['caption'])) {
                 //消息文字预处理
