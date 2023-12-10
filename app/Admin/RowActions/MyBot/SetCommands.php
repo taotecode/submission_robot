@@ -17,7 +17,7 @@ class SetCommands extends RowAction
      */
     public function title()
     {
-        return '设置命令';
+        return '【设置命令】';
     }
 
     /**
@@ -43,11 +43,10 @@ class SetCommands extends RowAction
     public function handle(Request $request): Response
     {
         // 获取当前行ID
-        $id = $this->getKey();
         $token = $request->input('token');
 
         try {
-            (new BaseService)->setCommands($id, $token);
+            (new BaseService)->setCommands($token);
 
             return $this->response()->success('设置成功')->refresh();
         } catch (Exception $e) {

@@ -35,7 +35,10 @@ class BaseService
         }
     }
 
-    public function setCommands($botId,$token)
+    /**
+     * @throws Exception
+     */
+    public function setCommands($token): bool
     {
         try {
             $commands=[
@@ -51,8 +54,12 @@ class BaseService
             $scope = [
                 'type' => 'all_private_chats',
             ];
+            $params = [
+                'commands' => $commands,
+                'scope' => $scope,
+            ];
             $telegram = new Api($token);
-            return $telegram->setMyCommands($commands,$scope);
+            return $telegram->setMyCommands($params);
         } catch (TelegramSDKException $e) {
             throw new Exception($e);
         }

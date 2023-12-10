@@ -17,7 +17,7 @@ class SetWebHook extends RowAction
      */
     public function title()
     {
-        return '设置Web Hook';
+        return '【设置Web Hook】';
     }
 
     /**
