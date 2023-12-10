@@ -105,6 +105,15 @@ class ConfigSeeder extends Seeder
                 'created_at' => '2023-11-23 21:13:00',
                 'updated_at' => '2023-11-23 21:13:00',
             ],
+            [
+                'id'=>11,
+                'group'=>'submission',
+                'name'=>'submission_is_empty',
+                'value'=>'您还没有输入任何内容，请重新输入！',
+                'description'=>'投稿内容为空提示语',
+                'created_at'=>'2023-11-23 21:13:00',
+                'updated_at'=>'2023-11-23 21:13:00',
+            ]
         ];
         DB::table('config')->insert($data);
     }
