@@ -92,7 +92,7 @@ trait SendPreviewMessageService
                 $duration = $message['video']['duration'];
                 $width = $message['video']['width'];
                 $height = $message['video']['height'];
-                $caption = $message['caption'];
+                $caption = $message['caption']??'';
                 if (! empty($botInfo->tail_content)) {
                     $caption .= PHP_EOL.PHP_EOL.$botInfo->tail_content;
                 }
@@ -158,7 +158,7 @@ trait SendPreviewMessageService
                 $file_id = $message['audio']['file_id'];
                 $duration = $message['audio']['duration'];
                 $title = $message['audio']['file_name'];
-                $caption = $message['caption'];
+                $caption = $message['caption']??"";
                 if (! empty($botInfo->tail_content)) {
                     $caption .= PHP_EOL.PHP_EOL.$botInfo->tail_content;
                 }
