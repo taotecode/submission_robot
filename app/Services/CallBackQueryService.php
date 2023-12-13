@@ -18,8 +18,9 @@ class CallBackQueryService
 {
     public string $cacheTag = 'start_submission';
 
-    use SendChannelMessageService;
+//    use SendChannelMessageService;
     use SendPostedByMessageService;
+    use SendTelegramMessageService;
 
     public Manuscript $manuscriptModel;
 
@@ -102,10 +103,10 @@ class CallBackQueryService
                     'reply_markup' => json_encode(KeyBoardData::REVIEW_GROUP_APPROVED),
                 ]);
 
-                $channelMessageId=$this->sendChannelMessage($telegram, $botInfo, $manuscript);
+                $channelMessageId = $this->sendChannelMessage($telegram, $botInfo, $manuscript);
                 $this->sendPostedByMessage($telegram, $manuscript, 1);
 
-                $manuscript->message_id=$channelMessageId;
+                $manuscript->message_id = $channelMessageId;
 
                 $manuscript->save();
 
@@ -227,10 +228,10 @@ class CallBackQueryService
                     'reply_markup' => json_encode(KeyBoardData::REVIEW_GROUP_APPROVED),
                 ]);
 
-                $channelMessageId=$this->sendChannelMessage($telegram, $botInfo, $manuscript);
+                $channelMessageId = $this->sendChannelMessage($telegram, $botInfo, $manuscript);
                 $this->sendPostedByMessage($telegram, $manuscript, 1);
 
-                $manuscript->message_id=$channelMessageId;
+                $manuscript->message_id = $channelMessageId;
                 $manuscript->save();
 
                 return 'ok';
@@ -418,10 +419,10 @@ class CallBackQueryService
                     'reply_markup' => json_encode(KeyBoardData::REVIEW_GROUP_APPROVED),
                 ]);
 
-                $channelMessageId=$this->sendChannelMessage($telegram, $botInfo, $manuscript);
+                $channelMessageId = $this->sendChannelMessage($telegram, $botInfo, $manuscript);
                 $this->sendPostedByMessage($telegram, $manuscript, 1);
 
-                $manuscript->message_id=$channelMessageId;
+                $manuscript->message_id = $channelMessageId;
                 $manuscript->save();
 
                 return 'ok';
@@ -509,14 +510,14 @@ class CallBackQueryService
             if ($isApproved) {
                 $manuscript->one_approved = $from->toArray();
                 $manuscript->status = 1;
-                $channelMessageId=$this->sendChannelMessage($telegram, $botInfo, $manuscript);
+                $channelMessageId = $this->sendChannelMessage($telegram, $botInfo, $manuscript);
                 $this->sendPostedByMessage($telegram, $manuscript, 1);
                 $telegram->editMessageReplyMarkup([
                     'chat_id' => $chatId,
                     'message_id' => $messageId,
                     'reply_markup' => json_encode(KeyBoardData::REVIEW_GROUP_APPROVED),
                 ]);
-                $manuscript->message_id=$channelMessageId;
+                $manuscript->message_id = $channelMessageId;
                 $manuscript->save();
             } else {
                 $manuscript->one_reject = $from->toArray();

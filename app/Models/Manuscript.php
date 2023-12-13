@@ -12,7 +12,6 @@ class Manuscript extends Model
     /**
      * @var array|mixed|string|null
      */
-
     protected $fillable = [
         'message_id',
         'type',

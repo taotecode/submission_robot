@@ -7,6 +7,7 @@
     "require": {
         "php": "^8.0.2",
         "dcat/laravel-admin": "2.*",
+        "fukuball/jieba-php": "dev-master",
         "guzzlehttp/guzzle": "^7.2",
         "irazasyed/telegram-bot-sdk": "^3.13",
         "laravel/framework": "^9.19",

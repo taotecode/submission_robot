@@ -57,9 +57,10 @@ class ManuscriptController extends AdminController
                 return $html.'</div>';
             });
             $grid->column('one_approved')->display(function ($one_approved) {
-                if (empty($one_approved)){
+                if (empty($one_approved)) {
                     return '无';
                 }
+
                 return get_posted_by($one_approved);
             })->expand(function () {
                 // 返回显示的详情
@@ -71,9 +72,10 @@ class ManuscriptController extends AdminController
                 return "<div style='padding:10px 10px'><p>UID: $uid</p><p>first name: $first_name</p><p>last name: $last_name</p><p>用户名: $username</p></div>";
             });
             $grid->column('one_reject')->display(function ($one_reject) {
-                if (empty($one_reject)){
+                if (empty($one_reject)) {
                     return '无';
                 }
+
                 return get_posted_by($one_reject);
             })->expand(function () {
                 // 返回显示的详情

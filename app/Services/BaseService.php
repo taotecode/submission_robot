@@ -41,7 +41,7 @@ class BaseService
     public function setCommands($token): bool
     {
         try {
-            $commands=[
+            $commands = [
                 [
                     'command' => 'start',
                     'description' => '开始使用',
@@ -56,9 +56,10 @@ class BaseService
             ];
             $params = [
                 'commands' => $commands,
-//                'scope' => $scope,
+                //                'scope' => $scope,
             ];
             $telegram = new Api($token);
+
             return $telegram->setMyCommands($params);
         } catch (TelegramSDKException $e) {
             throw new Exception($e);

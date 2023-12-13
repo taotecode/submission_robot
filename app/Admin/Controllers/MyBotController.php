@@ -2,6 +2,7 @@
 
 namespace App\Admin\Controllers;
 
+use App\Admin\Actions\Form\LexiconCheck;
 use App\Admin\Repositories\Bot;
 use App\Admin\RowActions\MyBot\SetCommands;
 use App\Admin\RowActions\MyBot\SetWebHook;
@@ -10,6 +11,7 @@ use Dcat\Admin\Form;
 use Dcat\Admin\Grid;
 use Dcat\Admin\Http\Controllers\AdminController;
 use Dcat\Admin\Show;
+use Illuminate\Support\Facades\Storage;
 
 class MyBotController extends AdminController
 {
@@ -85,8 +87,41 @@ class MyBotController extends AdminController
 
             $form->switch('status')->default(1);
 
+            $form->radio('is_auto_keyword')
+                ->when('1', function (Form $form) {
+                    $form->textarea('keyword')->default('新闻')->help('每行一个关键词<br>当稿件文本经过词库分词后的词语中，含有关键词，则会在消息尾部加入如：#新闻 #的标签');
+                    $form->textarea('lexicon')->default('新闻')->help('
+                    词库格式为每行一个词，如果需要提升分词准确率，可以在词语后面加上词性，词性之间用空格隔开，词性列表如下：<br>
+        新闻 1<br>
+        一般数值在1-10之间，数值越大，分词越准确，但是分词速度越慢，建议平均值为：3<br>
+        可以点击右上角【词库验证】进行分词测试<br>
+                    ');
+                })
+                ->options([
+                    '0' => '关闭自动关键词',
+                    '1' => '开启自动关键词',
+                ])
+                ->default('1');
+
             $form->display('created_at');
             $form->display('updated_at');
+
+            $form->saved(function (Form $form, $result) {
+                // 判断是否是新增操作
+                if ($form->isCreating()) {
+                    //自增ID
+                    $newId = $form->getKey();
+                } else {
+                    $newId = $form->model()->id;
+                }
+                // 保存词库
+                $lexicon = $form->input('lexicon'); //Lexicon
+                Storage::put("public/lexicon_{$newId}.txt", $lexicon);
+            });
+
+            $form->tools(function (Form\Tools $tools) {
+                $tools->append(new LexiconCheck());
+            });
         });
     }
 }

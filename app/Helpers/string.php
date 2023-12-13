@@ -1,5 +1,8 @@
 <?php
 
+use Fukuball\Jieba\Finalseg;
+use Fukuball\Jieba\Jieba;
+
 function get_posted_by($data)
 {
     if (! empty($data['first_name']) && ! empty($data['last_name'])) {
@@ -55,4 +58,21 @@ function telegram_message_pre_process($text, $entities)
     }
 
     return escapeMarkdownV2($text);
+}
+
+/**
+ * 快速调用分词
+ *
+ * @return array
+ */
+function quickCut($text, $lexicon_path)
+{
+    ini_set('memory_limit', '1024M');
+    Jieba::init();
+    Finalseg::init();
+    if (! empty($lexicon_path)) {
+        Jieba::loadUserDict($lexicon_path);
+    }
+
+    return Jieba::cut($text);
 }

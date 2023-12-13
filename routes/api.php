@@ -20,4 +20,5 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::prefix('bots')->group(function () {
     Route::any('hook/{id}', "App\Http\Controllers\Bots\HookController@index");
+    Route::any('test/setCommands', "App\Http\Controllers\Bots\TestController@setCommands");
 });
