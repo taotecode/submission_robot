@@ -100,6 +100,23 @@ class SubmissionService
         Cache::tags($this->cacheTag.'.'.$chatId)->flush();
         Cache::tags($this->cacheTag.'.'.$chatId)->put($chatId, $chat->toArray(), now()->addDay());
 
+        $submissionUser = (new SubmissionUser)->firstOrCreate([
+            'userId' => $chatId,
+        ], [
+            'type' => 0,
+            'userId' => $chatId,
+            'name' => get_posted_by($chat->toArray()),
+        ]);
+
+        if ($submissionUser->type == 2) {
+            return $this->sendTelegramMessage($telegram, 'sendMessage', [
+                'chat_id' => $chatId,
+                'text' => get_config('submission.black_list'),
+                'parse_mode' => 'MarkdownV2',
+                'reply_markup' => json_encode([]),
+            ]);
+        }
+
         return $this->sendTelegramMessage($telegram, 'sendMessage', [
             'chat_id' => $chatId,
             'text' => $text,
@@ -373,6 +390,33 @@ class SubmissionService
         ];
 
         $manuscript = $this->manuscriptModel->create($sqlData);
+
+        //白名单用户直接发布
+        if ($submissionUser->type == 1) {
+            if (isset($messageCache['text'])) {
+                $text = $messageCache['text'];
+            }
+            if (isset($messageCache['caption'])) {
+                $text = $messageCache['caption'];
+            }
+            $replaced = Str::replace('\r\n', PHP_EOL, $text);
+            $limitedString = Str::limit($replaced);
+            $firstLine = Str::before($limitedString, PHP_EOL);
+
+            $manuscript->text = $firstLine;
+            $manuscript->status = 1;
+            $channelMessageId = $this->sendChannelMessage($telegram, $botInfo, $manuscript);
+            $manuscript->message_id = $channelMessageId;
+            $manuscript->save();
+            Cache::tags($this->cacheTag.'.'.$chatId)->flush();
+            return $this->sendTelegramMessage($telegram, 'sendMessage', [
+                'chat_id' => $chatId,
+                'reply_to_message_id' => $messageId,
+                'text' => get_config('submission.confirm_white_list'),
+                'parse_mode' => 'MarkdownV2',
+                'reply_markup' => json_encode(KeyBoardData::START),
+            ]);
+        }
         // 发送消息到审核群组
         $text = $this->sendGroupMessage($telegram, $botInfo, $messageCache, $objectType, $manuscript->id);
         //            $text=$this->sendGroupMessage($telegram,$botInfo,$messageCache,$objectType,1);

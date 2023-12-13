@@ -114,6 +114,24 @@ class ConfigSeeder extends Seeder
                 'created_at' => '2023-11-23 21:13:00',
                 'updated_at' => '2023-11-23 21:13:00',
             ],
+            [
+                'id'=>12,
+                'group' => 'submission',
+                'name'  => 'confirm_white_list',
+                'value' => '您已经在白名单中，您的投稿将直接发送到频道。',
+                'description' => '确认白名单用户投稿提示语',
+                'created_at' => '2023-11-23 21:13:00',
+                'updated_at' => '2023-11-23 21:13:00',
+            ],
+            [
+                'id'=>13,
+                'group' => 'submission',
+                'name'  => 'black_list',
+                'value' => '您已经在黑名单中，无法进行投稿操作。',
+                'description' => '确认黑名单用户投稿提示语',
+                'created_at' => '2023-11-23 21:13:00',
+                'updated_at' => '2023-11-23 21:13:00',
+            ],
         ];
         //        DB::table('config')->insert($data);
         foreach ($data as $item) {
