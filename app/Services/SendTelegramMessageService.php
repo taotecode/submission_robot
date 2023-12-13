@@ -376,6 +376,8 @@ trait SendTelegramMessageService
         }
         //将关键词转换为数组，按行分割
         $keyword = explode(PHP_EOL, $keyword);
+        Log::info('关键词数据：'.json_encode($keyword));
+        Log::info('关键词数据：is_auto_keyword:'.$is_auto_keyword.' lexiconPath:'.$lexiconPath.' text:'.$text);
         if (empty($text)) {
             return '';
         }
