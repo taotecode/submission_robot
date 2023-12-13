@@ -124,7 +124,11 @@ trait SendTelegramMessageService
                 $media = [];
                 $caption = '';
                 foreach ($message as $key => $item) {
-                    if ($key == 0) {
+                    $temp_array = [
+                        'type' => 'photo',
+                        'media' => $item['photo'][0]['file_id'],
+                    ];
+                    if (!empty($item['caption'] ?? '')){
                         $caption = $item['caption'] ?? '';
                         //自动关键词
                         $caption .= $this->addKeyWord($botInfo->is_auto_keyword, $botInfo->keyword, $lexiconPath, $caption);
@@ -132,18 +136,10 @@ trait SendTelegramMessageService
                         $caption .= $this->addAnonymous($manuscript);
                         //加入自定义尾部内容
                         $caption .= $this->addTailContent($botInfo->tail_content);
-                        $media[] = [
-                            'type' => 'photo',
-                            'media' => $item['photo'][0]['file_id'],
-                            'caption' => $caption,
-                            'parse_mode' => 'HTML',
-                        ];
-                    } else {
-                        $media[] = [
-                            'type' => 'photo',
-                            'media' => $item['photo'][0]['file_id'],
-                        ];
+                        $temp_array['caption'] = $caption;
+                        $temp_array['parse_mode'] = 'HTML';
                     }
+                    $media[] = $temp_array;
                 }
                 $result = $this->sendTelegramMessage($telegram, 'sendMediaGroup', [
                     'chat_id' => $chatId,
@@ -201,7 +197,14 @@ trait SendTelegramMessageService
                 $media = [];
                 $caption = '';
                 foreach ($message as $key => $item) {
-                    if ($key == 0) {
+                    $temp_array = [
+                        'type' => 'video',
+                        'media' => $item['video']['file_id'],
+                        'duration' => $item['video']['duration'],
+                        'width' => $item['video']['width'],
+                        'height' => $item['video']['height'],
+                    ];
+                    if (!empty($item['caption'] ?? '')){
                         $caption = $item['caption'] ?? '';
                         //自动关键词
                         $caption .= $this->addKeyWord($botInfo->is_auto_keyword, $botInfo->keyword, $lexiconPath, $caption);
@@ -209,24 +212,10 @@ trait SendTelegramMessageService
                         $caption .= $this->addAnonymous($manuscript);
                         //加入自定义尾部内容
                         $caption .= $this->addTailContent($botInfo->tail_content);
-                        $media[] = [
-                            'type' => 'video',
-                            'media' => $item['video']['file_id'],
-                            'duration' => $item['video']['duration'],
-                            'width' => $item['video']['width'],
-                            'height' => $item['video']['height'],
-                            'caption' => $caption,
-                            'parse_mode' => 'HTML',
-                        ];
-                    } else {
-                        $media[] = [
-                            'type' => 'video',
-                            'media' => $item['video']['file_id'],
-                            'duration' => $item['video']['duration'],
-                            'width' => $item['video']['width'],
-                            'height' => $item['video']['height'],
-                        ];
+                        $temp_array['caption'] = $caption;
+                        $temp_array['parse_mode'] = 'HTML';
                     }
+                    $media[] = $temp_array;
                 }
 
                 $result = $this->sendTelegramMessage($telegram, 'sendMediaGroup', [
