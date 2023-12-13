@@ -371,6 +371,7 @@ trait SendTelegramMessageService
 
     private function addKeyWord($is_auto_keyword, $keyword, $lexiconPath, $text): string
     {
+        Log::info('关键词数据：is_auto_keyword:'.$is_auto_keyword.' lexiconPath:'.$lexiconPath.' text:'.$text.' keyword:'.$keyword);
         if (empty($keyword)) {
             return '';
         }
