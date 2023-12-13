@@ -100,6 +100,8 @@ trait SendTelegramMessageService
                 $caption = $message['caption'] ?? '';
                 //自动关键词
                 $caption .= $this->addKeyWord($botInfo->is_auto_keyword, $botInfo->keywords, $lexiconPath, $caption);
+                // 加入匿名
+                $caption .= $this->addAnonymous($manuscript);
                 //加入自定义尾部内容
                 $caption .= $this->addTailContent($botInfo->tail_content);
 
@@ -126,6 +128,8 @@ trait SendTelegramMessageService
                         $caption = $item['caption'] ?? '';
                         //自动关键词
                         $caption .= $this->addKeyWord($botInfo->is_auto_keyword, $botInfo->keywords, $lexiconPath, $caption);
+                        // 加入匿名
+                        $caption .= $this->addAnonymous($manuscript);
                         //加入自定义尾部内容
                         $caption .= $this->addTailContent($botInfo->tail_content);
                         $media[] = [
@@ -171,6 +175,8 @@ trait SendTelegramMessageService
                 $caption = $message['caption'] ?? '';
                 //自动关键词
                 $caption .= $this->addKeyWord($botInfo->is_auto_keyword, $botInfo->keywords, $lexiconPath, $caption);
+                // 加入匿名
+                $caption .= $this->addAnonymous($manuscript);
                 //加入自定义尾部内容
                 $caption .= $this->addTailContent($botInfo->tail_content);
                 $result = $this->sendTelegramMessage($telegram, 'sendVideo', [
@@ -199,6 +205,8 @@ trait SendTelegramMessageService
                         $caption = $item['caption'] ?? '';
                         //自动关键词
                         $caption .= $this->addKeyWord($botInfo->is_auto_keyword, $botInfo->keywords, $lexiconPath, $caption);
+                        // 加入匿名
+                        $caption .= $this->addAnonymous($manuscript);
                         //加入自定义尾部内容
                         $caption .= $this->addTailContent($botInfo->tail_content);
                         $media[] = [
@@ -250,6 +258,8 @@ trait SendTelegramMessageService
                 $caption = $message['caption'] ?? '';
                 //自动关键词
                 $caption .= $this->addKeyWord($botInfo->is_auto_keyword, $botInfo->keywords, $lexiconPath, $caption);
+                // 加入匿名
+                $caption .= $this->addAnonymous($manuscript);
                 //加入自定义尾部内容
                 $caption .= $this->addTailContent($botInfo->tail_content);
 
@@ -287,6 +297,8 @@ trait SendTelegramMessageService
                     $text = $textMessage;
                     //自动关键词
                     $text .= $this->addKeyWord($botInfo->is_auto_keyword, $botInfo->keywords, $lexiconPath, $text);
+                    // 加入匿名
+                    $text .= $this->addAnonymous($manuscript);
                     //加入自定义尾部内容
                     $text .= $this->addTailContent($botInfo->tail_content);
                     $this->sendTelegramMessage($telegram, 'sendMessage', [
