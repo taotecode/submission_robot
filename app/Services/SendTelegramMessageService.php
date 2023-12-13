@@ -76,7 +76,7 @@ trait SendTelegramMessageService
             case 'text':
                 $text = $message['text'] ?? '';
                 //自动关键词
-                $text .= $this->addKeyWord($botInfo->is_auto_keyword, $botInfo->keywords, $lexiconPath, $text);
+                $text .= $this->addKeyWord($botInfo->is_auto_keyword, $botInfo->keyword, $lexiconPath, $text);
                 // 加入匿名
                 $text .= $this->addAnonymous($manuscript);
                 //加入自定义尾部内容
