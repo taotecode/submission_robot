@@ -23,6 +23,9 @@ return new class extends Migration
             $table->json('channel_ids')->nullable()->comment('发布频道ID');
             $table->unsignedTinyInteger('status')->default(1)->comment('状态');
             $table->unsignedTinyInteger('webhook_status')->default(0)->comment('Web hook 状态');
+            $table->unsignedTinyInteger('is_auto_keyword')->nullable()->default(0)->comment('是否开启自动关键词？');
+            $table->text('keyword')->nullable()->comment('关键词列表');
+            $table->text('lexicon')->nullable()->comment('词库');
             $table->timestamps();
         });
     }
