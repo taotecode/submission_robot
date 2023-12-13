@@ -60,3 +60,4 @@ php artisan db:seed --class="Dcat\Admin\Models\AdminTablesSeeder"
 php artisan db:seed --class=AdminMenuAddSeeder
 ```
 
+后台账户：admin，密码：admin，登陆后记得修改密码，登陆地址： **http://你的域名/admin**
