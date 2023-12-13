@@ -13,7 +13,7 @@ return [
         'review_num' => '审核数量',
         'status' => '状态',
         'is_auto_keyword' => '自动关键词',
-        'keywords' => '关键词',
+        'keyword' => '关键词',
         'lexicon' => '词库',
     ],
     'options' => [

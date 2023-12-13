@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('type', 100)->comment('类型');
             $table->text('text')->comment('投稿内容');
             $table->json('posted_by')->comment('投稿人信息');
+            $table->unsignedInteger('posted_by_id')->nullable()->comment('投稿人ID');
             $table->unsignedTinyInteger('is_anonymous')->default(0)->comment('是否匿名');
             $table->json('data')->comment('投稿整体信息');
             $table->json('appendix')->nullable()->comment('投稿附件');

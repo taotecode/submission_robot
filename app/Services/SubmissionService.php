@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Enums\KeyBoardData;
 use App\Models\Manuscript;
+use App\Models\SubmissionUser;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
@@ -345,11 +346,22 @@ class SubmissionService
                 }
                 break;
         }
+
+        //检查投稿人是否已在数据库中
+        $submissionUser = (new SubmissionUser)->firstOrCreate([
+            'userId' => $chat->id,
+        ], [
+            'type' => 0,
+            'userId' => $chat->id,
+            'name' => get_posted_by($chat->toArray()),
+        ]);
+
         //将稿件信息存入数据库中
         $sqlData = [
             'type' => $objectType,
             'text' => '',
             'posted_by' => $chat->toArray(),
+            'posted_by_id' => $submissionUser->id,
             'is_anonymous' => $is_anonymous,
             'data' => $messageCache,
             'appendix' => [],

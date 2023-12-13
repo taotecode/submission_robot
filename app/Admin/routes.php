@@ -29,4 +29,6 @@ Route::group([
     //稿件列表
     $router->resource('manuscript', 'ManuscriptController');
 
+    $router->resource('submission_user', 'SubmissionUserController');
+
 });
