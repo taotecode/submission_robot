@@ -374,6 +374,8 @@ trait SendTelegramMessageService
         if (empty($keyword)) {
             return '';
         }
+        //将关键词转换为数组，按行分割
+        $keyword = explode(PHP_EOL, $keyword);
         if (empty($text)) {
             return '';
         }
