@@ -10,4 +10,8 @@ class SubmissionUser extends Model
     use HasDateTimeFormatter;
 
     protected $table = 'submission_user';
+
+    protected $fillable = [
+        'type', 'userId','name',
+    ];
 }
