@@ -101,7 +101,7 @@ class MyBotController extends AdminController
                     '0' => '关闭自动关键词',
                     '1' => '开启自动关键词',
                 ])
-                ->default('1');
+                ->default('1')->help('开启自动关键词后，会自动在消息尾部加入关键词标签，如：#新闻 #的标签<br>注意：开启自动关键词后，需要在下方填写关键词和词库，否则无法正常工作。<br>注意：服务器性能最少需要1核2G内存，否则会导致分词失败。对服务器性能要求较高。');
 
             $form->display('created_at');
             $form->display('updated_at');
