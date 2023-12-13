@@ -316,33 +316,44 @@ class SubmissionService
         $objectType = Cache::tags($this->cacheTag.'.'.$chatId)->get('objectType');
         $messageId = '';
         $messageCache = [];
+        $messageText = '';
 
         switch ($objectType) {
             case 'text':
                 $messageCache = Cache::tags($this->cacheTag.'.'.$chatId)->get('text');
                 $messageId = $messageCache['message_id'] ?? '';
+                $messageText= $messageCache['text'] ?? '';
                 break;
             case 'photo':
                 $messageCache = Cache::tags($this->cacheTag.'.'.$chatId)->get('photo');
                 $messageId = $messageCache['message_id'] ?? '';
+                $messageText= $messageCache['caption'] ?? '';
                 break;
             case 'media_group_photo':
                 $media_group_id = Cache::tags($this->cacheTag.'.'.$chatId)->get('photo:media_group_photo');
                 $messageCache = Cache::tags($this->cacheTag.'.'.$chatId)->get('photo:media_group_photo:'.$media_group_id);
                 $messageId = $messageCache[0]['message_id'] ?? '';
+                foreach ($messageCache as $key => $value) {
+                    $messageText .= $value['caption'] ?? '';
+                }
                 break;
             case 'video':
                 $messageCache = Cache::tags($this->cacheTag.'.'.$chatId)->get('video');
                 $messageId = $messageCache['message_id'] ?? '';
+                $messageText= $messageCache['caption'] ?? '';
                 break;
             case 'media_group_video':
                 $media_group_id = Cache::tags($this->cacheTag.'.'.$chatId)->get('video:media_group_video');
                 $messageCache = Cache::tags($this->cacheTag.'.'.$chatId)->get('video:media_group_video:'.$media_group_id);
                 $messageId = $messageCache[0]['message_id'] ?? '';
+                foreach ($messageCache as $key => $value) {
+                    $messageText .= $value['caption'] ?? '';
+                }
                 break;
             case 'audio':
                 $messageCache = Cache::tags($this->cacheTag.'.'.$chatId)->get('audio');
                 $messageId = $messageCache['message_id'] ?? '';
+                $messageText= $messageCache['caption'] ?? '';
                 break;
             case 'media_group_audio':
                 //特殊情况，需要先判断有没有文字，如果有，那就是文字+多音频
@@ -355,10 +366,14 @@ class SubmissionService
                         'text' => $messageCache,
                         'audio' => $audioMessageCache,
                     ];
+                    $messageText= $messageCache['text']['text'] ?? '';
                 } else {
                     $media_group_id = Cache::tags($this->cacheTag.'.'.$chatId)->get('audio:media_group_audio');
                     $messageCache = Cache::tags($this->cacheTag.'.'.$chatId)->get('audio:media_group_audio:'.$media_group_id);
                     $messageId = $messageCache[0]['message_id'] ?? '';
+                    foreach ($messageCache as $key => $value) {
+                        $messageText .= $value['caption'] ?? '';
+                    }
                 }
                 break;
         }
@@ -392,13 +407,7 @@ class SubmissionService
 
         //白名单用户直接发布
         if ($submissionUser->type == 1) {
-            if (isset($messageCache['text'])) {
-                $text = $messageCache['text'];
-            }
-            if (isset($messageCache['caption'])) {
-                $text = $messageCache['caption'];
-            }
-            $replaced = Str::replace('\r\n', PHP_EOL, $text);
+            $replaced = Str::replace('\r\n', PHP_EOL, $messageText);
             $limitedString = Str::limit($replaced);
             $firstLine = Str::before($limitedString, PHP_EOL);
 
