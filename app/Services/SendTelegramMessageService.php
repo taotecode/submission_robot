@@ -391,7 +391,7 @@ trait SendTelegramMessageService
                 foreach ($keywords as $item) {
                     $textContent .= "#{$item} ";
                 }
-
+                Log::info('关键词：'.$textContent);
                 return $textContent;
             }
         }
