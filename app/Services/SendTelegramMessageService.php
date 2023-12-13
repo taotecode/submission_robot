@@ -99,7 +99,7 @@ trait SendTelegramMessageService
                 $file_id = $message['photo'][0]['file_id'];
                 $caption = $message['caption'] ?? '';
                 //自动关键词
-                $caption .= $this->addKeyWord($botInfo->is_auto_keyword, $botInfo->keywords, $lexiconPath, $caption);
+                $caption .= $this->addKeyWord($botInfo->is_auto_keyword, $botInfo->keyword, $lexiconPath, $caption);
                 // 加入匿名
                 $caption .= $this->addAnonymous($manuscript);
                 //加入自定义尾部内容
@@ -127,7 +127,7 @@ trait SendTelegramMessageService
                     if ($key == 0) {
                         $caption = $item['caption'] ?? '';
                         //自动关键词
-                        $caption .= $this->addKeyWord($botInfo->is_auto_keyword, $botInfo->keywords, $lexiconPath, $caption);
+                        $caption .= $this->addKeyWord($botInfo->is_auto_keyword, $botInfo->keyword, $lexiconPath, $caption);
                         // 加入匿名
                         $caption .= $this->addAnonymous($manuscript);
                         //加入自定义尾部内容
@@ -174,7 +174,7 @@ trait SendTelegramMessageService
                 $height = $message['video']['height'];
                 $caption = $message['caption'] ?? '';
                 //自动关键词
-                $caption .= $this->addKeyWord($botInfo->is_auto_keyword, $botInfo->keywords, $lexiconPath, $caption);
+                $caption .= $this->addKeyWord($botInfo->is_auto_keyword, $botInfo->keyword, $lexiconPath, $caption);
                 // 加入匿名
                 $caption .= $this->addAnonymous($manuscript);
                 //加入自定义尾部内容
@@ -204,7 +204,7 @@ trait SendTelegramMessageService
                     if ($key == 0) {
                         $caption = $item['caption'] ?? '';
                         //自动关键词
-                        $caption .= $this->addKeyWord($botInfo->is_auto_keyword, $botInfo->keywords, $lexiconPath, $caption);
+                        $caption .= $this->addKeyWord($botInfo->is_auto_keyword, $botInfo->keyword, $lexiconPath, $caption);
                         // 加入匿名
                         $caption .= $this->addAnonymous($manuscript);
                         //加入自定义尾部内容
@@ -257,7 +257,7 @@ trait SendTelegramMessageService
                 $title = $message['audio']['file_name'];
                 $caption = $message['caption'] ?? '';
                 //自动关键词
-                $caption .= $this->addKeyWord($botInfo->is_auto_keyword, $botInfo->keywords, $lexiconPath, $caption);
+                $caption .= $this->addKeyWord($botInfo->is_auto_keyword, $botInfo->keyword, $lexiconPath, $caption);
                 // 加入匿名
                 $caption .= $this->addAnonymous($manuscript);
                 //加入自定义尾部内容
@@ -296,7 +296,7 @@ trait SendTelegramMessageService
                     }
                     $text = $textMessage;
                     //自动关键词
-                    $text .= $this->addKeyWord($botInfo->is_auto_keyword, $botInfo->keywords, $lexiconPath, $text);
+                    $text .= $this->addKeyWord($botInfo->is_auto_keyword, $botInfo->keyword, $lexiconPath, $text);
                     // 加入匿名
                     $text .= $this->addAnonymous($manuscript);
                     //加入自定义尾部内容
@@ -371,14 +371,11 @@ trait SendTelegramMessageService
 
     private function addKeyWord($is_auto_keyword, $keyword, $lexiconPath, $text): string
     {
-        Log::info('关键词数据：is_auto_keyword:'.$is_auto_keyword.' lexiconPath:'.$lexiconPath.' text:'.$text.' keyword:'.$keyword);
         if (empty($keyword)) {
             return '';
         }
         //将关键词转换为数组，按行分割
         $keyword = preg_split('/\r\n|\n|\r/', $keyword);;
-        Log::info('关键词数据：'.json_encode($keyword));
-        Log::info('关键词数据：is_auto_keyword:'.$is_auto_keyword.' lexiconPath:'.$lexiconPath.' text:'.$text);
         if (empty($text)) {
             return '';
         }
@@ -396,7 +393,6 @@ trait SendTelegramMessageService
                 foreach ($keywords as $item) {
                     $textContent .= "#{$item} ";
                 }
-                Log::info('关键词：'.$textContent);
                 return $textContent;
             }
         }
