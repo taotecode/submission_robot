@@ -201,24 +201,6 @@ class SubmissionService
                     return 'ok';
                 }
                 break;
-            case 'media_group_photo':
-                $media_group_id = Cache::tags($this->cacheTag.'.'.$chatId)->get('photo:media_group_photo');
-                $messageCache = Cache::tags($this->cacheTag.'.'.$chatId)->get('photo:media_group_photo:'.$media_group_id);
-                $messageId = $messageCache[0]['message_id'] ?? '';
-                if (
-                    ! isset($messageCache[0]['photo'][0]['file_id']) || empty($messageCache[0]['photo'][0]['file_id'])
-                ) {
-                    $this->sendTelegramMessage($telegram, 'sendMessage', [
-                        'chat_id' => $chatId,
-                        'reply_to_message_id' => $messageId,
-                        'text' => get_config('submission.submission_is_empty'),
-                        'parse_mode' => 'MarkdownV2',
-                        'reply_markup' => json_encode(KeyBoardData::START_SUBMISSION),
-                    ]);
-
-                    return 'ok';
-                }
-                break;
             case 'video':
                 $messageCache = Cache::tags($this->cacheTag.'.'.$chatId)->get('video');
                 $messageId = $messageCache['message_id'] ?? '';
@@ -236,11 +218,24 @@ class SubmissionService
                     return 'ok';
                 }
                 break;
+            case 'media_group_photo':
             case 'media_group_video':
-                $media_group_id = Cache::tags($this->cacheTag.'.'.$chatId)->get('video:media_group_video');
-                $messageCache = Cache::tags($this->cacheTag.'.'.$chatId)->get('video:media_group_video:'.$media_group_id);
+                $media_group_id = Cache::tags($this->cacheTag.'.'.$chatId)->get('media_group');
+                $messageCache = Cache::tags($this->cacheTag.'.'.$chatId)->get('media_group:'.$media_group_id);
                 $messageId = $messageCache[0]['message_id'] ?? '';
                 if (
+                    ! isset($messageCache[0]['photo'][0]['file_id']) || empty($messageCache[0]['photo'][0]['file_id'])
+                ) {
+                    $this->sendTelegramMessage($telegram, 'sendMessage', [
+                        'chat_id' => $chatId,
+                        'reply_to_message_id' => $messageId,
+                        'text' => get_config('submission.submission_is_empty'),
+                        'parse_mode' => 'MarkdownV2',
+                        'reply_markup' => json_encode(KeyBoardData::START_SUBMISSION),
+                    ]);
+
+                    return 'ok';
+                }elseif (
                     ! isset($messageCache[0]['video']['file_id']) || empty($messageCache[0]['video']['file_id'])
                 ) {
                     $this->sendTelegramMessage($telegram, 'sendMessage', [
@@ -329,22 +324,15 @@ class SubmissionService
                 $messageId = $messageCache['message_id'] ?? '';
                 $messageText= $messageCache['caption'] ?? '';
                 break;
-            case 'media_group_photo':
-                $media_group_id = Cache::tags($this->cacheTag.'.'.$chatId)->get('photo:media_group_photo');
-                $messageCache = Cache::tags($this->cacheTag.'.'.$chatId)->get('photo:media_group_photo:'.$media_group_id);
-                $messageId = $messageCache[0]['message_id'] ?? '';
-                foreach ($messageCache as $key => $value) {
-                    $messageText .= $value['caption'] ?? '';
-                }
-                break;
             case 'video':
                 $messageCache = Cache::tags($this->cacheTag.'.'.$chatId)->get('video');
                 $messageId = $messageCache['message_id'] ?? '';
                 $messageText= $messageCache['caption'] ?? '';
                 break;
+            case 'media_group_photo':
             case 'media_group_video':
-                $media_group_id = Cache::tags($this->cacheTag.'.'.$chatId)->get('video:media_group_video');
-                $messageCache = Cache::tags($this->cacheTag.'.'.$chatId)->get('video:media_group_video:'.$media_group_id);
+                $media_group_id = Cache::tags($this->cacheTag.'.'.$chatId)->get('media_group');
+                $messageCache = Cache::tags($this->cacheTag.'.'.$chatId)->get('media_group:'.$media_group_id);
                 $messageId = $messageCache[0]['message_id'] ?? '';
                 foreach ($messageCache as $key => $value) {
                     $messageText .= $value['caption'] ?? '';
@@ -490,8 +478,8 @@ class SubmissionService
     {
         $media_group_id = $message->media_group_id ?? '';
         $cacheKey = $type;
-        $cacheKeyGroup = $type.':media_group_'.$type;
-        $cacheKeyGroupId = $type.':media_group_'.$type.':'.$media_group_id;
+        $cacheKeyGroup = 'media_group';
+        $cacheKeyGroupId = 'media_group'.':'.$media_group_id;
         $objectType = $type;
         if (! empty($media_group_id)) {
             $objectType = 'media_group_'.$type;
