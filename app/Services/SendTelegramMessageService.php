@@ -238,6 +238,7 @@ trait SendTelegramMessageService
                 }
             case 'media_group_audio':
                 if (isset($message['text'])) {
+                    Log::info('media_group_audio', $message);
                     $textMessage = $message['text'];
                     $audioMessage = $message['audio'];
                     $media = [];
