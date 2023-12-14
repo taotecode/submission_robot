@@ -1,4 +1,4 @@
-php artisan migrate:generate --ignore="personal_access_tokens,password_resets"
+php artisan migrate:generate --ignore="personal_access_tokens,password_resets" --with-has-table
 
 php artisan migrate
 

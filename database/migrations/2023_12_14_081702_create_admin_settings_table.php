@@ -13,12 +13,13 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('channels', function (Blueprint $table) {
-            $table->increments('id');
-            $table->string('name')->nullable()->comment('公开频道用户名');
-            $table->string('appellation')->nullable()->comment('频道名称');
-            $table->timestamps();
-        });
+        if (!Schema::hasTable('admin_settings')) {
+            Schema::create('admin_settings', function (Blueprint $table) {
+                $table->string('slug', 100)->primary();
+                $table->longText('value');
+                $table->timestamps();
+            });
+        }
     }
 
     /**
@@ -28,6 +29,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('channels');
+        Schema::dropIfExists('admin_settings');
     }
 };

@@ -13,12 +13,14 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('review_group_auditors', function (Blueprint $table) {
-            $table->increments('id');
-            $table->unsignedInteger('review_group_id')->comment('审核群ID');
-            $table->unsignedInteger('auditor_id')->comment('审核员ID');
-            $table->timestamps();
-        });
+        if (!Schema::hasTable('review_group_auditors')) {
+            Schema::create('review_group_auditors', function (Blueprint $table) {
+                $table->increments('id');
+                $table->unsignedInteger('review_group_id')->comment('审核群ID');
+                $table->unsignedInteger('auditor_id')->comment('审核员ID');
+                $table->timestamps();
+            });
+        }
     }
 
     /**

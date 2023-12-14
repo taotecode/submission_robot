@@ -13,13 +13,15 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('admin_role_users', function (Blueprint $table) {
-            $table->bigInteger('role_id');
-            $table->bigInteger('user_id');
-            $table->timestamps();
+        if (!Schema::hasTable('admin_role_menu')) {
+            Schema::create('admin_role_menu', function (Blueprint $table) {
+                $table->bigInteger('role_id');
+                $table->bigInteger('menu_id');
+                $table->timestamps();
 
-            $table->unique(['role_id', 'user_id']);
-        });
+                $table->unique(['role_id', 'menu_id']);
+            });
+        }
     }
 
     /**
@@ -29,6 +31,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('admin_role_users');
+        Schema::dropIfExists('admin_role_menu');
     }
 };
