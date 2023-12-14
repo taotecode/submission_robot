@@ -74,12 +74,7 @@ class SubmissionService
             case 'video':
             case 'audio':
                 if (!Cache::tags($this->cacheTag . '.' . $chatId)->has($chatId)) {
-                    return $this->sendTelegramMessage($telegram, 'sendMessage', [
-                        'chat_id' => $chatId,
-                        'text' => get_config('submission.submission_timeout'),
-                        'parse_mode' => 'HTML',
-                        'reply_markup' => json_encode(KeyBoardData::START),
-                    ]);
+                    return $this->error_for_text($telegram, $chatId, $messageId);
                 }
                 $this->media($telegram, $chatId, $messageId, $message, $objectType);
                 break;
