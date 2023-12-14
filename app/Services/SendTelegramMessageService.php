@@ -238,7 +238,6 @@ trait SendTelegramMessageService
                 }
             case 'media_group_audio':
                 if (isset($message['text'])) {
-                    Log::info('media_group_audio', $message);
                     $textMessage = $message['text'];
                     $audioMessage = $message['audio'];
                     $media = [];
@@ -250,7 +249,7 @@ trait SendTelegramMessageService
                             'duration' => $item['audio']['duration'],
                         ];
                     }
-                    $text = $textMessage;
+                    $text = $textMessage['text'];
                     //自动关键词
                     $text .= $this->addKeyWord($botInfo->is_auto_keyword, $botInfo->keyword, $lexiconPath, $text);
                     // 加入匿名
