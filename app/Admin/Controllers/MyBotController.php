@@ -4,6 +4,7 @@ namespace App\Admin\Controllers;
 
 use App\Admin\Actions\Form\LexiconCheck;
 use App\Admin\Repositories\Bot;
+use App\Admin\RowActions\MyBot\DelWebHook;
 use App\Admin\RowActions\MyBot\SetCommands;
 use App\Admin\RowActions\MyBot\SetWebHook;
 use App\Models\Channel;
@@ -36,7 +37,11 @@ class MyBotController extends AdminController
 
             $grid->actions(function (Grid\Displayers\Actions $actions) {
                 // append一个操作
-                $actions->append(new SetWebHook());
+                if ($actions->row->webhook_status<1){
+                    $actions->append(new SetWebHook());
+                }else{
+                    $actions->append(new DelWebHook());
+                }
                 $actions->append(new SetCommands());
             });
 

@@ -114,6 +114,7 @@ class SubmissionService
                 'chat_id' => $chatId,
                 'text' => get_config('submission.black_list'),
                 'parse_mode' => 'MarkdownV2',
+                'reply_markup' => json_encode(KeyBoardData::BLACKLIST_USER_DELETE),
             ]);
         }
 
