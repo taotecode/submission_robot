@@ -224,19 +224,7 @@ class SubmissionService
                 $messageCache = Cache::tags($this->cacheTag.'.'.$chatId)->get('media_group:'.$media_group_id);
                 $messageId = $messageCache[0]['message_id'] ?? '';
                 if (
-                    ! isset($messageCache[0]['photo'][0]['file_id']) || empty($messageCache[0]['photo'][0]['file_id'])
-                ) {
-                    $this->sendTelegramMessage($telegram, 'sendMessage', [
-                        'chat_id' => $chatId,
-                        'reply_to_message_id' => $messageId,
-                        'text' => get_config('submission.submission_is_empty'),
-                        'parse_mode' => 'MarkdownV2',
-                        'reply_markup' => json_encode(KeyBoardData::START_SUBMISSION),
-                    ]);
-
-                    return 'ok';
-                }elseif (
-                    ! isset($messageCache[0]['video']['file_id']) || empty($messageCache[0]['video']['file_id'])
+                    ! isset($messageCache[0]['photo'][0]['file_id']) && ! isset($messageCache[0]['video']['file_id'])
                 ) {
                     $this->sendTelegramMessage($telegram, 'sendMessage', [
                         'chat_id' => $chatId,
