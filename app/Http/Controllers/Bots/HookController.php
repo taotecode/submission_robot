@@ -50,9 +50,6 @@ class HookController extends Controller
 
         $updateData = $telegram->commandsHandler(true);
 
-        Log::info('Object Type', [$updateData->getMessage()->objectType()]);
-        Log::info('Message', $updateData->getMessage()->toArray());
-
         //进入投稿服务
         if (
             $updateData->objectType() === 'message' &&
