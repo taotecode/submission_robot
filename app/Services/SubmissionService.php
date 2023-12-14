@@ -259,15 +259,15 @@ class SubmissionService
                 if (Cache::tags($this->cacheTag.'.'.$chatId)->has('text')) {
                     $messageCache = Cache::tags($this->cacheTag.'.'.$chatId)->get('text');
                     $messageId = $messageCache['message_id'] ?? '';
-                    $media_group_id = Cache::tags($this->cacheTag.'.'.$chatId)->get('audio:media_group_audio');
-                    $audioMessageCache = Cache::tags($this->cacheTag.'.'.$chatId)->get('audio:media_group_audio:'.$media_group_id);
+                    $media_group_id = Cache::tags($this->cacheTag.'.'.$chatId)->get('media_group');
+                    $audioMessageCache = Cache::tags($this->cacheTag.'.'.$chatId)->get('media_group:'.$media_group_id);
                     $messageCache = [
                         'text' => $messageCache,
                         'audio' => $audioMessageCache,
                     ];
                 } else {
-                    $media_group_id = Cache::tags($this->cacheTag.'.'.$chatId)->get('audio:media_group_audio');
-                    $messageCache = Cache::tags($this->cacheTag.'.'.$chatId)->get('audio:media_group_audio:'.$media_group_id);
+                    $media_group_id = Cache::tags($this->cacheTag.'.'.$chatId)->get('media_group');
+                    $messageCache = Cache::tags($this->cacheTag.'.'.$chatId)->get('media_group:'.$media_group_id);
                     $messageId = $messageCache[0]['message_id'] ?? '';
                 }
                 break;

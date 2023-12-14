@@ -206,53 +206,6 @@ trait SendTelegramMessageService
                 } else {
                     return 'ok';
                 }
-            /*case 'media_group_video':
-                $media = [];
-                $caption = '';
-                foreach ($message as $key => $item) {
-                    $temp_array = [
-                        'type' => 'video',
-                        'media' => $item['video']['file_id'],
-                        'duration' => $item['video']['duration'],
-                        'width' => $item['video']['width'],
-                        'height' => $item['video']['height'],
-                    ];
-                    if (!empty($item['caption'] ?? '')){
-                        $caption = $item['caption'] ?? '';
-                        //自动关键词
-                        $caption .= $this->addKeyWord($botInfo->is_auto_keyword, $botInfo->keyword, $lexiconPath, $caption);
-                        // 加入匿名
-                        $caption .= $this->addAnonymous($manuscript);
-                        //加入自定义尾部内容
-                        $caption .= $this->addTailContent($botInfo->tail_content);
-                        $temp_array['caption'] = $caption;
-                        $temp_array['parse_mode'] = 'HTML';
-                    }
-                    $media[] = $temp_array;
-                }
-
-                $result = $this->sendTelegramMessage($telegram, 'sendMediaGroup', [
-                    'chat_id' => $chatId,
-                    'media' => json_encode($media),
-                ], true, $isChannel);
-
-                if ($isReviewGroup) {
-                    $this->sendTelegramMessage($telegram, 'sendMessage', [
-                        'chat_id' => $chatId,
-                        'text' => '收到包含多个视频的提交 👆',
-                        'reply_to_message_id' => $result[0]['message_id'],
-                        'parse_mode' => 'HTML',
-                        'reply_markup' => $inline_keyboard,
-                    ]);
-                }
-                if ($isReturnText) {
-                    return $caption;
-                }
-                if (is_string($result) || $isChannel) {
-                    return $result;
-                } else {
-                    return 'ok';
-                }*/
             case 'audio':
                 $file_id = $message['audio']['file_id'];
                 $duration = $message['audio']['duration'];
@@ -335,12 +288,24 @@ trait SendTelegramMessageService
                 } else {
                     $media = [];
                     foreach ($message as $key => $item) {
-                        $media[] = [
+                        $temp_array=[
                             'type' => 'audio',
                             'media' => $item['audio']['file_id'],
                             'title' => $item['audio']['file_name'],
                             'duration' => $item['audio']['duration'],
                         ];
+                        if (!empty($item['caption'] ?? '')){
+                            $caption = $item['caption'] ?? '';
+                            //自动关键词
+                            $caption .= $this->addKeyWord($botInfo->is_auto_keyword, $botInfo->keyword, $lexiconPath, $caption);
+                            // 加入匿名
+                            $caption .= $this->addAnonymous($manuscript);
+                            //加入自定义尾部内容
+                            $caption .= $this->addTailContent($botInfo->tail_content);
+                            $temp_array['caption'] = $caption;
+                            $temp_array['parse_mode'] = 'HTML';
+                        }
+                        $media[] = $temp_array;
                     }
                     $result = $this->sendTelegramMessage($telegram, 'sendMediaGroup', [
                         'chat_id' => $chatId,
