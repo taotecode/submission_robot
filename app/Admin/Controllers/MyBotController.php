@@ -3,9 +3,9 @@
 namespace App\Admin\Controllers;
 
 use App\Admin\Actions\Form\LexiconCheck;
+use App\Admin\Actions\Grid\MyBot\SetCommands;
 use App\Admin\Repositories\Bot;
 use App\Admin\RowActions\MyBot\DelWebHook;
-use App\Admin\RowActions\MyBot\SetCommands;
 use App\Admin\RowActions\MyBot\SetWebHook;
 use App\Models\Channel;
 use Dcat\Admin\Form;

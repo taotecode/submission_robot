@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Bots;
 
 use App\Http\Controllers\Controller;
 use App\Services\BaseService;
+use App\Telegram\Commands\StartCommand;
 use Telegram\Bot\Api;
 
 class TestController extends Controller
@@ -17,23 +18,54 @@ class TestController extends Controller
         $commands = [
             [
                 'command' => 'start',
-                'description' => '开始使用',
+                'description' => '开始投稿',
             ],
             [
                 'command' => 'help',
-                'description' => '帮助',
+                'description' => '帮助中心',
             ],
         ];
-        $scope = [
-            'type' => 'BotCommandScopeDefault',
-        ];
-        $params = [
-            'commands' => $commands,
-            //            'scope' => $scope,
-        ];
-        dump($telegram->setMyCommands($params));
-        $method = 'getMyCommands';
-        dump($telegram->$method());
-
+        $telegram->setMyCommands([
+            'commands' => json_encode([]),
+            'scope' => [
+                'type' => 'default',
+            ],
+        ]);
+        $telegram->setMyCommands([
+            'commands'=>json_encode([
+                [
+                    'command' => 'get_group_id',
+                    'description' => '获取群组ID',
+                ],
+            ]),
+            'scope' => json_encode([
+                'type' => 'all_group_chats',
+            ]),
+        ]);
+        $telegram->setMyCommands([
+            'commands'=>json_encode([
+                [
+                    'command' => 'start',
+                    'description' => '开始投稿',
+                ],
+                [
+                    'command' => 'help',
+                    'description' => '帮助中心',
+                ],
+                [
+                    'command' => 'get_me_id',
+                    'description' => '获取我的ID',
+                ]
+            ]),
+            'scope' => json_encode([
+                'type' => 'all_private_chats',
+            ]),
+        ]);
+        $telegram->setMyCommands([
+            'commands' => json_encode($commands),
+            'scope' => json_encode([
+                'type' => 'default',
+            ]),
+        ]);
     }
 }
