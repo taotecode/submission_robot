@@ -58,8 +58,8 @@ class TailContentForm extends Form implements LazyRenderable
 
         // 获取外部传递参数
         $id = $this->payload['id'] ?? null;
-        $tail_content = $this->payload['tail_content'] ?? null;
-        $tail_content_button = $this->payload['tail_content_button'] ?? null;
+        $tail_content = $this->payload['tail_content'] ?? '';
+        $tail_content_button = $this->payload['tail_content_button'] ?? [];
         if (! empty($tail_content_button)) {
             $tail_content_button = json_decode($tail_content_button, true);
             foreach ($tail_content_button as $k => $v) {
