@@ -50,40 +50,39 @@ class TailContentForm extends Form implements LazyRenderable
     // 构建表单
     public function form()
     {
-        // 获取外部传递参数
-        $id = $this->payload['id'] ?? null;
-        $tail_content = $this->payload['tail_content'] ?? null;
-        $tail_content_button = $this->payload['tail_content_button'] ?? null;
-        if (! empty($tail_content_button)) {
-            $tail_content_button = json_decode($tail_content_button, true);
-        }
-
         $kv_1 = ['交流群' => '', '投稿链接' => ''];
         $kv_2 = [];
         $kv_3 = [];
         $kv_4 = [];
         $kv_5 = [];
 
-        foreach ($tail_content_button as $k => $v) {
-            if ($k === 0) {
-                foreach ($v as $key => $value) {
-                    $kv_1[$value['text']] = $value['url'];
-                }
-            } elseif ($k === 1) {
-                foreach ($v as $key => $value) {
-                    $kv_2[$value['text']] = $value['url'];
-                }
-            } elseif ($k === 2) {
-                foreach ($v as $key => $value) {
-                    $kv_3[$value['text']] = $value['url'];
-                }
-            } elseif ($k === 3) {
-                foreach ($v as $key => $value) {
-                    $kv_4[$value['text']] = $value['url'];
-                }
-            } elseif ($k === 4) {
-                foreach ($v as $key => $value) {
-                    $kv_5[$value['text']] = $value['url'];
+        // 获取外部传递参数
+        $id = $this->payload['id'] ?? null;
+        $tail_content = $this->payload['tail_content'] ?? null;
+        $tail_content_button = $this->payload['tail_content_button'] ?? null;
+        if (! empty($tail_content_button)) {
+            $tail_content_button = json_decode($tail_content_button, true);
+            foreach ($tail_content_button as $k => $v) {
+                if ($k === 0) {
+                    foreach ($v as $key => $value) {
+                        $kv_1[$value['text']] = $value['url'];
+                    }
+                } elseif ($k === 1) {
+                    foreach ($v as $key => $value) {
+                        $kv_2[$value['text']] = $value['url'];
+                    }
+                } elseif ($k === 2) {
+                    foreach ($v as $key => $value) {
+                        $kv_3[$value['text']] = $value['url'];
+                    }
+                } elseif ($k === 3) {
+                    foreach ($v as $key => $value) {
+                        $kv_4[$value['text']] = $value['url'];
+                    }
+                } elseif ($k === 4) {
+                    foreach ($v as $key => $value) {
+                        $kv_5[$value['text']] = $value['url'];
+                    }
                 }
             }
         }
