@@ -5,8 +5,8 @@ namespace App\Admin\Controllers;
 use App\Admin\Repositories\SubmissionUser;
 use Dcat\Admin\Form;
 use Dcat\Admin\Grid;
-use Dcat\Admin\Show;
 use Dcat\Admin\Http\Controllers\AdminController;
+use Dcat\Admin\Show;
 
 class SubmissionUserController extends AdminController
 {
@@ -21,6 +21,7 @@ class SubmissionUserController extends AdminController
             $grid->column('id')->sortable();
             $grid->column('type')->display(function ($type) {
                 $textArray = ['普通', '白名单', '黑名单'];
+
                 return $textArray[$type];
             })->label();
             $grid->column('userId')->copyable();
@@ -38,8 +39,7 @@ class SubmissionUserController extends AdminController
     /**
      * Make a show builder.
      *
-     * @param mixed $id
-     *
+     * @param  mixed  $id
      * @return Show
      */
     protected function detail($id)
@@ -63,7 +63,7 @@ class SubmissionUserController extends AdminController
     {
         return Form::make(new SubmissionUser(), function (Form $form) {
             $form->display('id');
-            $form->radio('type')->options(['0' => '普通', '1' => '白名单','2'=>'黑名单'])->default('0')->required()->help('普通：正常进入投稿审核流程，白名单：无视投稿审核，直接发布，黑名单：在黑名单中的用户不能提交');
+            $form->radio('type')->options(['0' => '普通', '1' => '白名单', '2' => '黑名单'])->default('0')->required()->help('普通：正常进入投稿审核流程，白名单：无视投稿审核，直接发布，黑名单：在黑名单中的用户不能提交');
             $form->text('userId')->required()->help('投稿人TG ID');
             $form->text('name')->help('投稿人昵称');
 

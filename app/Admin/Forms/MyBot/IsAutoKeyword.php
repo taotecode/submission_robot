@@ -2,13 +2,10 @@
 
 namespace App\Admin\Forms\MyBot;
 
-use App\Admin\Actions\Form\LexiconCheck;
-use App\Admin\Forms\LexiconCheck as LexiconCheckForm;
 use App\Models\Bot;
 use Dcat\Admin\Contracts\LazyRenderable;
 use Dcat\Admin\Traits\LazyWidget;
 use Dcat\Admin\Widgets\Form;
-use Dcat\Admin\Widgets\Modal;
 use Illuminate\Support\Facades\Storage;
 
 class IsAutoKeyword extends Form implements LazyRenderable
@@ -46,13 +43,13 @@ class IsAutoKeyword extends Form implements LazyRenderable
         $lexicon = $this->payload['lexicon'] ?? null;
 
         $this->radio('is_auto_keyword')
-            ->when('1', function (Form $form) use ($id,$keyword,$lexicon) {
+            ->when('1', function (Form $form) use ($id, $keyword, $lexicon) {
                 $form->textarea('keyword')->default('新闻')->value($keyword)->help('每行一个关键词<br>当稿件文本经过词库分词后的词语中，含有关键词，则会在消息尾部加入如：#新闻 #的标签');
                 $form->textarea('lexicon')->default('新闻')->value($lexicon)->help('
                     词库格式为每行一个词，如果需要提升分词准确率，可以在词语后面加上词性，词性之间用空格隔开，词性列表如下：<br>
         新闻 1<br>
         一般数值在1-10之间，数值越大，分词越准确，但是分词速度越慢，建议平均值为：3<br>
-        可以点击<a href="'.route('dcat.admin.bots.lexiconCheck',$id).'">词库验证</a>进行分词测试<br>
+        可以点击<a href="'.route('dcat.admin.bots.lexiconCheck', $id).'">词库验证</a>进行分词测试<br>
                     ');
             })
             ->options([

@@ -13,7 +13,7 @@ class SetChannel extends RowAction
      *
      * @return string
      */
-    protected $title='【设置发布频道】';
+    protected $title = '【设置发布频道】';
 
     public function render()
     {

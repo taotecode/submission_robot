@@ -13,7 +13,7 @@ return new class extends Migration
      */
     public function up()
     {
-        if (!Schema::hasTable('admin_extension_histories')) {
+        if (! Schema::hasTable('admin_extension_histories')) {
             Schema::create('admin_extension_histories', function (Blueprint $table) {
                 $table->bigIncrements('id');
                 $table->string('name', 100)->index();

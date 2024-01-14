@@ -1,4 +1,5 @@
 <?php
+
 return [
     'labels' => [
         'SubmissionUser' => '投稿人管理',

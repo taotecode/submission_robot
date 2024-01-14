@@ -56,12 +56,33 @@ trait SendTelegramMessageService
         return $this->objectTypeHandle($telegram, $botInfo, $channelListData, $objectType, $message, null, false, false, $manuscript, true);
     }
 
-    private function objectTypeHandle(Api $telegram, $botInfo, $chatId, $objectType, $message, array $inline_keyboard = null, bool $isReviewGroup = false, bool $isReturnText = false, $manuscript = null, bool $isChannel = false): mixed
+    /**
+     * 根据类型处理
+     *
+     * @param  Api  $telegram telegram 实例
+     * @param  mixed  $botInfo 机器人信息
+     * @param  string|int|array  $chatId 频道id或者频道ID数组或者用户id
+     * @param  string  $objectType 类型
+     * @param  array|null  $inline_keyboard 按键
+     * @param  bool  $isReviewGroup 是否是审核群
+     * @param  bool  $isReturnText 是否返回文本
+     * @param  null  $manuscript 投稿信息
+     * @param  bool  $isChannel 是否是频道
+     * @return mixed|string
+     */
+    private function objectTypeHandle(Api $telegram, $botInfo, $chatId, $objectType, $message, ?array $inline_keyboard = null, bool $isReviewGroup = false, bool $isReturnText = false, $manuscript = null, bool $isChannel = false): mixed
     {
         if (empty($inline_keyboard)) {
             $inline_keyboard = null;
         } else {
             $inline_keyboard = json_encode($inline_keyboard);
+        }
+
+        $tail_content_button = $botInfo->tail_content_button;
+        if ($isChannel && ! empty($tail_content_button)) {
+            $inline_keyboard = json_encode([
+                'inline_keyboard' => $tail_content_button,
+            ]);
         }
 
         $lexiconPath = null;
@@ -156,13 +177,13 @@ trait SendTelegramMessageService
                 $caption = '';
                 foreach ($message as $key => $item) {
                     $temp_array = [];
-                    if (isset($item['photo'])){
+                    if (isset($item['photo'])) {
                         $temp_array = [
                             'type' => 'photo',
                             'media' => $item['photo'][0]['file_id'],
                         ];
                     }
-                    if (isset($item['video'])){
+                    if (isset($item['video'])) {
                         $temp_array = [
                             'type' => 'video',
                             'media' => $item['video']['file_id'],
@@ -171,7 +192,7 @@ trait SendTelegramMessageService
                             'height' => $item['video']['height'],
                         ];
                     }
-                    if (!empty($item['caption'] ?? '')){
+                    if (! empty($item['caption'] ?? '')) {
                         $caption = $item['caption'] ?? '';
                         //自动关键词
                         $caption .= $this->addKeyWord($botInfo->is_auto_keyword, $botInfo->keyword, $lexiconPath, $caption);
@@ -288,13 +309,13 @@ trait SendTelegramMessageService
                 } else {
                     $media = [];
                     foreach ($message as $key => $item) {
-                        $temp_array=[
+                        $temp_array = [
                             'type' => 'audio',
                             'media' => $item['audio']['file_id'],
                             'title' => $item['audio']['file_name'],
                             'duration' => $item['audio']['duration'],
                         ];
-                        if (!empty($item['caption'] ?? '')){
+                        if (! empty($item['caption'] ?? '')) {
                             $caption = $item['caption'] ?? '';
                             //自动关键词
                             $caption .= $this->addKeyWord($botInfo->is_auto_keyword, $botInfo->keyword, $lexiconPath, $caption);
@@ -342,7 +363,7 @@ trait SendTelegramMessageService
             return '';
         }
         //将关键词转换为数组，按行分割
-        $keyword = preg_split('/\r\n|\n|\r/', $keyword);;
+        $keyword = preg_split('/\r\n|\n|\r/', $keyword);
         if (empty($text)) {
             return '';
         }
@@ -360,6 +381,7 @@ trait SendTelegramMessageService
                 foreach ($keywords as $item) {
                     $textContent .= "#{$item} ";
                 }
+
                 return $textContent;
             }
         }

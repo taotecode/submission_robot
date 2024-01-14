@@ -13,7 +13,7 @@ return new class extends Migration
      */
     public function up()
     {
-        if (!Schema::hasTable('config')) {
+        if (! Schema::hasTable('config')) {
             Schema::create('config', function (Blueprint $table) {
                 $table->increments('id');
                 $table->string('group', 100)->index('group')->comment('组');

@@ -33,8 +33,8 @@ class Channel extends Form implements LazyRenderable
         // 获取外部传递参数
         $id = $this->payload['id'] ?? null;
         $channel_ids = $this->payload['channel_ids'] ?? null;
-        if ($channel_ids){
-            $channel_ids = json_decode($channel_ids,true);
+        if ($channel_ids) {
+            $channel_ids = json_decode($channel_ids, true);
         }
 
         $this->checkbox('channel_ids', '发布频道')

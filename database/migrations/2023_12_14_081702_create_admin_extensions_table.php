@@ -13,7 +13,7 @@ return new class extends Migration
      */
     public function up()
     {
-        if (!Schema::hasTable('admin_extensions')) {
+        if (! Schema::hasTable('admin_extensions')) {
             Schema::create('admin_extensions', function (Blueprint $table) {
                 $table->increments('id');
                 $table->string('name', 100)->unique();

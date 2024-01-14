@@ -13,7 +13,7 @@ return new class extends Migration
      */
     public function up()
     {
-        if (!Schema::hasTable('admin_roles')) {
+        if (! Schema::hasTable('admin_roles')) {
             Schema::create('admin_roles', function (Blueprint $table) {
                 $table->bigIncrements('id');
                 $table->string('name', 50);

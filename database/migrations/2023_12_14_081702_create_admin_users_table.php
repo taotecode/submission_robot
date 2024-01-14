@@ -13,7 +13,7 @@ return new class extends Migration
      */
     public function up()
     {
-        if (!Schema::hasTable('admin_users')) {
+        if (! Schema::hasTable('admin_users')) {
             Schema::create('admin_users', function (Blueprint $table) {
                 $table->bigIncrements('id');
                 $table->string('username', 120)->unique();

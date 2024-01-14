@@ -13,7 +13,7 @@ return new class extends Migration
      */
     public function up()
     {
-        if (!Schema::hasTable('auditors')) {
+        if (! Schema::hasTable('auditors')) {
             Schema::create('auditors', function (Blueprint $table) {
                 $table->comment('审核人员表');
                 $table->increments('id');

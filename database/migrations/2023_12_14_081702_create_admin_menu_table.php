@@ -13,7 +13,7 @@ return new class extends Migration
      */
     public function up()
     {
-        if (!Schema::hasTable('admin_menu')) {
+        if (! Schema::hasTable('admin_menu')) {
             Schema::create('admin_menu', function (Blueprint $table) {
                 $table->bigIncrements('id');
                 $table->bigInteger('parent_id')->default(0);

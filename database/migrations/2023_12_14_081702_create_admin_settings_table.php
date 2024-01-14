@@ -13,7 +13,7 @@ return new class extends Migration
      */
     public function up()
     {
-        if (!Schema::hasTable('admin_settings')) {
+        if (! Schema::hasTable('admin_settings')) {
             Schema::create('admin_settings', function (Blueprint $table) {
                 $table->string('slug', 100)->primary();
                 $table->longText('value');

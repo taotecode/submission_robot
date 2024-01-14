@@ -13,7 +13,7 @@ return new class extends Migration
      */
     public function up()
     {
-        if (!Schema::hasTable('submission_user')) {
+        if (! Schema::hasTable('submission_user')) {
             Schema::create('submission_user', function (Blueprint $table) {
                 $table->comment('submission_user');
                 $table->increments('id');

@@ -99,6 +99,6 @@ class KeyBoardData
      * 黑名单用户删除键盘
      */
     const BLACKLIST_USER_DELETE = [
-        'remove_keyboard'=>true,
+        'remove_keyboard' => true,
     ];
 }

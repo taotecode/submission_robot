@@ -13,7 +13,7 @@ return new class extends Migration
      */
     public function up()
     {
-        if (!Schema::hasTable('channels')) {
+        if (! Schema::hasTable('channels')) {
             Schema::create('channels', function (Blueprint $table) {
                 $table->increments('id');
                 $table->string('name')->nullable()->comment('公开频道用户名');
