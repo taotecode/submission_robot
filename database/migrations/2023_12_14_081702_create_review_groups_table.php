@@ -13,7 +13,7 @@ return new class extends Migration
      */
     public function up()
     {
-        if (!Schema::hasTable('review_groups')) {
+        if (! Schema::hasTable('review_groups')) {
             Schema::create('review_groups', function (Blueprint $table) {
                 $table->increments('id');
                 $table->unsignedInteger('bot_id')->comment('Bot ID');

@@ -25,12 +25,14 @@ class BaseService
             $params = [
                 'url' => $url,
             ];
-            if ($telegram->setWebhook($params)){
-                $bot=Bot::find($botId);
-                $bot->webhook_status=1;
+            if ($telegram->setWebhook($params)) {
+                $bot = Bot::find($botId);
+                $bot->webhook_status = 1;
                 $bot->save();
+
                 return true;
             }
+
             return false;
         } catch (TelegramSDKException $e) {
             throw new Exception($e);
@@ -41,12 +43,14 @@ class BaseService
     {
         try {
             $telegram = new Api($token);
-            if ($telegram->deleteWebhook()){
-                $bot=Bot::find($botId);
-                $bot->webhook_status=0;
+            if ($telegram->deleteWebhook()) {
+                $bot = Bot::find($botId);
+                $bot->webhook_status = 0;
                 $bot->save();
+
                 return true;
             }
+
             return false;
         } catch (TelegramSDKException $e) {
             throw new Exception($e);
@@ -84,13 +88,13 @@ class BaseService
                 ],
             ]);
             $telegram->setMyCommands([
-                'commands'=>json_encode([]),
+                'commands' => json_encode([]),
                 'scope' => json_encode([
                     'type' => 'all_group_chats',
                 ]),
             ]);
             $telegram->setMyCommands([
-                'commands'=>json_encode([
+                'commands' => json_encode([
                     [
                         'command' => 'start',
                         'description' => '开始投稿',
@@ -104,6 +108,7 @@ class BaseService
                     'type' => 'all_private_chats',
                 ]),
             ]);
+
             return $telegram->setMyCommands([
                 'commands' => json_encode($commands),
                 'scope' => json_encode([

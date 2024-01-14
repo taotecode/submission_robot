@@ -13,7 +13,7 @@ return new class extends Migration
      */
     public function up()
     {
-        if (!Schema::hasTable('admin_role_menu')) {
+        if (! Schema::hasTable('admin_role_menu')) {
             Schema::create('admin_role_menu', function (Blueprint $table) {
                 $table->bigInteger('role_id');
                 $table->bigInteger('menu_id');

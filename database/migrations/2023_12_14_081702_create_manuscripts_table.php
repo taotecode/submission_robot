@@ -13,7 +13,7 @@ return new class extends Migration
      */
     public function up()
     {
-        if (!Schema::hasTable('manuscripts')) {
+        if (! Schema::hasTable('manuscripts')) {
             Schema::create('manuscripts', function (Blueprint $table) {
                 $table->increments('id');
                 $table->json('message_id')->nullable()->comment('发送频道消息ID');

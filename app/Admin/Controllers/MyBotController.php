@@ -40,9 +40,9 @@ class MyBotController extends AdminController
 
             $grid->actions(function (Grid\Displayers\Actions $actions) {
                 // append一个操作
-                if ($actions->row->webhook_status<1){
+                if ($actions->row->webhook_status < 1) {
                     $actions->append(new SetWebHook());
-                }else{
+                } else {
                     $actions->append(new DelWebHook());
                 }
                 $actions->append(new SetCommands());
@@ -109,6 +109,7 @@ class MyBotController extends AdminController
             if (empty($result)) {
                 return JsonResponse::make()->error('分词结果为空');
             }
+
             return JsonResponse::make()->alert()->success('分词结果为')->detail(implode('|', $result));
         }
         $form = Form::make(new Bot(), function (Form $form) use ($id) {
@@ -132,6 +133,7 @@ class MyBotController extends AdminController
                 $footer->disableViewCheck();
             });
         });
+
         return $content
             ->translation($this->translation())
             ->title($this->title())

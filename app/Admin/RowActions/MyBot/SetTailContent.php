@@ -13,7 +13,8 @@ class SetTailContent extends RowAction
      *
      * @return string
      */
-    protected $title='【设置消息尾部】';
+    protected $title = '【设置消息尾部】';
+
     public function render()
     {
         // 实例化表单类并传递自定义参数

@@ -13,7 +13,7 @@ class SetIsAutoKeyword extends RowAction
      *
      * @return string
      */
-    protected $title='【设置关键词】';
+    protected $title = '【设置关键词】';
 
     public function render()
     {

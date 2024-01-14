@@ -12,6 +12,6 @@ class SubmissionUser extends Model
     protected $table = 'submission_user';
 
     protected $fillable = [
-        'type', 'userId','name',
+        'type', 'userId', 'name',
     ];
 }

@@ -13,7 +13,7 @@ return new class extends Migration
      */
     public function up()
     {
-        if (!Schema::hasTable('bots')) {
+        if (! Schema::hasTable('bots')) {
             Schema::create('bots', function (Blueprint $table) {
                 $table->integer('id', true);
                 $table->string('name')->comment('机器人用户名');
