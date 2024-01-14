@@ -10,6 +10,7 @@ class Bot extends Model
     use HasDateTimeFormatter;
 
     protected $casts = [
+        'tail_content_button' => 'json',
         'channel_ids' => 'json',
     ];
 

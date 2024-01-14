@@ -15,6 +15,7 @@ Route::group([
     $router->get('/', 'HomeController@index');
 
     //My Bots
+    $router->any('bots/lexiconCheck/{id}', 'MyBotController@lexiconCheck')->name('bots.lexiconCheck');
     $router->resource('bots', 'MyBotController');
 
     //审核人群
