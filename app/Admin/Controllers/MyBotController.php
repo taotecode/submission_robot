@@ -2,15 +2,18 @@
 
 namespace App\Admin\Controllers;
 
-use App\Admin\Actions\Form\LexiconCheck;
 use App\Admin\Repositories\Bot;
 use App\Admin\RowActions\MyBot\DelWebHook;
+use App\Admin\RowActions\MyBot\SetChannel;
 use App\Admin\RowActions\MyBot\SetCommands;
+use App\Admin\RowActions\MyBot\SetIsAutoKeyword;
+use App\Admin\RowActions\MyBot\SetTailContent;
 use App\Admin\RowActions\MyBot\SetWebHook;
-use App\Models\Channel;
 use Dcat\Admin\Form;
 use Dcat\Admin\Grid;
 use Dcat\Admin\Http\Controllers\AdminController;
+use Dcat\Admin\Http\JsonResponse;
+use Dcat\Admin\Layout\Content;
 use Dcat\Admin\Show;
 use Illuminate\Support\Facades\Storage;
 
@@ -30,7 +33,7 @@ class MyBotController extends AdminController
             $grid->column('name')->display(function ($name) {
                 return '@'.$name;
             })->copyable();
-            $grid->column('review_num');
+            $grid->column('review_num')->badge();
             $grid->column('status')->switch();
             $grid->column('created_at');
             $grid->column('updated_at')->sortable();
@@ -43,6 +46,9 @@ class MyBotController extends AdminController
                     $actions->append(new DelWebHook());
                 }
                 $actions->append(new SetCommands());
+                $actions->append(new SetTailContent());
+                $actions->append(new SetIsAutoKeyword());
+                $actions->append(new SetChannel());
             });
 
             $grid->filter(function (Grid\Filter $filter) {
@@ -84,49 +90,52 @@ class MyBotController extends AdminController
             $form->password('token')->help('通过@BotFather创建机器人获取')->required();
             $form->number('review_num')->min(1)->max(30)->default(1)->required()
                 ->help('每条投稿消息的审核数量。如：设置1，那么只需要一个人就可以通过或拒绝。设置2，那么就需要两个人就可以通过或拒绝。<br>最小值为：1');
-            $form->textarea('tail_content')->help("每条投稿消息的尾部内容，支持html格式(参考<a href='https://core.telegram.org/bots/api#html-style' target='_blank'>https://core.telegram.org/bots/api#html-style</a>)。");
-
-            $form->checkbox('channel_ids', '发布频道')
-                ->options(Channel::all()->pluck('appellation', 'id'))
-                ->help('选择需要发布的频道，可以多选。');
 
             $form->switch('status')->default(1);
-
-            $form->radio('is_auto_keyword')
-                ->when('1', function (Form $form) {
-                    $form->textarea('keyword')->default('新闻')->help('每行一个关键词<br>当稿件文本经过词库分词后的词语中，含有关键词，则会在消息尾部加入如：#新闻 #的标签');
-                    $form->textarea('lexicon')->default('新闻')->help('
-                    词库格式为每行一个词，如果需要提升分词准确率，可以在词语后面加上词性，词性之间用空格隔开，词性列表如下：<br>
-        新闻 1<br>
-        一般数值在1-10之间，数值越大，分词越准确，但是分词速度越慢，建议平均值为：3<br>
-        可以点击右上角【词库验证】进行分词测试<br>
-                    ');
-                })
-                ->options([
-                    '0' => '关闭自动关键词',
-                    '1' => '开启自动关键词',
-                ])
-                ->default('1')->help('开启自动关键词后，会自动在消息尾部加入关键词标签，如：#新闻 #的标签<br>注意：开启自动关键词后，需要在下方填写关键词和词库，否则无法正常工作。<br>注意：服务器性能最少需要1核2G内存，否则会导致分词失败。对服务器性能要求较高。');
-
             $form->display('created_at');
             $form->display('updated_at');
+        });
+    }
 
-            $form->saved(function (Form $form, $result) {
-                // 判断是否是新增操作
-                if ($form->isCreating()) {
-                    //自增ID
-                    $newId = $form->getKey();
-                } else {
-                    $newId = $form->model()->id;
-                }
-                // 保存词库
-                $lexicon = $form->input('lexicon'); //Lexicon
-                Storage::put("public/lexicon_{$newId}.txt", $lexicon);
-            });
+    public function lexiconCheck($id, Content $content)
+    {
+        if (request()->isMethod('PUT')) {
+            $lexicon = request()->input('lexicon');
+            $text = request()->input('text');
+            $time = time();
+            Storage::put("public/lexicon_temp_{$time}.txt", $lexicon);
+            $result = quickCut($text, storage_path('app/public/lexicon_temp_'.$time.'.txt'));
+            Storage::delete("public/lexicon_temp_{$time}.txt");
+            if (empty($result)) {
+                return JsonResponse::make()->error('分词结果为空');
+            }
+            return JsonResponse::make()->alert()->success('分词结果为')->detail(implode('|', $result));
+        }
+        $form = Form::make(new Bot(), function (Form $form) use ($id) {
+            $form->action(route('dcat.admin.bots.lexiconCheck', $id));
+            $form->textarea('text', '稿件文本内容')->required();
+            $form->textarea('lexicon', '词库')->required()->help('
+        词库格式为每行一个词，如果需要提升分词准确率，可以在词语后面加上词性，词性之间用空格隔开，词性列表如下：<br>
+        新闻 1<br>
+        一般数值在1-10之间，数值越大，分词越准确，但是分词速度越慢，建议平均值为：3<br>
+        ');
 
-            $form->tools(function (Form\Tools $tools) {
-                $tools->append(new LexiconCheck());
+            $form->footer(function ($footer) {
+
+                // 去掉`继续编辑`checkbox
+                $footer->disableEditingCheck();
+
+                // 去掉`继续创建`checkbox
+                $footer->disableCreatingCheck();
+
+                // 去掉`查看`checkbox
+                $footer->disableViewCheck();
             });
         });
+        return $content
+            ->translation($this->translation())
+            ->title($this->title())
+            ->description('词库验证')
+            ->body($form->edit($id));
     }
 }
