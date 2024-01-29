@@ -64,6 +64,9 @@ class TailContentForm extends Form implements LazyRenderable
             $tail_content_button = json_decode($tail_content_button, true);
             foreach ($tail_content_button as $k => $v) {
                 if ($k === 0) {
+                    if (count($v) > 0) {
+                        $kv_1 = [];
+                    }
                     foreach ($v as $key => $value) {
                         $kv_1[$value['text']] = $value['url'];
                     }
