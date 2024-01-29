@@ -35,6 +35,8 @@ class Channel extends Form implements LazyRenderable
         $channel_ids = $this->payload['channel_ids'] ?? [];
         if (!empty($channel_ids)) {
             $channel_ids = json_decode($channel_ids, true);
+        }else{
+            $channel_ids = [];
         }
 
         $this->checkbox('channel_ids', '发布频道')
