@@ -43,6 +43,27 @@ trait SendTelegramMessageService
         return $this->objectTypeHandle($telegram, $botInfo, $chatId, $objectType, $message, $inline_keyboard, true, true);
     }
 
+    public function sendGroupMessageWhiteUser(Api $telegram, $botInfo,$manuscript)
+    {
+        if (! empty($botInfo->review_group->name)) {
+            $chatId = '@'.$botInfo->review_group->name;
+        } else {
+            $chatId = $botInfo->review_group->group_id;
+        }
+
+        $inline_keyboard = KeyBoardData::WHITE_LIST_USER_SUBMISSION;
+        $inline_keyboard['inline_keyboard'][0][0]['callback_data'] .= ":$manuscript->id";
+
+        $username=get_posted_by($manuscript->posted_by);
+
+        $this->sendTelegramMessage($telegram, 'sendMessage', [
+            'chat_id' => $chatId,
+            'text' => "白名单用户<b>【{$username}】</b>的投稿 “” 已自动通过审核。",
+            'parse_mode' => 'HTML',
+            'reply_markup' => json_encode($inline_keyboard),
+        ]);
+    }
+
     public function sendChannelMessage(Api $telegram, $botInfo, Manuscript $manuscript): mixed
     {
         $channelList = $botInfo->channel_ids;

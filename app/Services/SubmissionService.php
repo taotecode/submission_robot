@@ -396,13 +396,15 @@ class SubmissionService
             $manuscript->save();
             Cache::tags($this->cacheTag.'.'.$chatId)->flush();
 
-            return $this->sendTelegramMessage($telegram, 'sendMessage', [
+            $returnMessage = $this->sendTelegramMessage($telegram, 'sendMessage', [
                 'chat_id' => $chatId,
                 'reply_to_message_id' => $messageId,
                 'text' => get_config('submission.confirm_white_list'),
                 'parse_mode' => 'MarkdownV2',
                 'reply_markup' => json_encode(KeyBoardData::START),
-            ]);
+            ], true);
+
+            $this->sendGroupMessageWhiteUser($telegram, $botInfo, $manuscript);
         }
         // 发送消息到审核群组
         $text = $this->sendGroupMessage($telegram, $botInfo, $messageCache, $objectType, $manuscript->id);

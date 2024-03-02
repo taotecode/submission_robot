@@ -81,6 +81,9 @@ class KeyBoardData
             [
                 ['text' => '已通过', 'callback_data' => 'approved_submission'],
             ],
+            [
+                ['text' => '删除消息', 'callback_data' => 'delete_submission_message'],
+            ]
         ],
     ];
 
@@ -100,5 +103,16 @@ class KeyBoardData
      */
     const BLACKLIST_USER_DELETE = [
         'remove_keyboard' => true,
+    ];
+
+    /**
+     * 白名单用户投稿完成发送到审核群组键盘
+     */
+    const WHITE_LIST_USER_SUBMISSION = [
+        'inline_keyboard' => [
+            [
+                ['text' => '删除白名单用户投稿', 'callback_data' => 'delete_white_list_user_submission_message'],
+            ],
+        ],
     ];
 }

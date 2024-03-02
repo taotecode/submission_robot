@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Bots;
 
 use App\Http\Controllers\Controller;
+use App\Models\Bot;
 use App\Services\BaseService;
 use App\Telegram\Commands\StartCommand;
 use Telegram\Bot\Api;
