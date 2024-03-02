@@ -83,6 +83,9 @@ class KeyBoardData
             ],
             [
                 ['text' => '删除消息', 'callback_data' => 'delete_submission_message'],
+            ],
+            [
+                ['text'=>'查看消息','url'=>'https://t.me/'],
             ]
         ],
     ];

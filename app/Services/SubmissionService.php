@@ -367,6 +367,7 @@ class SubmissionService
 
         //将稿件信息存入数据库中
         $sqlData = [
+            'bot_id' => $botInfo->id,
             'type' => $objectType,
             'text' => '',
             'posted_by' => $chat->toArray(),

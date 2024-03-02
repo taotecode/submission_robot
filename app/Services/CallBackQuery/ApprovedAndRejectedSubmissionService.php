@@ -82,14 +82,17 @@ class ApprovedAndRejectedSubmissionService
                 $manuscript->reject = $reject;
                 $manuscript->status = ManuscriptStatus::APPROVED;
 
+                $inline_keyboard=KeyBoardData::REVIEW_GROUP_APPROVED;
+                $inline_keyboard['inline_keyboard'][0][2]['url'] .= $botInfo->channel->name."/".$manuscript->message_id;
+
                 $telegram->editMessageReplyMarkup([
                     'chat_id' => $chatId,
                     'message_id' => $messageId,
-                    'reply_markup' => json_encode(KeyBoardData::REVIEW_GROUP_APPROVED),
+                    'reply_markup' => json_encode($inline_keyboard),
                 ]);
 
                 $channelMessageId = $this->sendChannelMessage($telegram, $botInfo, $manuscript);
-                $this->sendPostedByMessage($telegram, $manuscript, 1);
+                $this->sendPostedByMessage($telegram, $manuscript,$botInfo, ManuscriptStatus::APPROVED);
 
                 $manuscript->message_id = $channelMessageId['message_id'];
                 $manuscript->save();
@@ -202,7 +205,7 @@ class ApprovedAndRejectedSubmissionService
                     'reply_markup' => json_encode(KeyBoardData::REVIEW_GROUP_REJECT),
                 ]);
 
-                $this->sendPostedByMessage($telegram, $manuscript, 2);
+                $this->sendPostedByMessage($telegram, $manuscript,$botInfo, ManuscriptStatus::REJECTED);
 
                 return 'ok';
             } catch (TelegramSDKException $telegramSDKException) {

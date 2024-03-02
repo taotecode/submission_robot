@@ -14,10 +14,14 @@ class TestController extends Controller
     {
         $telegram = new Api(env('TELEGRAM_BOT_TOKEN'));
 
+        $text=get_config('submission.review_approved_submission');
+
+        $text.="\r\n\r\n稿件消息<a href='https://t.me/123'>123</a>";
+
         dd($telegram->sendMessage([
             'chat_id' => '6247385123',
-            'text' => 'test',
-            'parse_mode' => 'MarkdownV2',
+            'text' => $text,
+            'parse_mode' => 'HTML',
         ]));
     }
 

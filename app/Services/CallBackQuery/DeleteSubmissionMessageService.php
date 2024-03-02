@@ -7,6 +7,7 @@ use App\Enums\KeyBoardData;
 use App\Enums\ManuscriptStatus;
 use App\Models\Bot;
 use App\Models\Manuscript;
+use App\Services\SendPostedByMessageService;
 use App\Services\SendTelegramMessageService;
 use Illuminate\Support\Facades\Log;
 use Telegram\Bot\Api;
@@ -19,6 +20,7 @@ class DeleteSubmissionMessageService
     use SendTelegramMessageService;
     use AuditorRoleCheckService;
     use UpdateReviewGroupMessageButtonService;
+    use SendPostedByMessageService;
 
     public function delete_submission_message(Api $telegram,Bot $botInfo,Manuscript $manuscript, ?CallbackQuery $callbackQuery,$chatId,$messageId,User $from): string
     {
@@ -71,6 +73,7 @@ class DeleteSubmissionMessageService
                 'text' => "对应的频道投稿已删除",
                 'show_alert' => true,
             ]);
+            $this->sendPostedByMessage($telegram, $manuscript,$botInfo, ManuscriptStatus::DELETE);
             return 'ok';
         } catch (TelegramSDKException $telegramSDKException) {
             Log::error($telegramSDKException);
