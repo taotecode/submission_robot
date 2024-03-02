@@ -20,15 +20,13 @@ class AuditorController extends AdminController
     {
         $repository = new Auditor();
 
-        $role_options = $repository->model()::ROLE;
-
-        return Grid::make($repository, function (Grid $grid) use ($role_options) {
+        return Grid::make($repository, function (Grid $grid) {
             $grid->column('id')->sortable();
             $grid->column('name');
             $grid->column('userId')->copyable();
-            $grid->column('role')->display(function ($role) use ($role_options) {
+            $grid->column('role')->display(function ($role) {
                 $textArray = [];
-                foreach ($role_options as $key => $value) {
+                foreach (AuditorRole::ROLE_NAME as $key => $value) {
                     if (in_array($key, $role)) {
                         $textArray[] = $value;
                     }
