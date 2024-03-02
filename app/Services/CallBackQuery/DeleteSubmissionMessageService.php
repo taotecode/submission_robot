@@ -51,7 +51,7 @@ class DeleteSubmissionMessageService
         }
 
         //获取机器人对应的频道ID
-        $channelId = $botInfo->channel_id;
+        $channelId = '@' . $botInfo->channel->name;
 
         //删除消息
         try {
