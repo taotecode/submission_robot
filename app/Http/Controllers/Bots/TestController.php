@@ -10,6 +10,18 @@ use Telegram\Bot\Api;
 
 class TestController extends Controller
 {
+    public function pa()
+    {
+        $telegram = new Api(env('TELEGRAM_BOT_TOKEN'));
+
+        dd($telegram->sendMessage([
+            'chat_id' => '6247385123',
+            'text' => 'test',
+            'parse_mode' => 'MarkdownV2',
+        ]));
+    }
+
+
     public function setCommands()
     {
         //        ini_set('memory_limit', '100M');

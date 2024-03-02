@@ -3,6 +3,7 @@
 namespace App\Admin\Controllers;
 
 use App\Admin\Repositories\Auditor;
+use App\Enums\AuditorRole;
 use Dcat\Admin\Form;
 use Dcat\Admin\Grid;
 use Dcat\Admin\Http\Controllers\AdminController;
@@ -71,13 +72,11 @@ class AuditorController extends AdminController
     {
         $repository = new Auditor();
 
-        $role_options = $repository->model()::ROLE;
-
-        return Form::make($repository, function (Form $form) use ($role_options) {
+        return Form::make($repository, function (Form $form) {
             $form->display('id');
             $form->text('name')->help('审核员名称');
             $form->text('userId')->required()->help('审核员TG ID');
-            $form->multipleSelect('role')->required()->options($role_options);
+            $form->multipleSelect('role')->required()->options(AuditorRole::ROLE_NAME)->help('审核员角色');
 
             $form->display('created_at');
             $form->display('updated_at');

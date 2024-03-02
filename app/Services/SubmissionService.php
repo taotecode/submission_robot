@@ -392,7 +392,7 @@ class SubmissionService
             $manuscript->text = $firstLine;
             $manuscript->status = 1;
             $channelMessageId = $this->sendChannelMessage($telegram, $botInfo, $manuscript);
-            $manuscript->message_id = $channelMessageId;
+            $manuscript->message_id = $channelMessageId['message_id']??null;
             $manuscript->save();
             Cache::tags($this->cacheTag.'.'.$chatId)->flush();
 
