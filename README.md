@@ -39,6 +39,8 @@
 
 请参考[文档](https://github.com/taotecode/submission_robot/blob/master/INSTALL.md)
 
+帮助文档：[HELP.md](https://github.com/taotecode/submission_robot/blob/master/HELP.md)
+
 
 # 感谢
 
