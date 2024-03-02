@@ -11,7 +11,6 @@ class Bot extends Model
 
     protected $casts = [
         'tail_content_button' => 'json',
-        'channel_ids' => 'json',
     ];
 
     public function review_group()

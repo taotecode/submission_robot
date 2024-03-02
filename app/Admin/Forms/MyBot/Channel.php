@@ -15,11 +15,10 @@ class Channel extends Form implements LazyRenderable
     public function handle(array $input)
     {
         $id = $input['id'];
-        $channel_ids = $input['channel_ids'];
-        $channel_ids = array_filter($channel_ids);
+        $channel_id = $input['channel_id'];
 
         $bot = Bot::find($id);
-        $bot->channel_ids = $channel_ids;
+        $bot->channel_id = $channel_id;
         if ($bot->save()) {
             return $this->response()->success('操作成功')->refresh();
         } else {
@@ -32,17 +31,15 @@ class Channel extends Form implements LazyRenderable
     {
         // 获取外部传递参数
         $id = $this->payload['id'] ?? null;
-        $channel_ids = $this->payload['channel_ids'] ?? [];
-        if (!empty($channel_ids)) {
-            $channel_ids = json_decode($channel_ids, true);
-        }else{
-            $channel_ids = [];
+        $channel_id = $this->payload['channel_id'] ?? null;
+        if (empty($channel_id)) {
+            $channel_id=null;
         }
 
-        $this->checkbox('channel_ids', '发布频道')
+        $this->select('channel_id', '发布频道')
             ->options(\App\Models\Channel::all()->pluck('appellation', 'id'))
-            ->default($channel_ids)
-            ->help('选择需要发布的频道，可以多选。');
+            ->help('选择需要发布的频道，不可以多选。')
+            ->default($channel_id);
 
         $this->hidden('id')->default($id);
     }

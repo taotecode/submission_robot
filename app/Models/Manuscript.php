@@ -30,7 +30,6 @@ class Manuscript extends Model
     ];
 
     protected $casts = [
-        'message_id' => 'json',
         'posted_by' => 'json',
         'data' => 'json',
         'appendix' => 'json',

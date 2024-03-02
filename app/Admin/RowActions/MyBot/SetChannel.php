@@ -20,7 +20,7 @@ class SetChannel extends RowAction
         $form = Channel::make()
             ->payload([
                 'id' => $this->getKey(),
-                'channel_ids' => json_encode($this->row->channel_ids??[]),
+                'channel_id' => $this->row->channel_id??null,
             ]);
 
         return Modal::make()
