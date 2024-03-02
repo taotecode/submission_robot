@@ -80,7 +80,7 @@ class CallBackQueryService
                 $this->deleteSubmissionMessage($telegram,$botInfo,$manuscript,$callbackQuery,$chatId,$messageId,$from);
                 break;
             case 'delete_submission_message_success':
-                $this->deleteSubmissionMessageSuccess($telegram, $botInfo, $manuscript,$callbackQuery);
+                $this->deleteSubmissionMessageSuccess($telegram,$callbackQuery);
                 break;
         }
     }
