@@ -408,7 +408,7 @@ class SubmissionService
                 'chat_id' => $chatId,
                 'reply_to_message_id' => $messageId,
                 'text' => $chatText,
-                'parse_mode' => 'MarkdownV2',
+                'parse_mode' => 'HTML',
                 'reply_markup' => json_encode(KeyBoardData::START),
             ]);
 
