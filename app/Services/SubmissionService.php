@@ -400,10 +400,14 @@ class SubmissionService
             $manuscript->save();
             Cache::tags($this->cacheTag.'.'.$chatId)->flush();
 
+            $chatText=get_config('submission.confirm_white_list');
+
+            $chatText .= "\r\n\r\n稿件消息直达链接：<a href='https://t.me/" . $botInfo->channel->name . "/" . $manuscript->message_id . "'>" . $manuscript->text . "</a>";
+
             $this->sendTelegramMessage($telegram, 'sendMessage', [
                 'chat_id' => $chatId,
                 'reply_to_message_id' => $messageId,
-                'text' => get_config('submission.confirm_white_list'),
+                'text' => $chatText,
                 'parse_mode' => 'MarkdownV2',
                 'reply_markup' => json_encode(KeyBoardData::START),
             ]);
