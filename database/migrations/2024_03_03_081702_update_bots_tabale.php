@@ -16,7 +16,7 @@ return new class extends Migration
         if (Schema::hasTable('bots')) {
             Schema::table('bots', function (Blueprint $table) {
                 $table->dropColumn('channel_ids');
-                $table->integer('channel_id')->nullable()->comment('发布频道ID')->after('submission_timeout');
+                $table->integer('channel_id')->nullable()->comment('发布频道ID')->after('token');
             });
         }
     }
