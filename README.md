@@ -6,7 +6,7 @@
 
 更新日志及开发进度：[CHANGELOG.md](https://github.com/taotecode/submission_robot/blob/master/CHANGELOG.md)
 
-# 最新功能更新日期：2024年1月29日
+# 最新功能更新日期：2024年3月3日
 
 联系：[@laocheng_user_bot](https://t.me/laocheng_user_bot)
 
@@ -23,6 +23,7 @@
 - [x] 支持自动生成标签
 - [x] 支持白名单用户直接发布投稿
 - [x] 支持黑名单用户直接拒绝投稿
+- [x] 支持已投稿稿件删除
 - [x] 简单用户管理
   - [x] 黑名单/白名单
   - [ ] 查看用户投稿统计
