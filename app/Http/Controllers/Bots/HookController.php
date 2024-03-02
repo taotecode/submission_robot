@@ -30,7 +30,7 @@ class HookController extends Controller
 
     public function index($id, Request $request)
     {
-        if (config('env') === 'local') {
+        if (config('app.env') === 'local') {
             Log::info('机器人请求', $request->all());
         }
         //查询机器人信息
