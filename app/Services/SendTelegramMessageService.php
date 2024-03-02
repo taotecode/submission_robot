@@ -71,10 +71,21 @@ trait SendTelegramMessageService
 
         $objectType = $manuscript->type;
 
+        //频道ID
+        if (!empty($botInfo->channel_id)) {
+            $chatId = '@' . $botInfo->channel->name;
+        }else{
+            $this->sendTelegramMessage($telegram, 'sendMessage', [
+                'chat_id' => $manuscript->posted_by,
+                'text' => '频道ID不存在，请联系管理员',
+            ]);
+            return false;
+        }
+
         return $this->objectTypeHandle(
             $telegram,
             $botInfo,
-            $botInfo->channel_id,
+            $chatId,
             $objectType,
             $message,
             null,

@@ -17,4 +17,9 @@ class Bot extends Model
     {
         return $this->hasOne(ReviewGroup::class, 'bot_id', 'id');
     }
+
+    public function channel()
+    {
+        return $this->hasOne(Channel::class, 'id', 'channel_id');
+    }
 }
