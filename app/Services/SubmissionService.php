@@ -367,6 +367,7 @@ class SubmissionService
 
         //将稿件信息存入数据库中
         $sqlData = [
+            'bot_id' => $botInfo->id,
             'type' => $objectType,
             'text' => '',
             'posted_by' => $chat->toArray(),
@@ -392,17 +393,26 @@ class SubmissionService
             $manuscript->text = $firstLine;
             $manuscript->status = 1;
             $channelMessageId = $this->sendChannelMessage($telegram, $botInfo, $manuscript);
-            $manuscript->message_id = $channelMessageId;
+            if (!$channelMessageId){
+                return 'ok';
+            }
+            $manuscript->message_id = $channelMessageId['message_id']??null;
             $manuscript->save();
             Cache::tags($this->cacheTag.'.'.$chatId)->flush();
 
-            return $this->sendTelegramMessage($telegram, 'sendMessage', [
+            $chatText=get_config('submission.confirm_white_list');
+
+            $chatText .= "\r\n\r\n稿件消息直达链接：<a href='https://t.me/" . $botInfo->channel->name . "/" . $manuscript->message_id . "'>" . $manuscript->text . "</a>";
+
+            $this->sendTelegramMessage($telegram, 'sendMessage', [
                 'chat_id' => $chatId,
                 'reply_to_message_id' => $messageId,
-                'text' => get_config('submission.confirm_white_list'),
+                'text' => $chatText,
                 'parse_mode' => 'MarkdownV2',
                 'reply_markup' => json_encode(KeyBoardData::START),
             ]);
+
+            return $this->sendGroupMessageWhiteUser($telegram, $botInfo, $manuscript);
         }
         // 发送消息到审核群组
         $text = $this->sendGroupMessage($telegram, $botInfo, $messageCache, $objectType, $manuscript->id);

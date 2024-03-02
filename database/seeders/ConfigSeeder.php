@@ -132,6 +132,15 @@ class ConfigSeeder extends Seeder
                 'created_at' => '2023-11-23 21:13:00',
                 'updated_at' => '2023-11-23 21:13:00',
             ],
+            [
+                'id' => 14,
+                'group' => 'submission',
+                'name' => 'review_delete_submission',
+                'value' => '投稿已被管理员删除。您可以重新开始投稿。',
+                'description' => '审核群组稿件删除提示语',
+                'created_at' => '2023-11-23 21:13:00',
+                'updated_at' => '2023-11-23 21:13:00',
+            ],
         ];
         //        DB::table('config')->insert($data);
         foreach ($data as $item) {

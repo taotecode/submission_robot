@@ -3,12 +3,29 @@
 namespace App\Http\Controllers\Bots;
 
 use App\Http\Controllers\Controller;
+use App\Models\Bot;
 use App\Services\BaseService;
 use App\Telegram\Commands\StartCommand;
 use Telegram\Bot\Api;
 
 class TestController extends Controller
 {
+    public function pa()
+    {
+        $telegram = new Api(env('TELEGRAM_BOT_TOKEN'));
+
+        $text=get_config('submission.review_approved_submission');
+
+        $text.="\r\n\r\n稿件消息<a href='https://t.me/123'>123</a>";
+
+        dd($telegram->sendMessage([
+            'chat_id' => '6247385123',
+            'text' => $text,
+            'parse_mode' => 'HTML',
+        ]));
+    }
+
+
     public function setCommands()
     {
         //        ini_set('memory_limit', '100M');

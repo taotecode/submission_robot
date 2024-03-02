@@ -62,13 +62,13 @@ class KeyBoardData
     const REVIEW_GROUP = [
         'inline_keyboard' => [
             [
-                ['text' => '通过', 'callback_data' => 'text_approved_submission'],
-                ['text' => '拒绝', 'callback_data' => 'text_reject_submission'],
+                ['text' => '通过', 'callback_data' => 'approved_submission'],
+                ['text' => '拒绝', 'callback_data' => 'reject_submission'],
                 ['text' => '私聊', 'callback_data' => 'private_message'],
             ],
             [
-                ['text' => '快捷通过', 'callback_data' => 'text_approved_submission_quick'],
-                ['text' => '快捷拒绝', 'callback_data' => 'text_reject_submission_quick'],
+                ['text' => '快捷通过', 'callback_data' => 'approved_submission_quick'],
+                ['text' => '快捷拒绝', 'callback_data' => 'reject_submission_quick'],
             ],
         ],
     ];
@@ -79,8 +79,14 @@ class KeyBoardData
     const REVIEW_GROUP_APPROVED = [
         'inline_keyboard' => [
             [
-                ['text' => '已通过', 'callback_data' => 'approved_submission'],
+                ['text' => '已通过', 'callback_data' => 'approved_submission_button'],
             ],
+            [
+                ['text' => '删除消息', 'callback_data' => 'delete_submission_message'],
+            ],
+            [
+                ['text'=>'查看消息','url'=>'https://t.me/'],
+            ]
         ],
     ];
 
@@ -90,8 +96,19 @@ class KeyBoardData
     const REVIEW_GROUP_REJECT = [
         'inline_keyboard' => [
             [
-                ['text' => '已拒绝', 'callback_data' => 'reject_submission'],
+                ['text' => '已拒绝', 'callback_data' => 'reject_submission_button'],
             ],
+        ],
+    ];
+
+    /**
+     * 审核群组稿件删除键盘
+     */
+    const REVIEW_GROUP_DELETE = [
+        'inline_keyboard' => [
+            [
+                ['text' => '消息已被删除', 'callback_data' => 'delete_submission_message_success'],
+            ]
         ],
     ];
 
@@ -100,5 +117,29 @@ class KeyBoardData
      */
     const BLACKLIST_USER_DELETE = [
         'remove_keyboard' => true,
+    ];
+
+    /**
+     * 白名单用户投稿完成发送到审核群组键盘
+     */
+    const WHITE_LIST_USER_SUBMISSION = [
+        'inline_keyboard' => [
+            [
+                ['text' => '删除白名单用户投稿', 'callback_data' => 'delete_white_list_user_submission_message'],
+            ],
+        ],
+    ];
+
+    /**
+     * 私聊用户信息键盘
+     */
+    const PRIVATE_MESSAGE = [
+        'inline_keyboard' => [
+            [
+                ['text' => '通用用户名联系', 'url' => 'https://t.me/'],
+                ['text' => '客户端协议联系', 'url' => 'tg://openmessage?user_id='],
+                ['text' => 'ID链接联系', 'url' => 'https://t.me/@id'],
+            ],
+        ],
     ];
 }

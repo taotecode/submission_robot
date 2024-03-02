@@ -30,7 +30,9 @@ class HookController extends Controller
 
     public function index($id, Request $request)
     {
-        Log::info('tg info', $request->all());
+        if (config('app.env') === 'local') {
+            Log::info('机器人请求', $request->all());
+        }
         //查询机器人信息
         $botInfo = $this->botModel->with('review_group')->find($id);
         if (! $botInfo) {

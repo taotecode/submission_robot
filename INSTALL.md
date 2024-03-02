@@ -61,3 +61,14 @@ php artisan db:seed --class=AdminMenuAddSeeder
 ```
 
 后台账户：admin，密码：admin，登陆后记得修改密码，登陆地址： **http://你的域名/admin**
+
+## 版本更新
+
+如果是更新版本，可以使用下面命令进行更新
+```bash
+git pull
+composer install
+php artisan migrate
+php artisan db:seed --class=ConfigSeeder
+php artisan db:seed --class=AdminMenuAddSeeder
+```

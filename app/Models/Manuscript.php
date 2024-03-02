@@ -13,6 +13,7 @@ class Manuscript extends Model
      * @var array|mixed|string|null
      */
     protected $fillable = [
+        'bot_id',
         'message_id',
         'type',
         'text',
@@ -30,7 +31,6 @@ class Manuscript extends Model
     ];
 
     protected $casts = [
-        'message_id' => 'json',
         'posted_by' => 'json',
         'data' => 'json',
         'appendix' => 'json',
@@ -39,4 +39,9 @@ class Manuscript extends Model
         'one_approved' => 'json',
         'one_reject' => 'json',
     ];
+
+    public function bot()
+    {
+        return $this->belongsTo(Bot::class,'id', 'bot_id');
+    }
 }
