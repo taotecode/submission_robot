@@ -404,6 +404,9 @@ trait SendTelegramMessageService
                     $keywords[] = $item;
                 }
             }
+            //去除重复
+            $keywords = array_unique($keywords);
+            //拼接关键词
             if (!empty($keywords)) {
                 $textContent = PHP_EOL . PHP_EOL . '关键词：';
                 foreach ($keywords as $item) {
