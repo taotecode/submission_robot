@@ -19,47 +19,6 @@ trait UpdateReviewGroupMessageButtonService
     public function update_review_group_message_button(Api $telegram,Bot $botInfo,$chatId,$messageId,Manuscript $manuscript,$review_num,$approvedNum,$rejectNum)
     {
 
-        if ($manuscript->status == ManuscriptStatus::APPROVED) {
-            try {
-                $telegram->editMessageReplyMarkup([
-                    'chat_id' => $chatId,
-                    'message_id' => $messageId,
-                    'reply_markup' => json_encode(KeyBoardData::REVIEW_GROUP_APPROVED),
-                ]);
-                return true;
-            } catch (TelegramSDKException $telegramSDKException) {
-                Log::error($telegramSDKException);
-                return 'error';
-            }
-        }
-
-        if ($manuscript->status == ManuscriptStatus::REJECTED) {
-            try {
-                $telegram->editMessageReplyMarkup([
-                    'chat_id' => $chatId,
-                    'message_id' => $messageId,
-                    'reply_markup' => json_encode(KeyBoardData::REVIEW_GROUP_REJECT),
-                ]);
-                return true;
-            } catch (TelegramSDKException $telegramSDKException) {
-                Log::error($telegramSDKException);
-                return 'error';
-            }
-        }
-
-        if ($manuscript->status == ManuscriptStatus::DELETE) {
-            try {
-                $telegram->editMessageReplyMarkup([
-                    'chat_id' => $chatId,
-                    'message_id' => $messageId,
-                    'reply_markup' => json_encode(KeyBoardData::REVIEW_GROUP_DELETE),
-                ]);
-                return true;
-            } catch (TelegramSDKException $telegramSDKException) {
-                Log::error($telegramSDKException);
-                return 'error';
-            }
-        }
 
         //如果通过人员数量大于等于审核数，则不再审核
         if ($approvedNum >= $review_num) {
@@ -111,5 +70,49 @@ trait UpdateReviewGroupMessageButtonService
                 return 'error';
             }
         }
+
+        if ($manuscript->status == ManuscriptStatus::DELETE) {
+            try {
+                $telegram->editMessageReplyMarkup([
+                    'chat_id' => $chatId,
+                    'message_id' => $messageId,
+                    'reply_markup' => json_encode(KeyBoardData::REVIEW_GROUP_DELETE),
+                ]);
+                return true;
+            } catch (TelegramSDKException $telegramSDKException) {
+                Log::error($telegramSDKException);
+                return 'error';
+            }
+        }
+
+
+//        if ($manuscript->status == ManuscriptStatus::APPROVED) {
+//            try {
+//                $telegram->editMessageReplyMarkup([
+//                    'chat_id' => $chatId,
+//                    'message_id' => $messageId,
+//                    'reply_markup' => json_encode(KeyBoardData::REVIEW_GROUP_APPROVED),
+//                ]);
+//                return true;
+//            } catch (TelegramSDKException $telegramSDKException) {
+//                Log::error($telegramSDKException);
+//                return 'error';
+//            }
+//        }
+//
+//        if ($manuscript->status == ManuscriptStatus::REJECTED) {
+//            try {
+//                $telegram->editMessageReplyMarkup([
+//                    'chat_id' => $chatId,
+//                    'message_id' => $messageId,
+//                    'reply_markup' => json_encode(KeyBoardData::REVIEW_GROUP_REJECT),
+//                ]);
+//                return true;
+//            } catch (TelegramSDKException $telegramSDKException) {
+//                Log::error($telegramSDKException);
+//                return 'error';
+//            }
+//        }
+        return false;
     }
 }
