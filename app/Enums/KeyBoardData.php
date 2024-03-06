@@ -84,9 +84,7 @@ class KeyBoardData
             [
                 ['text' => '删除消息', 'callback_data' => 'delete_submission_message'],
             ],
-            [
-                ['text'=>'查看消息','url'=>'https://t.me/'],
-            ]
+            ['text'=>'查看消息','url'=>'https://t.me/'],
         ],
     ];
 
@@ -126,9 +124,7 @@ class KeyBoardData
         'inline_keyboard' => [
             [
                 ['text' => '删除白名单用户投稿', 'callback_data' => 'delete_white_list_user_submission_message'],
-                [
-                    ['text'=>'查看消息','url'=>'https://t.me/'],
-                ],
+                ['text'=>'查看消息','url'=>'https://t.me/'],
             ],
         ],
     ];
