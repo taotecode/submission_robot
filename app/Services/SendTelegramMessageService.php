@@ -57,11 +57,11 @@ trait SendTelegramMessageService
 
         $username = get_posted_by($manuscript->posted_by);
 
-        $text="白名单用户<b>【{$username}】</b>的投稿";
+        $text="白名单用户<b>【 {$username} 】</b>的投稿";
         if (empty($manuscript->text)){
-            $text .= "的投稿已自动通过审核。";
+            $text .= "已自动通过审核。";
         } else {
-            $text .= "的投稿 “ ".$manuscript->text." ” 已自动通过审核。";
+            $text .= "“ ".$manuscript->text." ” 已自动通过审核。";
         }
 
         return $this->sendTelegramMessage($telegram, 'sendMessage', [
