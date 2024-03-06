@@ -53,12 +53,20 @@ trait SendTelegramMessageService
 
         $inline_keyboard = KeyBoardData::WHITE_LIST_USER_SUBMISSION;
         $inline_keyboard['inline_keyboard'][0][0]['callback_data'] .= ":$manuscript->id";
+        $inline_keyboard['inline_keyboard'][0][1]['url'] .= $botInfo->channel->name . "/" . $manuscript->message_id;
 
         $username = get_posted_by($manuscript->posted_by);
 
+        $text="白名单用户<b>【{$username}】</b>的投稿";
+        if (empty($manuscript->text)){
+            $text .= "的投稿已自动通过审核。";
+        } else {
+            $text .= "的投稿 “ ".$manuscript->text." ” 已自动通过审核。";
+        }
+
         return $this->sendTelegramMessage($telegram, 'sendMessage', [
             'chat_id' => $chatId,
-            'text' => "白名单用户<b>【{$username}】</b>的投稿 “” 已自动通过审核。",
+            'text' => $text,
             'parse_mode' => 'HTML',
             'reply_markup' => json_encode($inline_keyboard),
         ]);
