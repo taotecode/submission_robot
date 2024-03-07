@@ -1,14 +1,21 @@
 # 安装教程
 
-以下教程为了方便快速搭建，使用Centos 7.6进行
+以下教程为了方便快速搭建，使用Centos 7.6进行，最低支持服务器配置为：1H2G
 
 
 ## 支持环境
 
-- PHP >= 8.1
+- PHP >= 8.2
 - MySQL >= 5.7
 - Redis >= 6.0
 - Composer >= 2.1
+- Nginx >= 1.16
+
+PHP扩展：
+- OpenSSL PHP 扩展
+- PDO PHP 扩展
+- Fileinfo PHP 扩展
+- Redis PHP 扩展
 
 ## 克隆项目
 首先先进入到你的网站根目录，如：/www，不同的人的网站目录位置不一样
@@ -59,6 +66,41 @@ php artisan db:seed --class=ConfigSeeder
 php artisan db:seed --class="Dcat\Admin\Models\AdminTablesSeeder"
 php artisan db:seed --class=AdminMenuAddSeeder
 ```
+
+## 配置网站伪静态
+
+在Nginx配置文件中添加以下内容
+```nginx
+server {
+    listen 80;
+    server_name 你的域名;
+    root /www/submission_robot/public;
+    index index.php index.html index.htm;
+    location / {
+        try_files $uri $uri/ /index.php?$query_string;
+    }
+    location ~ \.php$ {
+        fastcgi_pass unix:/run/php-fpm/www.sock;
+        fastcgi_index index.php;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        include fastcgi_params;
+    }
+}
+```
+
+或者直接配置伪静态规则
+```nginx
+location / {
+    try_files $uri $uri/ /index.php?$query_string;
+}
+```
+
+然后重启Nginx
+```bash
+systemctl restart nginx
+```
+
+## 访问后台
 
 后台账户：admin，密码：admin，登陆后记得修改密码，登陆地址： **http://你的域名/admin**
 
