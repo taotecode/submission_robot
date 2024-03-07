@@ -37,12 +37,12 @@
 
 # 安装
 
-请参考[文档](https://github.com/taotecode/submission_robot/blob/master/INSTALL.md)
+请参考[安装文档](https://github.com/taotecode/submission_robot/blob/master/INSTALL.md)
 
-帮助文档：[HELP.md](https://github.com/taotecode/submission_robot/blob/master/HELP.md)
+帮助文档及常见问题：[HELP.md](https://github.com/taotecode/submission_robot/blob/master/HELP.md)
 
 
-# 感谢
+# 感谢，排名不分先后
 
 - [telegram-bot-sdk](https://telegram-bot-sdk.com/)
 
@@ -51,4 +51,5 @@
 - [laravel](https://laravel.com/)
 
 - [dcat-admin](https://github.com/jqhph/dcat-admin)
+- 
 - [kitloong/laravel-migrations-generator](https://github.com/kitloong/laravel-migrations-generator)

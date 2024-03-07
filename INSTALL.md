@@ -115,4 +115,4 @@ php artisan db:seed --class=ConfigSeeder
 php artisan db:seed --class=AdminMenuAddSeeder
 ```
 
-帮助文档：[HELP.md](https://github.com/taotecode/submission_robot/blob/master/HELP.md)
+帮助文档及常见问题：[HELP.md](https://github.com/taotecode/submission_robot/blob/master/HELP.md)
