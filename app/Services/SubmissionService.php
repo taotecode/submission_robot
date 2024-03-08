@@ -113,7 +113,7 @@ class SubmissionService
             return $this->sendTelegramMessage($telegram, 'sendMessage', [
                 'chat_id' => $chatId,
                 'text' => get_config('submission.black_list'),
-                'parse_mode' => 'MarkdownV2',
+                'parse_mode' => 'HTML',
                 'reply_markup' => json_encode(KeyBoardData::BLACKLIST_USER_DELETE),
             ]);
         }
@@ -121,7 +121,7 @@ class SubmissionService
         return $this->sendTelegramMessage($telegram, 'sendMessage', [
             'chat_id' => $chatId,
             'text' => $text,
-            'parse_mode' => 'MarkdownV2',
+            'parse_mode' => 'HTML',
             'reply_markup' => json_encode(KeyBoardData::START_SUBMISSION),
         ]);
     }
@@ -140,7 +140,7 @@ class SubmissionService
             'chat_id' => $chatId,
             'reply_to_message_id' => $messageId,
             'text' => get_config('submission.error_for_text'),
-            'parse_mode' => 'MarkdownV2',
+            'parse_mode' => 'HTML',
             'reply_markup' => json_encode(KeyBoardData::START),
         ]);
     }
@@ -159,7 +159,7 @@ class SubmissionService
         return $this->sendTelegramMessage($telegram, 'sendMessage', [
             'chat_id' => $chatId,
             'text' => get_config('submission.cancel'),
-            'parse_mode' => 'MarkdownV2',
+            'parse_mode' => 'HTML',
             'reply_markup' => json_encode(KeyBoardData::START),
         ]);
     }
@@ -179,7 +179,7 @@ class SubmissionService
                         'chat_id' => $chatId,
                         'reply_to_message_id' => $messageId,
                         'text' => get_config('submission.submission_is_empty'),
-                        'parse_mode' => 'MarkdownV2',
+                        'parse_mode' => 'HTML',
                         'reply_markup' => json_encode(KeyBoardData::START_SUBMISSION),
                     ]);
 
@@ -196,7 +196,7 @@ class SubmissionService
                         'chat_id' => $chatId,
                         'reply_to_message_id' => $messageId,
                         'text' => get_config('submission.submission_is_empty'),
-                        'parse_mode' => 'MarkdownV2',
+                        'parse_mode' => 'HTML',
                         'reply_markup' => json_encode(KeyBoardData::START_SUBMISSION),
                     ]);
 
@@ -213,7 +213,7 @@ class SubmissionService
                         'chat_id' => $chatId,
                         'reply_to_message_id' => $messageId,
                         'text' => get_config('submission.submission_is_empty'),
-                        'parse_mode' => 'MarkdownV2',
+                        'parse_mode' => 'HTML',
                         'reply_markup' => json_encode(KeyBoardData::START_SUBMISSION),
                     ]);
 
@@ -232,7 +232,7 @@ class SubmissionService
                         'chat_id' => $chatId,
                         'reply_to_message_id' => $messageId,
                         'text' => get_config('submission.submission_is_empty'),
-                        'parse_mode' => 'MarkdownV2',
+                        'parse_mode' => 'HTML',
                         'reply_markup' => json_encode(KeyBoardData::START_SUBMISSION),
                     ]);
 
@@ -249,7 +249,7 @@ class SubmissionService
                         'chat_id' => $chatId,
                         'reply_to_message_id' => $messageId,
                         'text' => get_config('submission.submission_is_empty'),
-                        'parse_mode' => 'MarkdownV2',
+                        'parse_mode' => 'HTML',
                         'reply_markup' => json_encode(KeyBoardData::START_SUBMISSION),
                     ]);
 
@@ -278,7 +278,7 @@ class SubmissionService
                     'chat_id' => $chatId,
                     'reply_to_message_id' => $messageId,
                     'text' => get_config('submission.submission_is_empty'),
-                    'parse_mode' => 'MarkdownV2',
+                    'parse_mode' => 'HTML',
                     'reply_markup' => json_encode(KeyBoardData::START_SUBMISSION),
                 ]);
 
@@ -291,7 +291,7 @@ class SubmissionService
             'chat_id' => $chatId,
             'reply_to_message_id' => $messageId,
             'text' => get_config('submission.preview_tips'),
-            'parse_mode' => 'MarkdownV2',
+            'parse_mode' => 'HTML',
             'reply_markup' => json_encode(KeyBoardData::END_SUBMISSION),
         ]);
     }

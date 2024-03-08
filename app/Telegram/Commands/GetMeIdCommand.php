@@ -17,7 +17,7 @@ class GetMeIdCommand extends Command
         if ($this->getUpdate()->getChat()->type != 'private') {
             $this->replyWithMessage([
                 'text' => '*请在私聊中使用！*',
-                'parse_mode' => 'MarkdownV2',
+                'parse_mode' => 'HTML',
             ]);
 
             return 'ok';
@@ -28,7 +28,7 @@ class GetMeIdCommand extends Command
 
         $this->replyWithMessage([
             'text' => $textData,
-            'parse_mode' => 'MarkdownV2',
+            'parse_mode' => 'HTML',
         ]);
     }
 }
