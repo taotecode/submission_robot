@@ -32,3 +32,17 @@ cd 项目目录
 # 给予 storage 目录写入权限
 chmod -R 777 storage
 ```
+
+## 问题或咨询提交并解决
+
+在提交问题之前，请先查看 [常见问题](#常见问题)。
+
+提交问题的时候，请附带并上传错误日志，方便我更快的解决问题。路径：`storage/logs/laravel.log`。
+
+如果你在使用过程中遇到了问题，可以提交 [Issue](https://github.com/taotecode/submission_robot/issues)，我会尽快解决。
+
+如果你有其他问题或咨询，可以通过以下方式联系我：
+
+联系：[@laocheng_user_bot](https://t.me/laocheng_user_bot)
+
+交流群：[纸飞机：@submission_robot_chat](https://t.me/submission_robot_chat)

@@ -16,6 +16,7 @@ PHP扩展：
 - PDO PHP 扩展
 - Fileinfo PHP 扩展
 - Redis PHP 扩展
+- opcache PHP 扩展
 
 ## 克隆项目
 首先先进入到你的网站根目录，如：/www，不同的人的网站目录位置不一样
