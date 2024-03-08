@@ -468,6 +468,8 @@ trait SendTelegramMessageService
 
             return 'ok';
         } catch (TelegramSDKException $telegramSDKException) {
+            Log::error('发送类型：' . $method);
+            Log::error('发送参数：' . json_encode($params));
             Log::error($telegramSDKException);
 
             return 'error';
