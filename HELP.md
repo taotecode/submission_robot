@@ -23,3 +23,12 @@
 proc_open
 proc_get_status
 ```
+
+### 出现错误： `PHP Fatal error:  Uncaught ErrorException: file_put_contents(***): Failed to open stream: Permission denied in ***`
+
+这种错误是因为没有权限写入文件，可以尝试给予项目目录写入权限：
+```bash
+cd 项目目录
+# 给予 storage 目录写入权限
+chmod -R 777 storage
+```
