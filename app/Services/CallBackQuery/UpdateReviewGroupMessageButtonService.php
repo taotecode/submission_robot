@@ -24,7 +24,7 @@ trait UpdateReviewGroupMessageButtonService
         if ($approvedNum >= $review_num) {
             try {
                 $inline_keyboard=KeyBoardData::REVIEW_GROUP_APPROVED;
-                $inline_keyboard['inline_keyboard'][0][2]['url'] .= $botInfo->channel->name."/".$manuscript->message_id;
+                $inline_keyboard['inline_keyboard'][0][1]['url'] .= $botInfo->channel->name."/".$manuscript->message_id;
 
                 $telegram->editMessageReplyMarkup([
                     'chat_id' => $chatId,

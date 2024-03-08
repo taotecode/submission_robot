@@ -80,11 +80,11 @@ class KeyBoardData
         'inline_keyboard' => [
             [
                 ['text' => '已通过', 'callback_data' => 'approved_submission_button'],
+                ['text'=>'查看消息','url'=>'https://t.me/'],
             ],
             [
                 ['text' => '删除消息', 'callback_data' => 'delete_submission_message'],
             ],
-            ['text'=>'查看消息','url'=>'https://t.me/'],
         ],
     ];
 
@@ -123,8 +123,8 @@ class KeyBoardData
     const WHITE_LIST_USER_SUBMISSION = [
         'inline_keyboard' => [
             [
-                ['text' => '删除白名单用户投稿', 'callback_data' => 'delete_white_list_user_submission_message'],
                 ['text'=>'查看消息','url'=>'https://t.me/'],
+                ['text' => '删除白名单用户投稿', 'callback_data' => 'delete_white_list_user_submission_message'],
             ],
         ],
     ];
