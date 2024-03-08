@@ -120,17 +120,17 @@ trait SendTelegramMessageService
      */
     private function objectTypeHandle(Api $telegram, $botInfo, $chatId, $objectType, $message, ?array $inline_keyboard = null, bool $isReviewGroup = false, bool $isReturnText = false, bool $isReturnTelegramMessage=false, $manuscript = null): mixed
     {
-        if (empty($inline_keyboard)) {
-            $inline_keyboard = null;
-        } else {
-            $inline_keyboard = json_encode($inline_keyboard);
-        }
-
         $tail_content_button = $botInfo->tail_content_button;
         if (!empty($tail_content_button)) {
             $inline_keyboard = json_encode([
                 'inline_keyboard' => $tail_content_button,
             ]);
+        }
+
+        if (empty($inline_keyboard)) {
+            $inline_keyboard = null;
+        } else {
+            $inline_keyboard = json_encode($inline_keyboard);
         }
 
         $lexiconPath = null;
