@@ -19,6 +19,9 @@ class ManuscriptController extends AdminController
     protected function grid()
     {
         return Grid::make(new Manuscript(), function (Grid $grid) {
+
+            $grid->model()->orderBy('id', 'desc');
+
             $grid->column('id')->sortable();
             $grid->column('type')->display(function ($type) {
                 return ObjectType::data[$type];
