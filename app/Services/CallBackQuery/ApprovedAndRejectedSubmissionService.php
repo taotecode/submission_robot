@@ -88,11 +88,13 @@ class ApprovedAndRejectedSubmissionService
 
                 Log::error('键盘数据', $inline_keyboard);
 
-                $telegram->editMessageReplyMarkup([
+                $params = [
                     'chat_id' => $chatId,
                     'message_id' => $messageId,
                     'reply_markup' => json_encode($inline_keyboard),
-                ]);
+                ];
+
+                $telegram->editMessageReplyMarkup($params);
 
                 $channelMessageId = $this->sendChannelMessage($telegram, $botInfo, $manuscript);
                 $this->sendPostedByMessage($telegram, $manuscript,$botInfo, ManuscriptStatus::APPROVED);
