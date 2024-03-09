@@ -86,15 +86,11 @@ class ApprovedAndRejectedSubmissionService
                 $inline_keyboard['inline_keyboard'][0][1]['url'] .= $botInfo->channel->name."/".$manuscript->message_id;
                 $inline_keyboard['inline_keyboard'][1][0]['callback_data'] .= ":{$manuscriptId}";
 
-                Log::error('键盘数据', $inline_keyboard);
-
                 $params = [
                     'chat_id' => $chatId,
                     'message_id' => $messageId,
                     'reply_markup' => json_encode($inline_keyboard),
                 ];
-
-                Log::error('键盘数据2', $params);
 
                 $telegram->editMessageReplyMarkup($params);
 

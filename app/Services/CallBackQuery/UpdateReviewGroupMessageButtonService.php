@@ -74,6 +74,34 @@ trait UpdateReviewGroupMessageButtonService
             }
         }
 
+        if ($manuscript->status == ManuscriptStatus::APPROVED && !$isDelete) {
+            try {
+                $telegram->editMessageReplyMarkup([
+                    'chat_id' => $chatId,
+                    'message_id' => $messageId,
+                    'reply_markup' => json_encode(KeyBoardData::REVIEW_GROUP_APPROVED),
+                ]);
+                return true;
+            } catch (TelegramSDKException $telegramSDKException) {
+                Log::error($telegramSDKException);
+                return 'error';
+            }
+        }
+
+        if ($manuscript->status == ManuscriptStatus::REJECTED && !$isDelete) {
+            try {
+                $telegram->editMessageReplyMarkup([
+                    'chat_id' => $chatId,
+                    'message_id' => $messageId,
+                    'reply_markup' => json_encode(KeyBoardData::REVIEW_GROUP_REJECT),
+                ]);
+                return true;
+            } catch (TelegramSDKException $telegramSDKException) {
+                Log::error($telegramSDKException);
+                return 'error';
+            }
+        }
+
         if ($manuscript->status == ManuscriptStatus::DELETE && $isDelete) {
             try {
                 $telegram->editMessageReplyMarkup([
@@ -87,35 +115,6 @@ trait UpdateReviewGroupMessageButtonService
                 return 'error';
             }
         }
-
-
-//        if ($manuscript->status == ManuscriptStatus::APPROVED) {
-//            try {
-//                $telegram->editMessageReplyMarkup([
-//                    'chat_id' => $chatId,
-//                    'message_id' => $messageId,
-//                    'reply_markup' => json_encode(KeyBoardData::REVIEW_GROUP_APPROVED),
-//                ]);
-//                return true;
-//            } catch (TelegramSDKException $telegramSDKException) {
-//                Log::error($telegramSDKException);
-//                return 'error';
-//            }
-//        }
-//
-//        if ($manuscript->status == ManuscriptStatus::REJECTED) {
-//            try {
-//                $telegram->editMessageReplyMarkup([
-//                    'chat_id' => $chatId,
-//                    'message_id' => $messageId,
-//                    'reply_markup' => json_encode(KeyBoardData::REVIEW_GROUP_REJECT),
-//                ]);
-//                return true;
-//            } catch (TelegramSDKException $telegramSDKException) {
-//                Log::error($telegramSDKException);
-//                return 'error';
-//            }
-//        }
         return false;
     }
 }
