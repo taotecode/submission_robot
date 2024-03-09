@@ -94,6 +94,8 @@ class ApprovedAndRejectedSubmissionService
                     'reply_markup' => json_encode($inline_keyboard),
                 ];
 
+                Log::error('键盘数据2', $params);
+
                 $telegram->editMessageReplyMarkup($params);
 
                 $channelMessageId = $this->sendChannelMessage($telegram, $botInfo, $manuscript);
