@@ -50,7 +50,7 @@ class DeleteSubmissionMessageService
             return 'ok';
         }
 
-        if ($this->update_review_group_message_button($telegram, $botInfo, $chatId, $messageId, $manuscript, $review_num, $approvedNum, $rejectNum) === true) {
+        if ($this->update_review_group_message_button($telegram, $botInfo, $chatId, $messageId, $manuscript, $review_num, $approvedNum, $rejectNum,true) === true) {
             Log::info('update_review_group_message_button: true');
             return 'ok';
         }
