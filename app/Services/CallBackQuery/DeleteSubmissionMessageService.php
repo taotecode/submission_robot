@@ -39,16 +39,19 @@ class DeleteSubmissionMessageService
         $rejectNum = count($reject);
 
         if ($this->baseCheck($telegram, $callbackQuery->id, $from->id, $reviewGroup->id) !== true) {
+            Log::info('baseCheck: false');
             return 'ok';
         }
 
         if ($this->roleCheck($telegram, $callbackQuery->id, $from->id, [
                 AuditorRole::DELETE_SUBMISSION,
             ]) !== true) {
+            Log::info('roleCheck: false');
             return 'ok';
         }
 
         if ($this->update_review_group_message_button($telegram, $botInfo, $chatId, $messageId, $manuscript, $review_num, $approvedNum, $rejectNum) === true) {
+            Log::info('update_review_group_message_button: true');
             return 'ok';
         }
 
@@ -61,8 +64,10 @@ class DeleteSubmissionMessageService
                 'chat_id' => $channelId,
                 'message_id' => $manuscript->message_id,
             ]);
+
             $manuscript->status = ManuscriptStatus::DELETE;
             $manuscript->save();
+
             $telegram->editMessageReplyMarkup([
                 'chat_id' => $chatId,
                 'message_id' => $messageId,
