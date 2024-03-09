@@ -16,12 +16,12 @@ trait UpdateReviewGroupMessageButtonService
 
     use SendTelegramMessageService;
 
-    public function update_review_group_message_button(Api $telegram,Bot $botInfo,$chatId,$messageId,Manuscript $manuscript,$review_num,$approvedNum,$rejectNum)
+    public function update_review_group_message_button(Api $telegram,Bot $botInfo,$chatId,$messageId,Manuscript $manuscript,$review_num,$approvedNum,$rejectNum,$isDelete=false)
     {
 
 
         //如果通过人员数量大于等于审核数，则不再审核
-        if ($approvedNum >= $review_num) {
+        if ($approvedNum >= $review_num && !$isDelete) {
             try {
                 $inline_keyboard=KeyBoardData::REVIEW_GROUP_APPROVED;
                 $inline_keyboard['inline_keyboard'][0][1]['url'] .= $botInfo->channel->name."/".$manuscript->message_id;
@@ -52,7 +52,7 @@ trait UpdateReviewGroupMessageButtonService
         }
 
         //如果拒绝人员数量大于等于审核数，则不再审核
-        if ($rejectNum >= $review_num) {
+        if ($rejectNum >= $review_num && !$isDelete) {
             try {
                 $telegram->editMessageReplyMarkup([
                     'chat_id' => $chatId,
@@ -74,7 +74,7 @@ trait UpdateReviewGroupMessageButtonService
             }
         }
 
-        if ($manuscript->status == ManuscriptStatus::DELETE) {
+        if ($manuscript->status == ManuscriptStatus::DELETE && $isDelete) {
             try {
                 $telegram->editMessageReplyMarkup([
                     'chat_id' => $chatId,
