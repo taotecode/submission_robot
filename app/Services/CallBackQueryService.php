@@ -136,7 +136,7 @@ class CallBackQueryService
         }
     }
 
-    private function deleteSubmissionMessage(Api $telegram,$botInfo,Manuscript $manuscript, ?CallbackQuery $callbackQuery,$chatId,$messageId,User $from): string
+    private function deleteSubmissionMessage(Api $telegram,$botInfo,?Manuscript $manuscript, ?CallbackQuery $callbackQuery,$chatId,$messageId,User $from): string
     {
         return (new DeleteSubmissionMessageService())->delete_submission_message($telegram, $botInfo, $manuscript, $callbackQuery, $chatId, $messageId, $from);
     }

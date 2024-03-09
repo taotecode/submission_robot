@@ -22,7 +22,7 @@ class DeleteSubmissionMessageService
     use UpdateReviewGroupMessageButtonService;
     use SendPostedByMessageService;
 
-    public function delete_submission_message(Api $telegram,Bot $botInfo,Manuscript $manuscript, ?CallbackQuery $callbackQuery,$chatId,$messageId,User $from): string
+    public function delete_submission_message(Api $telegram,Bot $botInfo,?Manuscript $manuscript, ?CallbackQuery $callbackQuery,$chatId,$messageId,User $from): string
     {
         //获取审核群组信息
         $reviewGroup = $botInfo->review_group;
