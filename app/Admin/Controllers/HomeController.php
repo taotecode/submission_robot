@@ -4,6 +4,7 @@ namespace App\Admin\Controllers;
 
 use App\Admin\Metrics\Examples;
 use App\Http\Controllers\Controller;
+use Artisan;
 use Dcat\Admin\Http\Controllers\Dashboard;
 use Dcat\Admin\Layout\Column;
 use Dcat\Admin\Layout\Content;
@@ -32,5 +33,15 @@ class HomeController extends Controller
                     $column->row(new Examples\ProductOrders());
                 });
             });
+    }
+
+    public function clearCache()
+    {
+        Artisan::call('cache:clear');
+        Artisan::call('config:clear');
+        return response()->json([
+            'status'  => true,
+            'message' => '清除成功',
+        ]);
     }
 }

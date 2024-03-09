@@ -14,6 +14,8 @@ Route::group([
 
     $router->get('/', 'HomeController@index');
 
+    $router->post('cache/clear', 'HomeController@clearCache');
+
     //My Bots
     $router->any('bots/lexiconCheck/{id}', 'MyBotController@lexiconCheck')->name('bots.lexiconCheck');
     $router->resource('bots', 'MyBotController');
