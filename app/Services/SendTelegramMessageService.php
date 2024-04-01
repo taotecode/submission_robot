@@ -52,8 +52,8 @@ trait SendTelegramMessageService
         }
 
         $inline_keyboard = KeyBoardData::WHITE_LIST_USER_SUBMISSION;
-        $inline_keyboard['inline_keyboard'][0][0]['callback_data'] .= ":$manuscript->id";
-        $inline_keyboard['inline_keyboard'][0][1]['url'] .= $botInfo->channel->name . "/" . $manuscript->message_id;
+        $inline_keyboard['inline_keyboard'][0][0]['url'] .= $botInfo->channel->name . "/" . $manuscript->message_id;
+        $inline_keyboard['inline_keyboard'][0][1]['callback_data'] .= ":$manuscript->id";
 
         $username = get_posted_by($manuscript->posted_by);
 
