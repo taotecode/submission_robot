@@ -6,7 +6,7 @@
 
 更新日志及开发进度：[CHANGELOG.md](https://github.com/taotecode/submission_robot/blob/master/CHANGELOG.md)
 
-# 最新功能更新日期：2024年3月6日
+# 最新功能更新日期：2024年4月1日
 
 联系：[@laocheng_user_bot](https://t.me/laocheng_user_bot)
 
