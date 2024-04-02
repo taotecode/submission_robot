@@ -65,10 +65,13 @@ class DeleteSubmissionMessageService
             $manuscript->status = ManuscriptStatus::DELETE;
             $manuscript->save();
 
+            $inline_keyboard = KeyBoardData::REVIEW_GROUP_DELETE;
+            $inline_keyboard['inline_keyboard'][0][0]['callback_data'] .= ":".$manuscript->id;
+
             $telegram->editMessageReplyMarkup([
                 'chat_id' => $chatId,
                 'message_id' => $messageId,
-                'reply_markup' => json_encode(KeyBoardData::REVIEW_GROUP_DELETE),
+                'reply_markup' => json_encode($inline_keyboard),
             ]);
             $telegram->answerCallbackQuery([
                 'callback_query_id' => $callbackQuery->id,

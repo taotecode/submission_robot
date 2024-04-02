@@ -53,10 +53,6 @@ class CallBackQueryService
             $manuscript = $this->manuscriptModel->find($manuscriptId);
         }
 
-        Log::error('callbackQuery: ' . $command);
-        Log::error('manuscriptId: ' . $manuscriptId);
-        Log::error('manuscript: ' . json_encode($manuscript));
-
         switch ($command) {
             case 'approved_submission':
                 $this->approved_and_rejected_submission($telegram, $botInfo, $manuscript, $chatId, $from, $messageId, true, $callbackQuery);

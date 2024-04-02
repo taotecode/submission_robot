@@ -41,6 +41,11 @@ class ApprovedAndRejectedSubmissionService
         //拒绝人员数量
         $rejectNum = count($reject);
 
+        $inline_keyboard_approved=KeyBoardData::REVIEW_GROUP_APPROVED;
+        $inline_keyboard_approved['inline_keyboard'][0][0]['callback_data'] .= ":".$manuscript->id;
+        $inline_keyboard_approved['inline_keyboard'][0][1]['url'] .= $botInfo->channel->name."/".$manuscript->message_id;
+        $inline_keyboard_approved['inline_keyboard'][1][0]['callback_data'] .= ':'.$manuscript->id;
+
         if ($this->baseCheck($telegram, $callbackQuery->id, $from->id, $reviewGroup->id) !== true) {
             return 'ok';
         }
@@ -82,14 +87,10 @@ class ApprovedAndRejectedSubmissionService
                 $manuscript->reject = $reject;
                 $manuscript->status = ManuscriptStatus::APPROVED;
 
-                $inline_keyboard=KeyBoardData::REVIEW_GROUP_APPROVED;
-                $inline_keyboard['inline_keyboard'][0][1]['url'] .= $botInfo->channel->name."/".$manuscript->message_id;
-                $inline_keyboard['inline_keyboard'][1][0]['callback_data'] .= ":{$manuscriptId}";
-
                 $params = [
                     'chat_id' => $chatId,
                     'message_id' => $messageId,
-                    'reply_markup' => json_encode($inline_keyboard),
+                    'reply_markup' => json_encode($inline_keyboard_approved),
                 ];
 
                 $telegram->editMessageReplyMarkup($params);
@@ -160,6 +161,9 @@ class ApprovedAndRejectedSubmissionService
         //拒绝人员数量
         $rejectNum = count($reject);
 
+        $inline_keyboard_reject=KeyBoardData::REVIEW_GROUP_REJECT;
+        $inline_keyboard_reject['inline_keyboard'][0][0]['callback_data'] .= ":".$manuscript->id;
+
         if ($this->baseCheck($telegram, $callbackQuery->id, $from->id, $reviewGroup->id) !== true) {
             return 'ok';
         }
@@ -205,7 +209,7 @@ class ApprovedAndRejectedSubmissionService
                 $telegram->editMessageReplyMarkup([
                     'chat_id' => $chatId,
                     'message_id' => $messageId,
-                    'reply_markup' => json_encode(KeyBoardData::REVIEW_GROUP_REJECT),
+                    'reply_markup' => json_encode($inline_keyboard_reject),
                 ]);
 
                 $this->sendPostedByMessage($telegram, $manuscript,$botInfo, ManuscriptStatus::REJECTED);

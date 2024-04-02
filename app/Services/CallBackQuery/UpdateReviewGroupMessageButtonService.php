@@ -18,18 +18,25 @@ trait UpdateReviewGroupMessageButtonService
 
     public function update_review_group_message_button(Api $telegram,Bot $botInfo,$chatId,$messageId,Manuscript $manuscript,$review_num,$approvedNum,$rejectNum,$isDelete=false)
     {
+        $inline_keyboard_approved=KeyBoardData::REVIEW_GROUP_APPROVED;
+        $inline_keyboard_approved['inline_keyboard'][0][0]['callback_data'] .= ":".$manuscript->id;
+        $inline_keyboard_approved['inline_keyboard'][0][1]['url'] .= $botInfo->channel->name."/".$manuscript->message_id;
+        $inline_keyboard_approved['inline_keyboard'][1][0]['callback_data'] .= ':'.$manuscript->id;
 
+        $inline_keyboard_reject=KeyBoardData::REVIEW_GROUP_REJECT;
+        $inline_keyboard_reject['inline_keyboard'][0][0]['callback_data'] .= ":".$manuscript->id;
+
+        $inline_keyboard_delete = KeyBoardData::REVIEW_GROUP_DELETE;
+        $inline_keyboard_delete['inline_keyboard'][0][0]['callback_data'] .= ":".$manuscript->id;
 
         //如果通过人员数量大于等于审核数，则不再审核
         if ($approvedNum >= $review_num && !$isDelete) {
             try {
-                $inline_keyboard=KeyBoardData::REVIEW_GROUP_APPROVED;
-                $inline_keyboard['inline_keyboard'][0][1]['url'] .= $botInfo->channel->name."/".$manuscript->message_id;
 
                 $telegram->editMessageReplyMarkup([
                     'chat_id' => $chatId,
                     'message_id' => $messageId,
-                    'reply_markup' => json_encode($inline_keyboard),
+                    'reply_markup' => json_encode($inline_keyboard_approved),
                 ]);
 
                 if ($manuscript->status != ManuscriptStatus::APPROVED) {
@@ -57,7 +64,7 @@ trait UpdateReviewGroupMessageButtonService
                 $telegram->editMessageReplyMarkup([
                     'chat_id' => $chatId,
                     'message_id' => $messageId,
-                    'reply_markup' => json_encode(KeyBoardData::REVIEW_GROUP_REJECT),
+                    'reply_markup' => json_encode($inline_keyboard_reject),
                 ]);
 
                 if ($manuscript->status!=ManuscriptStatus::REJECTED){
@@ -79,7 +86,7 @@ trait UpdateReviewGroupMessageButtonService
                 $telegram->editMessageReplyMarkup([
                     'chat_id' => $chatId,
                     'message_id' => $messageId,
-                    'reply_markup' => json_encode(KeyBoardData::REVIEW_GROUP_APPROVED),
+                    'reply_markup' => json_encode($inline_keyboard_approved),
                 ]);
                 return true;
             } catch (TelegramSDKException $telegramSDKException) {
@@ -93,7 +100,7 @@ trait UpdateReviewGroupMessageButtonService
                 $telegram->editMessageReplyMarkup([
                     'chat_id' => $chatId,
                     'message_id' => $messageId,
-                    'reply_markup' => json_encode(KeyBoardData::REVIEW_GROUP_REJECT),
+                    'reply_markup' => json_encode($inline_keyboard_reject),
                 ]);
                 return true;
             } catch (TelegramSDKException $telegramSDKException) {
@@ -107,7 +114,7 @@ trait UpdateReviewGroupMessageButtonService
                 $telegram->editMessageReplyMarkup([
                     'chat_id' => $chatId,
                     'message_id' => $messageId,
-                    'reply_markup' => json_encode(KeyBoardData::REVIEW_GROUP_DELETE),
+                    'reply_markup' => json_encode($inline_keyboard_delete),
                 ]);
                 return true;
             } catch (TelegramSDKException $telegramSDKException) {

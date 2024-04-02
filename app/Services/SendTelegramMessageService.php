@@ -17,6 +17,15 @@ trait SendTelegramMessageService
         return $this->objectTypeHandle($telegram, $botInfo, $chatId, $objectType, $message);
     }
 
+    /**
+     * 发送审核群消息
+     * @param Api $telegram
+     * @param $botInfo
+     * @param $message
+     * @param $objectType
+     * @param $manuscriptId
+     * @return mixed
+     */
     public function sendGroupMessage(Api $telegram, $botInfo, $message, $objectType, $manuscriptId): mixed
     {
         if (!empty($botInfo->review_group->name)) {
