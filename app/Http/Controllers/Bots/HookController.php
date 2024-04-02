@@ -49,6 +49,7 @@ class HookController extends Controller
             \App\Telegram\Commands\GetMeIdCommand::class,
             \App\Telegram\Commands\HelpCommand::class,
             \App\Telegram\Commands\BlackCommand::class,
+            \App\Telegram\Commands\WhoCommand::class,
         ]);
 
         $updateData = $telegram->commandsHandler(true);
