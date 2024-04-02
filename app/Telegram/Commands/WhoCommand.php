@@ -46,16 +46,6 @@ class WhoCommand extends Command
             return 'ok';
         }
 
-        $user_id = $this->getArguments()['user_id']??'';
-        if (empty($user_id)){
-            $this->replyWithMessage([
-                'text' => "<b>请填写用户ID！</b>,如：<pre>/black 12345678</pre>",
-                'parse_mode' => 'HTML',
-                'reply_markup'=>json_encode(['remove_keyboard'=>true,'selective'=>false]),
-            ]);
-            return 'ok';
-        }
-
         if ($this->baseCheck($this->getTelegram(), $chat->id, $from->id, $botInfo->review_group->id,true,$message->id) !== true) {
             return 'ok';
         }
