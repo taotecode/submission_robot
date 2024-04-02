@@ -50,7 +50,7 @@ class WhoCommand extends Command
             return 'ok';
         }
 
-        Log::info('message: ',$message);
+        Log::info('message: ',$message->toArray());
         return 'ok';
     }
 }
