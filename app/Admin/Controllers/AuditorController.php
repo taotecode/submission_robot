@@ -38,8 +38,14 @@ class AuditorController extends AdminController
             $grid->column('updated_at')->sortable();
 
             $grid->filter(function (Grid\Filter $filter) {
+                $filter->panel();
                 $filter->equal('id');
-
+                $filter->like('name');
+                $filter->equal('userId');
+                //需要将权限转换为字符串，数据库的权限是json格式，并且支持多选，还要支持模糊查询
+//                $filter->where('role', function ($query, $value) {
+//                    $query->whereJsonContains('role', $value);
+//                }, '权限')->multipleSelect(AuditorRole::ROLE_NAME);
             });
         });
     }
@@ -74,7 +80,7 @@ class AuditorController extends AdminController
             $form->display('id');
             $form->text('name')->help('审核员名称');
             $form->text('userId')->required()->help('审核员TG ID');
-            $form->multipleSelect('role')->required()->options(AuditorRole::ROLE_NAME)->help('审核员角色');
+            $form->multipleSelect('role')->required()->options(AuditorRole::ROLE_NAME)->help('审核员角色')->default([AuditorRole::APPROVAL, AuditorRole::REJECTION]);
 
             $form->display('created_at');
             $form->display('updated_at');

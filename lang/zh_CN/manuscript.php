@@ -2,8 +2,8 @@
 
 return [
     'labels' => [
-        'Manuscript' => 'Manuscript',
-        'manuscript' => 'Manuscript',
+        'Manuscript' => '稿件管理',
+        'manuscript' => '稿件管理',
     ],
     'fields' => [
         'type' => '类型',

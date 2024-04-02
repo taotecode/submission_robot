@@ -102,6 +102,7 @@ class ManuscriptController extends AdminController
             $grid->column('updated_at')->sortable();
 
             $grid->filter(function (Grid\Filter $filter) {
+                $filter->panel();
                 $filter->equal('id');
 
             });

@@ -31,6 +31,7 @@ class ChannelController extends AdminController
             $grid->column('updated_at')->sortable();
 
             $grid->filter(function (Grid\Filter $filter) {
+                $filter->panel();
                 $filter->equal('id');
                 $filter->like('name');
                 $filter->like('appellation');

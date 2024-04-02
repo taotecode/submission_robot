@@ -9,6 +9,10 @@ class Auditor extends Model
 {
     use HasDateTimeFormatter;
 
+    protected $table = 'auditors';
+
+    protected $fillable = ['userId', 'name', 'role'];
+
     //设置json字段
     protected $casts = [
         'role' => 'array',

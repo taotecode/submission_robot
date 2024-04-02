@@ -40,8 +40,12 @@ class ReviewGroupController extends AdminController
             });
 
             $grid->filter(function (Grid\Filter $filter) {
+                $filter->panel();
                 $filter->equal('id');
-
+                $filter->like('appellation');
+                $filter->equal('bot_id')->select(BotModel::all()->pluck('appellation', 'id'));
+                $filter->like('group_id');
+                $filter->like('name');
             });
         });
     }

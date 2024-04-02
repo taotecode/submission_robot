@@ -52,8 +52,12 @@ class MyBotController extends AdminController
             });
 
             $grid->filter(function (Grid\Filter $filter) {
+                $filter->panel();
                 $filter->equal('id');
-
+                $filter->like('appellation');
+                $filter->like('name');
+                $filter->equal('status')->select([0 => '禁用', 1 => '启用']);
+                $filter->between('created_at')->datetime();
             });
         });
     }

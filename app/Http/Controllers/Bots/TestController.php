@@ -92,7 +92,7 @@ class TestController extends Controller
         $telegram = new Api(env('TELEGRAM_BOT_TOKEN'));
 
         //设置web app
-        $response = $telegram->setWebhook(['url' => 'https:///api/bots/test/webapp_hook']);
+        $response = $telegram->getMe();
         dd($response);
     }
 
@@ -102,7 +102,7 @@ class TestController extends Controller
         $updates = $telegram->commandsHandler(true);
         Log::info('',$updates->toArray());
 
-        $telegram->sendMessage([
+        $telegram->setMyCommands([
             'chat_id' => $updates->getChat()->id,
             'text' => '你的网页名称',
             'reply_markup' => json_encode([

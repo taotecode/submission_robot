@@ -13,4 +13,11 @@ class Bot extends EloquentRepository
      * @var string
      */
     protected $eloquentClass = Model::class;
+
+    public function getSelectOptions(): \Illuminate\Support\Collection
+    {
+        return $this->model()::query()->pluck('name', 'id');
+    }
+
+
 }

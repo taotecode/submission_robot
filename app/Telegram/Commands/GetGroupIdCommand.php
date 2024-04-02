@@ -16,7 +16,7 @@ class GetGroupIdCommand extends Command
     {
         if (! in_array($this->getUpdate()->getChat()->type, ['group', 'supergroup'])) {
             $this->replyWithMessage([
-                'text' => '*请在群组中使用！*',
+                'text' => "<b>请在群组中使用！</b>",
                 'parse_mode' => 'HTML',
             ]);
 
@@ -39,7 +39,7 @@ class GetGroupIdCommand extends Command
             $isAdmin = '是管理员';
         }
 
-        $textData = "群组名称：`{$chatTitle}`\r\n群组ID ：`{$chatId}`\r\n机器人是否是管理员：{$isAdmin}";
+        $textData = "群组名称：<pre>{$chatTitle}</pre> \r\n 群组ID ：<pre>{$chatId}</pre> \r\n 机器人是否是管理员：{$isAdmin}";
 
         $this->replyWithMessage([
             'text' => $textData,

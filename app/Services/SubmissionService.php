@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Enums\KeyBoardData;
+use App\Enums\SubmissionUserType;
 use App\Models\Manuscript;
 use App\Models\SubmissionUser;
 use Illuminate\Support\Collection;
@@ -40,7 +41,7 @@ class SubmissionService
         switch ($objectType) {
             case 'text':
                 if ($message->text == '开始投稿') {
-                    return $this->start($telegram, $chatId, $chat, get_config('submission.start'));
+                    return $this->start($telegram,$botInfo, $chatId, $chat, get_config('submission.start'));
                 }
                 if (! Cache::tags($this->cacheTag.'.'.$chatId)->has($chatId)) {
                     return $this->error_for_text($telegram, $chatId, $messageId);
@@ -56,7 +57,7 @@ class SubmissionService
                     return $this->cancel($telegram, $chatId);
                 }
                 if ($message->text == '重新开始') {
-                    return $this->start($telegram, $chatId, $chat, get_config('submission.restart'));
+                    return $this->start($telegram,$botInfo, $chatId, $chat, get_config('submission.restart'));
                 }
                 if ($message->text == '结束发送') {
                     return $this->end($telegram, $chatId, $botInfo);
@@ -92,6 +93,7 @@ class SubmissionService
      */
     private function start(
         Api $telegram,
+        $botInfo,
         string $chatId,
         Collection $chat,
         string $text = "请直接发送您要投稿的内容\r\n发送完毕后，请点击下方的 “结束发送” 按钮。",
@@ -100,14 +102,16 @@ class SubmissionService
         Cache::tags($this->cacheTag.'.'.$chatId)->put($chatId, $chat->toArray(), now()->addDay());
 
         $submissionUser = (new SubmissionUser)->firstOrCreate([
+            'bot_id' => $botInfo->id,
             'userId' => $chatId,
         ], [
-            'type' => 0,
+            'type' => SubmissionUserType::NORMAL,
+            'bot_id'=>$botInfo->id,
             'userId' => $chatId,
             'name' => get_posted_by($chat->toArray()),
         ]);
 
-        if ($submissionUser->type == 2) {
+        if ($submissionUser->type == SubmissionUserType::BLACK) {
             Cache::tags($this->cacheTag.'.'.$chatId)->flush();
 
             return $this->sendTelegramMessage($telegram, 'sendMessage', [
@@ -385,7 +389,7 @@ class SubmissionService
         $manuscript = $this->manuscriptModel->create($sqlData);
 
         //白名单用户直接发布
-        if ($submissionUser->type == 1) {
+        if ($submissionUser->type == SubmissionUserType::WHITE) {
             $replaced = Str::replace('\r\n', PHP_EOL, $messageText);
             $limitedString = Str::limit($replaced);
             $firstLine = Str::before($limitedString, PHP_EOL);
