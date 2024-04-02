@@ -23,6 +23,7 @@ class WhoCommand extends Command
         $chat = $this->getUpdate()->getChat();
         $message = $this->getUpdate()->getMessage();
         $from = $message->from;
+        $replyToMessage=$message->replyToMessage;
 
         if (! in_array($this->getUpdate()->getChat()->type, ['group', 'supergroup'])) {
             $this->replyWithMessage([
@@ -50,7 +51,19 @@ class WhoCommand extends Command
             return 'ok';
         }
 
-        Log::info('message: ',$message->toArray());
+        if (empty($replyToMessage)) {
+            $this->replyWithMessage([
+                'text' => "<b>请回复用户投稿的稿件消息再使用本命令！</b>",
+                'parse_mode' => 'HTML',
+                'reply_markup'=>json_encode(['remove_keyboard'=>true,'selective'=>false]),
+            ]);
+
+            return 'ok';
+        }
+
+        $replyMarkup=$replyToMessage->replyMarkup;
+
+        Log::info('message: ',$replyMarkup->toArray());
         return 'ok';
     }
 }
