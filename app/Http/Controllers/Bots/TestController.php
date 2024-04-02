@@ -100,9 +100,11 @@ class TestController extends Controller
     {
         $telegram = new Api(env('TELEGRAM_BOT_TOKEN'));
         $updates = $telegram->commandsHandler(true);
+        Log::info('',$updates->toArray());
 
         $telegram->sendMessage([
             'chat_id' => $updates->getChat()->id,
+            'text' => '你的网页名称',
             'reply_markup' => json_encode([
                 'inline_keyboard' => [
                     [
@@ -111,6 +113,5 @@ class TestController extends Controller
                 ]
             ])
         ]);
-        Log::info('',$updates->toArray());
     }
 }
