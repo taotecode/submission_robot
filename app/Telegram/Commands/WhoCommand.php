@@ -88,6 +88,8 @@ class WhoCommand extends Command
 
         $submissionUser=$manuscript->posted_by;
 
+        Log::info('WhoCommand:'.json_encode($submissionUser));
+
         $text="用户ID：<pre>".$submissionUser['id']."</pre>\r\n";
         $text.="用户名：<pre>".$submissionUser['username']??'无'."</pre>\r\n";
         $text.="姓名：<pre>".$submissionUser['first_name']??'无'."</pre>\r\n";
