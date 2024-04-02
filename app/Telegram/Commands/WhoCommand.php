@@ -3,24 +3,20 @@
 namespace App\Telegram\Commands;
 
 use App\Enums\AuditorRole;
-use App\Enums\SubmissionUserType;
 use App\Models\Bot;
-use App\Models\SubmissionUser;
 use App\Services\CallBackQuery\AuditorRoleCheckService;
 use Illuminate\Support\Facades\Log;
 use Telegram\Bot\Commands\Command;
 
-class BlackCommand extends Command
+class WhoCommand extends Command
 {
     use AuditorRoleCheckService;
 
     //主要命令
-    protected string $name = 'black';
+    protected string $name = 'who';
 
     //命令描述
-    protected string $description = '将用户添加至黑名单';
-
-    protected string $pattern = '{user_id}';
+    protected string $description = '获取用户投稿信息';
 
     public function handle()
     {
@@ -64,33 +60,7 @@ class BlackCommand extends Command
             return 'ok';
         }
 
-        if ($this->roleCheck($this->getTelegram(), $chat->id, $from->id, [
-                AuditorRole::ADD_BLACK,
-            ],true,$message->id) !== true) {
-            return 'ok';
-        }
-
-        $submissionUser = (new SubmissionUser)->firstOrCreate([
-            'bot_id' => $botInfo->id,
-            'userId' => $user_id,
-        ], [
-            'type' => SubmissionUserType::BLACK,
-            'bot_id'=>$botInfo->id,
-            'userId' => $user_id,
-            'name' => "未知",
-        ]);
-
-        if ($submissionUser->type!= SubmissionUserType::BLACK){
-            $submissionUser->type = SubmissionUserType::BLACK;
-            $submissionUser->save();
-        }
-
-        $this->replyWithMessage([
-            'text' => "<b>用户ID：{$user_id} 已加入黑名单！</b>",
-            'parse_mode' => 'HTML',
-            'reply_markup'=>json_encode(['remove_keyboard'=>true,'selective'=>false]),
-        ]);
-
+        Log::info('update: ',$this->getUpdate()->toArray());
         return 'ok';
     }
 }
