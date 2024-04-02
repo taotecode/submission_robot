@@ -82,6 +82,9 @@ class CallBackQueryService
             case 'delete_submission_message_success':
                 $this->deleteSubmissionMessageSuccess($telegram,$callbackQuery);
                 break;
+            case 'set_submission_user_type':
+                $this->setSubmissionUserType($telegram, $botInfo, $manuscript, $chatId, $from, $callbackQuery);
+                break;
         }
     }
 
@@ -152,5 +155,10 @@ class CallBackQueryService
 
             return 'error';
         }
+    }
+
+    private function setSubmissionUserType(Api $telegram, $botInfo, ?Manuscript $manuscript, mixed $chatId, User $from, ?CallbackQuery $callbackQuery)
+    {
+
     }
 }

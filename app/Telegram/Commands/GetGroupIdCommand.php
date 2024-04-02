@@ -14,6 +14,7 @@ class GetGroupIdCommand extends Command
 
     public function handle()
     {
+        $message = $this->getUpdate()->getMessage();
         if (! in_array($this->getUpdate()->getChat()->type, ['group', 'supergroup'])) {
             $this->replyWithMessage([
                 'text' => "<b>请在群组中使用！</b>",
@@ -44,6 +45,7 @@ class GetGroupIdCommand extends Command
         $this->replyWithMessage([
             'text' => $textData,
             'parse_mode' => 'HTML',
+            'reply_to_message_id' => $message->id,
         ]);
 
         return 'ok';

@@ -141,4 +141,15 @@ class KeyBoardData
             ],
         ],
     ];
+
+    /**
+     * 查询投稿人信息键盘
+     */
+    const QUERY_SUBMISSION_USER = [
+        'inline_keyboard' => [
+            [
+                ['text' => '设置为普通用户', 'callback_data' => 'set'],
+            ],
+        ],
+    ];
 }

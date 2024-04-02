@@ -3,6 +3,8 @@
 namespace App\Telegram\Commands;
 
 use App\Enums\AuditorRole;
+use App\Enums\KeyBoardData;
+use App\Enums\SubmissionUserType;
 use App\Models\Bot;
 use App\Models\Manuscript;
 use App\Services\CallBackQuery\AuditorRoleCheckService;
@@ -31,6 +33,7 @@ class WhoCommand extends Command
                 'text' => "<b>请在群组中使用！</b>",
                 'parse_mode' => 'HTML',
                 'reply_markup'=>json_encode(['remove_keyboard'=>true,'selective'=>false]),
+                'reply_to_message_id' => $message->id,
             ]);
 
             return 'ok';
@@ -43,6 +46,7 @@ class WhoCommand extends Command
                 'text' => "<b>请先前往后台添加机器人！或后台机器人的用户名没有设置正确！</b>",
                 'parse_mode' => 'HTML',
                 'reply_markup'=>json_encode(['remove_keyboard'=>true,'selective'=>false]),
+                'reply_to_message_id' => $message->id,
             ]);
 
             return 'ok';
@@ -57,6 +61,7 @@ class WhoCommand extends Command
                 'text' => "<b>请回复用户投稿的稿件消息再使用本命令！</b>",
                 'parse_mode' => 'HTML',
                 'reply_markup'=>json_encode(['remove_keyboard'=>true,'selective'=>false]),
+                'reply_to_message_id' => $message->id,
             ]);
 
             return 'ok';
@@ -69,6 +74,7 @@ class WhoCommand extends Command
                 'text' => "<b>请回复用户投稿的稿件消息再使用本命令！</b>",
                 'parse_mode' => 'HTML',
                 'reply_markup'=>json_encode(['remove_keyboard'=>true,'selective'=>false]),
+                'reply_to_message_id' => $message->id,
             ]);
 
             return 'ok';
@@ -82,6 +88,7 @@ class WhoCommand extends Command
                 'text' => "<b>请回复用户投稿的稿件消息再使用本命令！</b>",
                 'parse_mode' => 'HTML',
                 'reply_markup'=>json_encode(['remove_keyboard'=>true,'selective'=>false]),
+                'reply_to_message_id' => $message->id,
             ]);
             return 'ok';
         }
@@ -101,10 +108,22 @@ class WhoCommand extends Command
             $text .= "姓氏：<code>" . $submissionUser['last_name']. "</code> \r\n";
         }
 
+        $inline_keyboard=[
+            'inline_keyboard' => [
+            ],
+        ];
+
+        foreach (SubmissionUserType::MAP as $key=>$value){
+            $inline_keyboard['inline_keyboard'][]=[
+                ['text' => '设置为'.$value.'用户', 'callback_data' => 'set_submission_user_type:'.$manuscriptId.':'.$key],
+            ];
+        }
+
         $this->replyWithMessage([
             'text' => $text,
             'parse_mode' => 'HTML',
-            'reply_markup'=>json_encode(['remove_keyboard'=>true,'selective'=>false]),
+            'reply_markup'=>json_encode($inline_keyboard),
+            'reply_to_message_id' => $message->id,
         ]);
         return 'ok';
     }

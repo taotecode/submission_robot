@@ -33,6 +33,7 @@ class BlackCommand extends Command
                 'text' => "<b>请在群组中使用！</b>",
                 'parse_mode' => 'HTML',
                 'reply_markup'=>json_encode(['remove_keyboard'=>true,'selective'=>false]),
+                'reply_to_message_id' => $message->id,
             ]);
 
             return 'ok';
@@ -45,6 +46,7 @@ class BlackCommand extends Command
                 'text' => "<b>请先前往后台添加机器人！或后台机器人的用户名没有设置正确！</b>",
                 'parse_mode' => 'HTML',
                 'reply_markup'=>json_encode(['remove_keyboard'=>true,'selective'=>false]),
+                'reply_to_message_id' => $message->id,
             ]);
 
             return 'ok';
@@ -56,6 +58,7 @@ class BlackCommand extends Command
                 'text' => "<b>请填写用户ID！</b>,如：<pre>/black 12345678</pre>",
                 'parse_mode' => 'HTML',
                 'reply_markup'=>json_encode(['remove_keyboard'=>true,'selective'=>false]),
+                'reply_to_message_id' => $message->id,
             ]);
             return 'ok';
         }
@@ -89,6 +92,7 @@ class BlackCommand extends Command
             'text' => "<b>用户ID：{$user_id} 已加入黑名单！</b>",
             'parse_mode' => 'HTML',
             'reply_markup'=>json_encode(['remove_keyboard'=>true,'selective'=>false]),
+            'reply_to_message_id' => $message->id,
         ]);
 
         return 'ok';
