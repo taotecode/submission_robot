@@ -3,6 +3,7 @@
 namespace App\Telegram\Commands;
 
 use App\Models\Bot;
+use Illuminate\Support\Facades\Log;
 use Telegram\Bot\Commands\Command;
 
 class BlackCommand extends Command
@@ -38,9 +39,9 @@ class BlackCommand extends Command
         }
 
         $user_id = $this->getArguments()['user_id'];
-        logger('用户ID', $user_id);
+        Log::info('用户ID', $user_id);
 
-        logger('加入黑名单', $this->getArguments());
+        Log::info('加入黑名单', $this->getArguments());
         return 'ok';
     }
 }
