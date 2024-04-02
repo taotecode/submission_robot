@@ -92,7 +92,7 @@ class TestController extends Controller
         $telegram = new Api(env('TELEGRAM_BOT_TOKEN'));
 
         //设置web app
-        $response = $telegram->setWebhook(['url' => 'https://bot.modg.asia/api/bots/test/webapp_hook']);
+        $response = $telegram->setWebhook(['url' => 'https:///api/bots/test/webapp_hook']);
         dd($response);
     }
 
@@ -101,9 +101,8 @@ class TestController extends Controller
         $telegram = new Api(env('TELEGRAM_BOT_TOKEN'));
         $updates = $telegram->commandsHandler(true);
 
-        $telegram->editMessageReplyMarkup([
+        $telegram->sendMessage([
             'chat_id' => $updates->getChat()->id,
-            'message_id' => $updates->getMessage()->id,
             'reply_markup' => json_encode([
                 'inline_keyboard' => [
                     [
