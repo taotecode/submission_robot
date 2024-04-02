@@ -59,7 +59,8 @@ class HookController extends Controller
             ! $updateData->getMessage()->hasCommand() &&
             ! $updateData->getChat()->has('group') &&
             ! $updateData->getChat()->has('supergroup') &&
-            ! $updateData->getChat()->has('getChat')
+            ! $updateData->getChat()->has('getChat') &&
+            ! in_array($updateData->getChat()->type, ['group', 'supergroup'])
         ) {
             if ($updateData->getChat()->type != 'private') {
                 return 'ok';
