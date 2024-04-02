@@ -88,19 +88,17 @@ class WhoCommand extends Command
 
         $submissionUser=$manuscript->posted_by;
 
-        Log::info('WhoCommand:'.json_encode($submissionUser));
-
-        $text="用户ID：<pre>".$submissionUser['id']."</pre> \r\n";
+        $text="用户ID：<code>".$submissionUser['id']."</code> \r\n";
         if (!empty($submissionUser['username'])){
-            $text.="用户名：<pre>".$submissionUser['username']??'无'."</pre> \r\n";
+            $text.="用户名：<code>".$submissionUser['username']."</code> \r\n";
         }
 
         if (!empty($submissionUser['first_name'])) {
-            $text .= "姓名：<pre>" . $submissionUser['first_name'] ?? '无' . "</pre> \r\n";
+            $text .= "姓名：<code>" . $submissionUser['first_name'] . "</code> \r\n";
         }
 
         if (!empty($submissionUser['last_name'])) {
-            $text .= "姓氏：<pre>" . $submissionUser['last_name'] ?? '无' . "</pre> \r\n";
+            $text .= "姓氏：<code>" . $submissionUser['last_name']. "</code> \r\n";
         }
 
         $this->replyWithMessage([
