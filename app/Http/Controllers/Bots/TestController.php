@@ -92,7 +92,8 @@ class TestController extends Controller
         $telegram = new Api(env('TELEGRAM_BOT_TOKEN'));
 
         //设置web app
-
+        $response = $telegram->setWebhook(['url' => 'https://bot.modg.asia/api/bots/test/webapp_hook']);
+        dd($response);
     }
 
     public function webapp_hook()
@@ -111,6 +112,6 @@ class TestController extends Controller
                 ]
             ])
         ]);
-        Log::info('',$updates);
+        Log::info('',$updates->toArray());
     }
 }
