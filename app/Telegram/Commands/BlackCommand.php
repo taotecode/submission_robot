@@ -2,14 +2,18 @@
 
 namespace App\Telegram\Commands;
 
+use App\Enums\AuditorRole;
 use App\Enums\SubmissionUserType;
 use App\Models\Bot;
 use App\Models\SubmissionUser;
+use App\Services\CallBackQuery\AuditorRoleCheckService;
 use Illuminate\Support\Facades\Log;
 use Telegram\Bot\Commands\Command;
 
 class BlackCommand extends Command
 {
+    use AuditorRoleCheckService;
+
     //主要命令
     protected string $name = 'black';
 
@@ -52,6 +56,16 @@ class BlackCommand extends Command
             return 'ok';
         }
 
+        if ($this->baseCheck($this->getTelegram(), $this->getUpdate()->getChat()->id, $this->getUpdate()->getMessage()->from->id, $botInfo->review_group->id,true,$this->getUpdate()->getMessage()->id) !== true) {
+            return 'ok';
+        }
+
+        if ($this->roleCheck($this->getTelegram(), $this->getUpdate()->getChat()->id, $this->getUpdate()->getMessage()->from->id, [
+                AuditorRole::ADD_BLACK,
+            ],true,$this->getUpdate()->getMessage()->id) !== true) {
+            return 'ok';
+        }
+
         $submissionUser = (new SubmissionUser)->firstOrCreate([
             'bot_id' => $botInfo->id,
             'userId' => $user_id,
@@ -62,7 +76,7 @@ class BlackCommand extends Command
             'name' => "未知",
         ]);
 
-        if ($submissionUser){
+        if ($submissionUser->type!= SubmissionUserType::BLACK){
             $submissionUser->type = SubmissionUserType::BLACK;
             $submissionUser->save();
         }
