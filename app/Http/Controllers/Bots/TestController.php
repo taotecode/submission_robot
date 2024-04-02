@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Bot;
 use App\Services\BaseService;
 use App\Telegram\Commands\StartCommand;
+use Illuminate\Support\Facades\Log;
 use Telegram\Bot\Api;
 
 class TestController extends Controller
@@ -84,5 +85,32 @@ class TestController extends Controller
                 'type' => 'default',
             ]),
         ]);
+    }
+
+    public function webapp()
+    {
+        $telegram = new Api(env('TELEGRAM_BOT_TOKEN'));
+
+        //设置web app
+
+    }
+
+    public function webapp_hook()
+    {
+        $telegram = new Api(env('TELEGRAM_BOT_TOKEN'));
+        $updates = $telegram->commandsHandler(true);
+
+        $telegram->editMessageReplyMarkup([
+            'chat_id' => $updates->getChat()->id,
+            'message_id' => $updates->getMessage()->id,
+            'reply_markup' => json_encode([
+                'inline_keyboard' => [
+                    [
+                        ['text' => '你的网页名称', 'url' => 'https://www.baidu.com'],
+                    ]
+                ]
+            ])
+        ]);
+        Log::info('',$updates);
     }
 }
