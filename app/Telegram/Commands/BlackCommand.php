@@ -39,7 +39,7 @@ class BlackCommand extends Command
         }
 
         $user_id = $this->getArguments()['user_id'];
-        Log::info('用户ID', $user_id);
+        Log::info('用户ID', [$user_id]);
 
         Log::info('加入黑名单', $this->getArguments());
         return 'ok';
