@@ -59,10 +59,8 @@ class HookController extends Controller
 
         $updateData = $telegram->commandsHandler(true);
 
-        Log::info('机器人请求', $updateData->getChat()->toArray());
-
         //存入使用机器人的用户
-//        $this->save_bot_user($botInfo, $updateData->getChat());
+        $this->save_bot_user($botInfo, $updateData->getChat());
 
         //进入投稿服务
         if (
