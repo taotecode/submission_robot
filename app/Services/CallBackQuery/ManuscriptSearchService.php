@@ -14,7 +14,7 @@ class ManuscriptSearchService
     {
         $url="https://t.me/".$botInfo->channel->name."/".$manuscript->message_id;
 
-        $text= '<a href="'.$url.'">【'.$manuscript->text.'】';
+        $text= "<a href='$url'>【{$manuscript->text}】</a>";
 
         try {
             $telegram->sendMessage([
