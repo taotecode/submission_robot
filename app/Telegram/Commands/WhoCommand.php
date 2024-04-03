@@ -7,6 +7,7 @@ use App\Enums\KeyBoardData;
 use App\Enums\SubmissionUserType;
 use App\Models\Bot;
 use App\Models\Manuscript;
+use App\Models\SubmissionUser;
 use App\Services\CallBackQuery\AuditorRoleCheckService;
 use Illuminate\Support\Facades\Log;
 use Telegram\Bot\Commands\Command;
@@ -94,6 +95,25 @@ class WhoCommand extends Command
         }
 
         $submissionUser=$manuscript->posted_by;
+        if (empty($submissionUser)){
+            $this->replyWithMessage([
+                'text' => "<b>未找到投稿用户信息！</b>",
+                'parse_mode' => 'HTML',
+                'reply_markup'=>json_encode(['remove_keyboard'=>true,'selective'=>false]),
+                'reply_to_message_id' => $message->id,
+            ]);
+            return 'ok';
+        }
+
+        $submissionUserInfo = (new SubmissionUser)->firstOrCreate([
+            'bot_id' => $botInfo->id,
+            'userId' => $submissionUser['id'],
+        ], [
+            'type' => SubmissionUserType::NORMAL,
+            'bot_id'=>$botInfo->id,
+            'userId' => $submissionUser['id'],
+            'name' => "未知",
+        ]);
 
         $text="用户ID：<code>".$submissionUser['id']."</code> \r\n";
         if (!empty($submissionUser['username'])){
@@ -108,12 +128,17 @@ class WhoCommand extends Command
             $text .= "姓氏：<code>" . $submissionUser['last_name']. "</code> \r\n";
         }
 
+        $text.="用户身份：<code>".SubmissionUserType::MAP[$submissionUserInfo->type]."</code> \r\n";
+
         $inline_keyboard=[
             'inline_keyboard' => [
             ],
         ];
 
         foreach (SubmissionUserType::MAP as $key=>$value){
+            if ($key==$submissionUserInfo->type){
+                continue;
+            }
             $inline_keyboard['inline_keyboard'][]=[
                 ['text' => '设置为'.$value.'用户', 'callback_data' => 'set_submission_user_type:'.$manuscriptId.':'.$key.':'.$submissionUser['id']],
             ];

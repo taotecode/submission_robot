@@ -84,7 +84,7 @@ class CallBackQueryService
                 $this->deleteSubmissionMessageSuccess($telegram,$callbackQuery);
                 break;
             case 'set_submission_user_type':
-                $this->setSubmissionUserType($telegram, $botInfo, $from, $callbackQuery,$commandArray);
+                $this->setSubmissionUserType($telegram, $botInfo, $from, $callbackQuery,$commandArray,$manuscriptId,$manuscript,$chatId,$messageId);
                 break;
         }
     }
@@ -158,8 +158,8 @@ class CallBackQueryService
         }
     }
 
-    private function setSubmissionUserType(Api $telegram, $botInfo, User $from, ?CallbackQuery $callbackQuery,array $commandArray)
+    private function setSubmissionUserType(Api $telegram, $botInfo, User $from, ?CallbackQuery $callbackQuery,array $commandArray,$manuscriptId,$manuscript,$chatId,$messageId)
     {
-        return (new SetSubmissionUserTypeService())->setSubmissionUserType($telegram, $botInfo, $from, $callbackQuery, $commandArray);
+        return (new SetSubmissionUserTypeService())->setSubmissionUserType($telegram, $botInfo, $from, $callbackQuery, $commandArray,$manuscriptId,$manuscript,$chatId,$messageId);
     }
 }
