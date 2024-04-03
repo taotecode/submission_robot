@@ -68,14 +68,16 @@ class ManuscriptSearchService
             ];
         });
 
+        $pageInlineKeyboardNum = count($inline_keyboard)+1;
+
         if ($manuscript->currentPage() > 1) {
-            $inline_keyboard['inline_keyboard'][] = [
-                ['text' => '上一页', 'callback_data' => 'manuscript_search_page:prev:'.$keyword.':'.($manuscript->currentPage()-1)],
+            $inline_keyboard['inline_keyboard'][$pageInlineKeyboardNum][] = [
+                'text' => '上一页', 'callback_data' => 'manuscript_search_page:prev:'.$keyword.':'.($manuscript->currentPage()-1)
             ];
         }
         if ($manuscript->lastPage() > $manuscript->currentPage()) {
-            $inline_keyboard['inline_keyboard'][] = [
-                ['text' => '下一页', 'callback_data' => 'manuscript_search_page:next:'.$keyword.':'.($manuscript->currentPage()+1)],
+            $inline_keyboard['inline_keyboard'][$pageInlineKeyboardNum][] = [
+                'text' => '下一页', 'callback_data' => 'manuscript_search_page:next:'.$keyword.':'.($manuscript->currentPage()+1)
             ];
         }
 
