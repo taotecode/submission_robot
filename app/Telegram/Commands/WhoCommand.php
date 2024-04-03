@@ -115,7 +115,7 @@ class WhoCommand extends Command
 
         foreach (SubmissionUserType::MAP as $key=>$value){
             $inline_keyboard['inline_keyboard'][]=[
-                ['text' => '设置为'.$value.'用户', 'callback_data' => 'set_submission_user_type:'.$manuscriptId.':'.$key],
+                ['text' => '设置为'.$value.'用户', 'callback_data' => 'set_submission_user_type:'.$manuscriptId.':'.$key.':'.$submissionUser['id']],
             ];
         }
 

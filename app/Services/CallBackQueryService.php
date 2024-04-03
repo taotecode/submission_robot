@@ -11,6 +11,7 @@ use App\Services\CallBackQuery\ApprovedAndRejectedSubmissionService;
 use App\Services\CallBackQuery\DeleteSubmissionMessageService;
 use App\Services\CallBackQuery\PrivateMessageService;
 use App\Services\CallBackQuery\QuickSubmissionService;
+use App\Services\CallBackQuery\SetSubmissionUserTypeService;
 use Illuminate\Support\Facades\Log;
 use Telegram\Bot\Api;
 use Telegram\Bot\Exceptions\TelegramSDKException;
@@ -83,7 +84,7 @@ class CallBackQueryService
                 $this->deleteSubmissionMessageSuccess($telegram,$callbackQuery);
                 break;
             case 'set_submission_user_type':
-                $this->setSubmissionUserType($telegram, $botInfo, $manuscript, $chatId, $from, $callbackQuery);
+                $this->setSubmissionUserType($telegram, $botInfo, $from, $callbackQuery,$commandArray);
                 break;
         }
     }
@@ -157,8 +158,8 @@ class CallBackQueryService
         }
     }
 
-    private function setSubmissionUserType(Api $telegram, $botInfo, ?Manuscript $manuscript, mixed $chatId, User $from, ?CallbackQuery $callbackQuery)
+    private function setSubmissionUserType(Api $telegram, $botInfo, User $from, ?CallbackQuery $callbackQuery,array $commandArray)
     {
-
+        return (new SetSubmissionUserTypeService())->setSubmissionUserType($telegram, $botInfo, $from, $callbackQuery, $commandArray);
     }
 }
