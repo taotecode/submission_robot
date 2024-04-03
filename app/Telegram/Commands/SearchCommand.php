@@ -35,6 +35,17 @@ class SearchCommand extends Command
             return 'ok';
         }
 
+        $keyword = $this->getArguments()['keyword']??'';
+        if (empty($keyword)){
+            $this->replyWithMessage([
+                'text' => "<b>请填写关键字！</b>,如：<pre>/s 关键字</pre>",
+                'parse_mode' => 'HTML',
+                'reply_markup'=>json_encode(['remove_keyboard'=>true,'selective'=>false]),
+                'reply_to_message_id' => $message->id,
+            ]);
+            return 'ok';
+        }
+
         $inline_keyboard=[
             'inline_keyboard' => []
         ];
@@ -42,6 +53,9 @@ class SearchCommand extends Command
         $manuscript = (new \App\Models\Manuscript())
             ->where('bot_id', $botInfo->id)
             ->where('status', ManuscriptStatus::APPROVED)
+//            ->where('text', 'like', '%'.$keyword.'%')
+//            ->where('data', 'like', '%'.$keyword.'%')
+            ->orderBy('id', 'desc')
             ->paginate(10, ['*'], 'page', 1);
 
         if ($manuscript->isEmpty()){

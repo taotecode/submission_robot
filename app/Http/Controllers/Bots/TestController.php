@@ -105,7 +105,9 @@ class TestController extends Controller
         $manuscript = (new \App\Models\Manuscript())
             ->where('bot_id', 1)
             ->where('status', ManuscriptStatus::APPROVED)
-            ->paginate(10, ['*'], 'page', $page);
+            ->where('text', 'like', '%关键字%')
+            ->orderBy('id', 'desc')
+            ->paginate(10, ['*'], 'page', 1);
         dd($manuscript->toArray());
     }
 
