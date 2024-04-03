@@ -94,12 +94,40 @@ class TestController extends Controller
         $response = $telegram->getMe();
         dd($response);*/
 
+        $keyword='关键字';
+
         $manuscript = (new \App\Models\Manuscript())
             ->where('bot_id', 1)
             ->where('status', ManuscriptStatus::APPROVED)
-            ->where('text', 'like', '%关键字%')
+//            ->where('text', 'like', '%关键字%')
             ->orderBy('id', 'desc')
-            ->paginate(10, ['*'], 'page', 1);
+            ->paginate(10, ['*'], 'page');
+
+        $inline_keyboard=[
+            'inline_keyboard' => []
+        ];
+
+        $manuscript->each(function ($item) use (&$inline_keyboard){
+            $inline_keyboard['inline_keyboard'][] = [
+                ['text' => $item->text, 'callback_data' => 'manuscript_search_show_link:'.$item->id]
+            ];
+        });
+
+        $pageInlineKeyboardNum = count($inline_keyboard['inline_keyboard'])+1;
+        dump($pageInlineKeyboardNum);
+
+        if ($manuscript->currentPage() > 1) {
+            $inline_keyboard['inline_keyboard'][$pageInlineKeyboardNum][] = [
+                'text' => '上一页', 'callback_data' => 'manuscript_search_page:prev:'.$keyword.':'.($manuscript->currentPage()-1)
+            ];
+        }
+        if ($manuscript->lastPage() !== $manuscript->currentPage()) {
+            $inline_keyboard['inline_keyboard'][$pageInlineKeyboardNum][] = [
+                'text' => '下一页', 'callback_data' => 'manuscript_search_page:next:'.$keyword.':'.($manuscript->currentPage()+1)
+            ];
+        }
+
+        dump($inline_keyboard);
         dd($manuscript->toArray());
     }
 
