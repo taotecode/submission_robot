@@ -15,7 +15,7 @@ trait SaveBotUserService
             ['user_data' => $user],
         );
 
-        $submissionUser = (new SubmissionUser())->where(['bot_id' => $botInfo->id, 'user_id' => $user->id])->first();
+        $submissionUser = (new SubmissionUser())->where(['bot_id' => $botInfo->id, 'userId' => $user->id])->first();
         if ($submissionUser){
             $submissionUser->name=get_posted_by($user->toArray());
             $submissionUser->save();
