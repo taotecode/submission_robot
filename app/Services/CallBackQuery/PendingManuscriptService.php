@@ -70,7 +70,7 @@ class PendingManuscriptService
         }
     }
 
-    public function show(Api $telegram, $botInfo,?Manuscript $manuscript)
+    public function show(Api $telegram, $botInfo,?Manuscript $manuscript): string
     {
         //机器人的审核数
         $review_num = $botInfo->review_num;
