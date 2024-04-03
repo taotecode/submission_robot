@@ -42,6 +42,7 @@ class CallBackQueryService
         $chatId = $chat->id;
         $messageId = $updateData->getMessage()->messageId;
         $callbackQuery = $updateData->callbackQuery;
+        $callbackQueryId = $callbackQuery->id;
         $message = $updateData->getMessage();
         //执行人
         $from = $callbackQuery->from;
@@ -90,13 +91,16 @@ class CallBackQueryService
                 $this->setSubmissionUserType($telegram, $botInfo, $from, $callbackQuery,$commandArray,$manuscriptId,$manuscript,$chatId,$messageId);
                 break;
             case 'refresh_pending_manuscript_list':
-                $this->refreshPendingManuscriptList($telegram, $botInfo, $chatId, $messageId,$message,$callbackQuery->id);
+                $this->refreshPendingManuscriptList($telegram, $botInfo, $chatId, $messageId,$message,$callbackQueryId);
                 break;
             case 'show_pending_manuscript':
                 $this->showPendingManuscript($telegram, $botInfo, $manuscript);
                 break;
             case 'manuscript_search_show_link':
                 $this->manuscriptSearchShowLink($telegram, $botInfo, $manuscript, $chatId);
+                break;
+            case 'manuscript_search_page':
+                $this->manuscriptSearchPage($telegram, $botInfo, $manuscript, $chatId,$messageId,$callbackQueryId, $commandArray);
                 break;
         }
     }
@@ -188,5 +192,10 @@ class CallBackQueryService
     private function manuscriptSearchShowLink(Api $telegram, $botInfo, ?Manuscript $manuscript, mixed $chatId)
     {
         return (new ManuscriptSearchService())->link($telegram, $botInfo, $manuscript, $chatId);
+    }
+
+    private function manuscriptSearchPage(Api $telegram, $botInfo, ?Manuscript $manuscript, mixed $chatId,$messageId,$callbackQueryId, array $commandArray)
+    {
+        return (new ManuscriptSearchService())->page($telegram, $botInfo, $manuscript, $chatId,$messageId,$callbackQueryId, $commandArray);
     }
 }

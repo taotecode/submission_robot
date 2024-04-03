@@ -76,7 +76,7 @@ class SearchCommand extends Command
 
         if ($manuscript->lastPage() > 1) {
             $inline_keyboard['inline_keyboard'][] = [
-                ['text' => '下一页', 'callback_data' => 'manuscript_search_page:next:'.$manuscript->currentPage()+1],
+                ['text' => '下一页', 'callback_data' => 'manuscript_search_page:next:'.$keyword.':'.$manuscript->currentPage()+1],
             ];
         }
 
