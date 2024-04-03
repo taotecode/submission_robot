@@ -26,10 +26,19 @@ class BotUserController extends AdminController
 
             $grid->column('id')->sortable();
             $grid->column('bot.appellation');
+            $grid->column('type')->display(function () {
+                return admin_trans('bot-user.type')[$this->user_data['type']];
+            })->label();
             $grid->column('userId');
             $grid->column('user_name')->display(function () {
+                if ($this->user_data['type'] != 'private'){
+                    return $this->user_data['title'];
+                }
                 return get_posted_by($this->user_data);
             })->expand(function () {
+                if ($this->user_data['type'] != 'private'){
+                    return "<div style='padding:10px 10px'><p>title: {$this->user_data['title']}</p></div>";
+                }
                 // 返回显示的详情
                 $uid = $this->user_data['id'] ?? '';
                 $first_name = $this->user_data['first_name'] ?? '';
