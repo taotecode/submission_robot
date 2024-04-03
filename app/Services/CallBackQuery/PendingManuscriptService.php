@@ -9,7 +9,7 @@ use Telegram\Bot\Objects\Message;
 
 class PendingManuscriptService
 {
-    public function refresh(Api $telegram, $botInfo,$chatId,$messageId,Message $message)
+    public function refresh(Api $telegram, $botInfo,$chatId,$messageId,Message $message,$callbackQueryId)
     {
         $inline_keyboard=[
             'inline_keyboard' => [
@@ -38,7 +38,17 @@ class PendingManuscriptService
             $messageInlineKeyboard = json_decode($message->replyMarkup,true);
             //检查是否与当前的inline_keyboard一致
             if ($messageInlineKeyboard == $inline_keyboard){
-                Log::info('inline_keyboard is same');
+                try {
+                    $telegram->answerCallbackQuery([
+                        'callback_query_id' => $callbackQueryId,
+                        'text' => '暂无新稿件',
+                        'show_alert' => true,
+                    ]);
+                    return 'ok';
+                } catch (TelegramSDKException $telegramSDKException) {
+                    Log::error($telegramSDKException);
+                    return 'error';
+                }
             }
         }
 

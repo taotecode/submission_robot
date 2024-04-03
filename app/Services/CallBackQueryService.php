@@ -89,7 +89,7 @@ class CallBackQueryService
                 $this->setSubmissionUserType($telegram, $botInfo, $from, $callbackQuery,$commandArray,$manuscriptId,$manuscript,$chatId,$messageId);
                 break;
             case 'refresh_pending_manuscript_list':
-                $this->refreshPendingManuscriptList($telegram, $botInfo, $chatId, $messageId,$message);
+                $this->refreshPendingManuscriptList($telegram, $botInfo, $chatId, $messageId,$message,$callbackQuery->id);
                 break;
         }
     }
@@ -168,8 +168,8 @@ class CallBackQueryService
         return (new SetSubmissionUserTypeService())->setSubmissionUserType($telegram, $botInfo, $from, $callbackQuery, $commandArray,$manuscriptId,$manuscript,$chatId,$messageId);
     }
 
-    private function refreshPendingManuscriptList(Api $telegram, $botInfo, mixed $chatId, mixed $messageId,$message)
+    private function refreshPendingManuscriptList(Api $telegram, $botInfo, mixed $chatId, mixed $messageId,$message,$callbackQueryId)
     {
-        return (new PendingManuscriptService())->refresh($telegram, $botInfo, $chatId, $messageId,$message);
+        return (new PendingManuscriptService())->refresh($telegram, $botInfo, $chatId, $messageId,$message,$callbackQueryId);
     }
 }
