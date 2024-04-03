@@ -3,6 +3,7 @@
 namespace App\Services\CallBackQuery;
 
 use App\Enums\KeyBoardData;
+use App\Enums\ManuscriptStatus;
 use App\Models\Manuscript;
 use App\Services\SendTelegramMessageService;
 use Illuminate\Support\Facades\Log;
@@ -27,7 +28,7 @@ class PendingManuscriptService
             ],
         ];
 
-        $manuscript = (new \App\Models\Manuscript())->where('bot_id', $botInfo->id)->where('status', 0)->get();
+        $manuscript = (new \App\Models\Manuscript())->where('bot_id', $botInfo->id)->where('status', ManuscriptStatus::PENDING)->get();
         if (!$manuscript->isEmpty()){
             foreach ($manuscript as $item){
                 $inline_keyboard['inline_keyboard'][] = [

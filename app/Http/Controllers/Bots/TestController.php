@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Bots;
 
+use App\Enums\ManuscriptStatus;
 use App\Http\Controllers\Controller;
 use App\Models\Bot;
 use App\Services\BaseService;
@@ -95,11 +96,17 @@ class TestController extends Controller
 
     public function webapp()
     {
-        $telegram = new Api(env('TELEGRAM_BOT_TOKEN'));
+        /*$telegram = new Api(env('TELEGRAM_BOT_TOKEN'));
 
         //设置web app
         $response = $telegram->getMe();
-        dd($response);
+        dd($response);*/
+
+        $manuscript = (new \App\Models\Manuscript())
+            ->where('bot_id', 1)
+            ->where('status', ManuscriptStatus::APPROVED)
+            ->paginate(10, ['*'], 'page', $page);
+        dd($manuscript->toArray());
     }
 
     public function webapp_hook()

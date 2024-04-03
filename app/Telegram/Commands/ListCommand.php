@@ -3,6 +3,7 @@
 namespace App\Telegram\Commands;
 
 use App\Enums\KeyBoardData;
+use App\Enums\ManuscriptStatus;
 use App\Models\Bot;
 use Telegram\Bot\Commands\Command;
 
@@ -57,7 +58,7 @@ class ListCommand extends Command
             ],
         ];
 
-        $manuscript = (new \App\Models\Manuscript())->where('bot_id', $botInfo->id)->where('status', 0)->get();
+        $manuscript = (new \App\Models\Manuscript())->where('bot_id', $botInfo->id)->where('status', ManuscriptStatus::PENDING)->get();
         if (!$manuscript->isEmpty()){
             foreach ($manuscript as $item){
                 $inline_keyboard['inline_keyboard'][] = [
