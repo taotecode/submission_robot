@@ -9,6 +9,7 @@ use App\Models\Manuscript;
 use App\Models\SubmissionUser;
 use Illuminate\Support\Facades\Log;
 use Telegram\Bot\Api;
+use Telegram\Bot\Exceptions\TelegramSDKException;
 use Telegram\Bot\Objects\User;
 
 class SetSubmissionUserTypeService
@@ -32,12 +33,16 @@ class SetSubmissionUserTypeService
         }
 
         if (empty($commandArray[2])|| empty($commandArray[3])) {
-            $telegram->answerCallbackQuery([
-                'callback_query_id' => $callbackQuery->id,
-                'text' => "参数错误！",
-                'show_alert' => true,
-            ]);
-            return 'ok';
+            try {
+                $telegram->answerCallbackQuery([
+                    'callback_query_id' => $callbackQuery->id,
+                    'text' => "参数错误！",
+                    'show_alert' => true,
+                ]);return 'ok';
+            } catch (TelegramSDKException $telegramSDKException) {
+                Log::error($telegramSDKException);
+                return 'error';
+            }
         }
 
         if (! in_array($commandArray[2], SubmissionUserType::getKey())) {
@@ -45,12 +50,17 @@ class SetSubmissionUserTypeService
                 'commandArray'=>$commandArray,
                 'key'=>SubmissionUserType::getKey(),
             ]);
-            $telegram->answerCallbackQuery([
-                'callback_query_id' => $callbackQuery->id,
-                'text' => "参数不存在！",
-                'show_alert' => true,
-            ]);
-            return 'ok';
+            try {
+                $telegram->answerCallbackQuery([
+                    'callback_query_id' => $callbackQuery->id,
+                    'text' => "参数不存在！",
+                    'show_alert' => true,
+                ]);
+                return 'ok';
+            } catch (TelegramSDKException $telegramSDKException) {
+                Log::error($telegramSDKException);
+                return 'error';
+            }
         }
 
         $submissionUser=(new SubmissionUser())->where(['userId'=>$commandArray[3],'bot_id'=>$botInfo->id])->first();
@@ -88,24 +98,30 @@ class SetSubmissionUserTypeService
             ];
         }
 
-        $telegram->editMessageReplyMarkup([
-            'chat_id' => $chatId,
-            'message_id' => $messageId,
-            'reply_markup' => json_encode($inline_keyboard),
-        ]);
+//        $telegram->editMessageReplyMarkup([
+//            'chat_id' => $chatId,
+//            'message_id' => $messageId,
+//        ]);
 
-        $telegram->editMessageText([
-            'chat_id' => $chatId,
-            'message_id' => $messageId,
-            'text' => $text,
-            'parse_mode' => 'HTML',
-        ]);
+        try {
+            $telegram->editMessageText([
+                'chat_id' => $chatId,
+                'message_id' => $messageId,
+                'text' => $text,
+                'parse_mode' => 'HTML',
+                'reply_markup' => json_encode($inline_keyboard),
+            ]);
 
-        $telegram->answerCallbackQuery([
-            'callback_query_id' => $callbackQuery->id,
-            'text' => "设置成功！",
-            'show_alert' => true,
-        ]);
-        return 'ok';
+            $telegram->answerCallbackQuery([
+                'callback_query_id' => $callbackQuery->id,
+                'text' => "设置成功！",
+                'show_alert' => true,
+            ]);
+
+            return 'ok';
+        } catch (TelegramSDKException $telegramSDKException) {
+            Log::error($telegramSDKException);
+            return 'error';
+        }
     }
 }
