@@ -30,7 +30,7 @@ class SetSubmissionUserTypeService
             return 'ok';
         }
 
-        if (empty($commandArray[1])|| empty($commandArray[2])) {
+        if (empty($commandArray[2])|| empty($commandArray[3])) {
             $telegram->answerCallbackQuery([
                 'callback_query_id' => $callbackQuery->id,
                 'text' => "参数错误！",
@@ -39,7 +39,7 @@ class SetSubmissionUserTypeService
             return 'ok';
         }
 
-        if (! in_array($commandArray[1], SubmissionUserType::getKey())) {
+        if (! in_array($commandArray[2], SubmissionUserType::getKey())) {
             Log::info('参数不存在！',[
                 'commandArray'=>$commandArray,
                 'key'=>SubmissionUserType::getKey(),
@@ -52,8 +52,8 @@ class SetSubmissionUserTypeService
             return 'ok';
         }
 
-        $submissionUser=(new SubmissionUser())->where(['userId'=>$commandArray[2],'bot_id'=>$botInfo->id])->first();
-        $submissionUser->type=$commandArray[1];
+        $submissionUser=(new SubmissionUser())->where(['userId'=>$commandArray[3],'bot_id'=>$botInfo->id])->first();
+        $submissionUser->type=$commandArray[2];
         $submissionUser->save();
 
         $telegram->answerCallbackQuery([
