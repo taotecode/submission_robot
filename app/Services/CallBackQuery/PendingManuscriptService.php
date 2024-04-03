@@ -38,6 +38,7 @@ class PendingManuscriptService
                 'message_id' => $messageId,
                 'reply_markup' => json_encode($inline_keyboard),
             ]);
+            return 'ok';
         } catch (TelegramSDKException $telegramSDKException) {
             Log::error($telegramSDKException);
             return 'error';
