@@ -32,7 +32,7 @@ class SetSubmissionUserTypeService
             return 'ok';
         }
 
-        if (empty($commandArray[2])|| empty($commandArray[3])) {
+        if (!isset($commandArray[2]) || empty($commandArray[3])) {
             Log::info('参数错误！',[
                 'commandArray'=>$commandArray,
             ]);
