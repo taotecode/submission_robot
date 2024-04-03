@@ -114,7 +114,6 @@ class TestController extends Controller
         });
 
         $pageInlineKeyboardNum = count($inline_keyboard['inline_keyboard'])+1;
-        dump($pageInlineKeyboardNum);
 
         if ($manuscript->currentPage() > 1) {
             $inline_keyboard['inline_keyboard'][$pageInlineKeyboardNum][] = [

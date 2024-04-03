@@ -81,6 +81,8 @@ class ManuscriptSearchService
             ];
         }
 
+        $inline_keyboard['inline_keyboard']=array_values($inline_keyboard['inline_keyboard']);
+
         try {
             $telegram->editMessageReplyMarkup([
                 'chat_id' => $chatId,
