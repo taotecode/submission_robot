@@ -11,7 +11,7 @@ use Telegram\Bot\Exceptions\TelegramSDKException;
 class ManuscriptSearchService
 {
 
-    public function link(Api $telegram, $botInfo,?Manuscript $manuscript,$chatId)
+    public function link(Api $telegram, $botInfo,?Manuscript $manuscript,$chatId): string
     {
         $url="https://t.me/".$botInfo->channel->name."/".$manuscript->message_id;
 
@@ -30,7 +30,7 @@ class ManuscriptSearchService
         }
     }
 
-    public function page(Api $telegram, $botInfo, ?Manuscript $manuscript, mixed $chatId,$messageId,$callbackQueryId, array $commandArray)
+    public function page(Api $telegram, $botInfo, ?Manuscript $manuscript, mixed $chatId,$messageId,$callbackQueryId, array $commandArray): string
     {
         $keyword = $commandArray[2]??'';
         $page = $commandArray[3]??1;
@@ -43,8 +43,8 @@ class ManuscriptSearchService
         $manuscript = (new Manuscript())
             ->where('bot_id', $botInfo->id)
             ->where('status', ManuscriptStatus::APPROVED)
-            ->where('text', 'like', '%'.$keyword.'%')
-            ->where('data', 'like', '%'.$keyword.'%')
+//            ->where('text', 'like', '%'.$keyword.'%')
+//            ->where('data', 'like', '%'.$keyword.'%')
             ->orderBy('id', 'desc')
             ->paginate(10, ['*'], 'page', $page);
 
