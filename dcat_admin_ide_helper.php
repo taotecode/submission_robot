@@ -7,7 +7,6 @@
  *
  * @author jqh <841324345@qq.com>
  */
-
 namespace Dcat\Admin {
     use Illuminate\Support\Collection;
 
@@ -39,13 +38,20 @@ namespace Dcat\Admin {
      * @property Grid\Column|Collection remember_token
      * @property Grid\Column|Collection userId
      * @property Grid\Column|Collection role
+     * @property Grid\Column|Collection bot_id
+     * @property Grid\Column|Collection user_data
      * @property Grid\Column|Collection appellation
      * @property Grid\Column|Collection token
      * @property Grid\Column|Collection tail_content
+     * @property Grid\Column|Collection tail_content_button
      * @property Grid\Column|Collection review_num
      * @property Grid\Column|Collection status
      * @property Grid\Column|Collection webhook_status
-     * @property Grid\Column|Collection bot_ids
+     * @property Grid\Column|Collection is_auto_keyword
+     * @property Grid\Column|Collection keyword
+     * @property Grid\Column|Collection lexicon
+     * @property Grid\Column|Collection submission_timeout
+     * @property Grid\Column|Collection channel_id
      * @property Grid\Column|Collection group
      * @property Grid\Column|Collection uuid
      * @property Grid\Column|Collection connection
@@ -53,8 +59,10 @@ namespace Dcat\Admin {
      * @property Grid\Column|Collection payload
      * @property Grid\Column|Collection exception
      * @property Grid\Column|Collection failed_at
+     * @property Grid\Column|Collection message_id
      * @property Grid\Column|Collection text
      * @property Grid\Column|Collection posted_by
+     * @property Grid\Column|Collection posted_by_id
      * @property Grid\Column|Collection is_anonymous
      * @property Grid\Column|Collection data
      * @property Grid\Column|Collection appendix
@@ -62,7 +70,6 @@ namespace Dcat\Admin {
      * @property Grid\Column|Collection reject
      * @property Grid\Column|Collection one_approved
      * @property Grid\Column|Collection one_reject
-     * @property Grid\Column|Collection email
      * @property Grid\Column|Collection tokenable_type
      * @property Grid\Column|Collection tokenable_id
      * @property Grid\Column|Collection abilities
@@ -70,8 +77,8 @@ namespace Dcat\Admin {
      * @property Grid\Column|Collection expires_at
      * @property Grid\Column|Collection review_group_id
      * @property Grid\Column|Collection auditor_id
-     * @property Grid\Column|Collection bot_id
      * @property Grid\Column|Collection group_id
+     * @property Grid\Column|Collection email
      * @property Grid\Column|Collection email_verified_at
      *
      * @method Grid\Column|Collection id(string $label = null)
@@ -101,13 +108,20 @@ namespace Dcat\Admin {
      * @method Grid\Column|Collection remember_token(string $label = null)
      * @method Grid\Column|Collection userId(string $label = null)
      * @method Grid\Column|Collection role(string $label = null)
+     * @method Grid\Column|Collection bot_id(string $label = null)
+     * @method Grid\Column|Collection user_data(string $label = null)
      * @method Grid\Column|Collection appellation(string $label = null)
      * @method Grid\Column|Collection token(string $label = null)
      * @method Grid\Column|Collection tail_content(string $label = null)
+     * @method Grid\Column|Collection tail_content_button(string $label = null)
      * @method Grid\Column|Collection review_num(string $label = null)
      * @method Grid\Column|Collection status(string $label = null)
      * @method Grid\Column|Collection webhook_status(string $label = null)
-     * @method Grid\Column|Collection bot_ids(string $label = null)
+     * @method Grid\Column|Collection is_auto_keyword(string $label = null)
+     * @method Grid\Column|Collection keyword(string $label = null)
+     * @method Grid\Column|Collection lexicon(string $label = null)
+     * @method Grid\Column|Collection submission_timeout(string $label = null)
+     * @method Grid\Column|Collection channel_id(string $label = null)
      * @method Grid\Column|Collection group(string $label = null)
      * @method Grid\Column|Collection uuid(string $label = null)
      * @method Grid\Column|Collection connection(string $label = null)
@@ -115,8 +129,10 @@ namespace Dcat\Admin {
      * @method Grid\Column|Collection payload(string $label = null)
      * @method Grid\Column|Collection exception(string $label = null)
      * @method Grid\Column|Collection failed_at(string $label = null)
+     * @method Grid\Column|Collection message_id(string $label = null)
      * @method Grid\Column|Collection text(string $label = null)
      * @method Grid\Column|Collection posted_by(string $label = null)
+     * @method Grid\Column|Collection posted_by_id(string $label = null)
      * @method Grid\Column|Collection is_anonymous(string $label = null)
      * @method Grid\Column|Collection data(string $label = null)
      * @method Grid\Column|Collection appendix(string $label = null)
@@ -124,7 +140,6 @@ namespace Dcat\Admin {
      * @method Grid\Column|Collection reject(string $label = null)
      * @method Grid\Column|Collection one_approved(string $label = null)
      * @method Grid\Column|Collection one_reject(string $label = null)
-     * @method Grid\Column|Collection email(string $label = null)
      * @method Grid\Column|Collection tokenable_type(string $label = null)
      * @method Grid\Column|Collection tokenable_id(string $label = null)
      * @method Grid\Column|Collection abilities(string $label = null)
@@ -132,17 +147,13 @@ namespace Dcat\Admin {
      * @method Grid\Column|Collection expires_at(string $label = null)
      * @method Grid\Column|Collection review_group_id(string $label = null)
      * @method Grid\Column|Collection auditor_id(string $label = null)
-     * @method Grid\Column|Collection bot_id(string $label = null)
      * @method Grid\Column|Collection group_id(string $label = null)
+     * @method Grid\Column|Collection email(string $label = null)
      * @method Grid\Column|Collection email_verified_at(string $label = null)
      */
-    class Grid
-    {
-    }
+    class Grid {}
 
-    class MiniGrid extends Grid
-    {
-    }
+    class MiniGrid extends Grid {}
 
     /**
      * @property Show\Field|Collection id
@@ -172,13 +183,20 @@ namespace Dcat\Admin {
      * @property Show\Field|Collection remember_token
      * @property Show\Field|Collection userId
      * @property Show\Field|Collection role
+     * @property Show\Field|Collection bot_id
+     * @property Show\Field|Collection user_data
      * @property Show\Field|Collection appellation
      * @property Show\Field|Collection token
      * @property Show\Field|Collection tail_content
+     * @property Show\Field|Collection tail_content_button
      * @property Show\Field|Collection review_num
      * @property Show\Field|Collection status
      * @property Show\Field|Collection webhook_status
-     * @property Show\Field|Collection bot_ids
+     * @property Show\Field|Collection is_auto_keyword
+     * @property Show\Field|Collection keyword
+     * @property Show\Field|Collection lexicon
+     * @property Show\Field|Collection submission_timeout
+     * @property Show\Field|Collection channel_id
      * @property Show\Field|Collection group
      * @property Show\Field|Collection uuid
      * @property Show\Field|Collection connection
@@ -186,8 +204,10 @@ namespace Dcat\Admin {
      * @property Show\Field|Collection payload
      * @property Show\Field|Collection exception
      * @property Show\Field|Collection failed_at
+     * @property Show\Field|Collection message_id
      * @property Show\Field|Collection text
      * @property Show\Field|Collection posted_by
+     * @property Show\Field|Collection posted_by_id
      * @property Show\Field|Collection is_anonymous
      * @property Show\Field|Collection data
      * @property Show\Field|Collection appendix
@@ -195,7 +215,6 @@ namespace Dcat\Admin {
      * @property Show\Field|Collection reject
      * @property Show\Field|Collection one_approved
      * @property Show\Field|Collection one_reject
-     * @property Show\Field|Collection email
      * @property Show\Field|Collection tokenable_type
      * @property Show\Field|Collection tokenable_id
      * @property Show\Field|Collection abilities
@@ -203,8 +222,8 @@ namespace Dcat\Admin {
      * @property Show\Field|Collection expires_at
      * @property Show\Field|Collection review_group_id
      * @property Show\Field|Collection auditor_id
-     * @property Show\Field|Collection bot_id
      * @property Show\Field|Collection group_id
+     * @property Show\Field|Collection email
      * @property Show\Field|Collection email_verified_at
      *
      * @method Show\Field|Collection id(string $label = null)
@@ -234,13 +253,20 @@ namespace Dcat\Admin {
      * @method Show\Field|Collection remember_token(string $label = null)
      * @method Show\Field|Collection userId(string $label = null)
      * @method Show\Field|Collection role(string $label = null)
+     * @method Show\Field|Collection bot_id(string $label = null)
+     * @method Show\Field|Collection user_data(string $label = null)
      * @method Show\Field|Collection appellation(string $label = null)
      * @method Show\Field|Collection token(string $label = null)
      * @method Show\Field|Collection tail_content(string $label = null)
+     * @method Show\Field|Collection tail_content_button(string $label = null)
      * @method Show\Field|Collection review_num(string $label = null)
      * @method Show\Field|Collection status(string $label = null)
      * @method Show\Field|Collection webhook_status(string $label = null)
-     * @method Show\Field|Collection bot_ids(string $label = null)
+     * @method Show\Field|Collection is_auto_keyword(string $label = null)
+     * @method Show\Field|Collection keyword(string $label = null)
+     * @method Show\Field|Collection lexicon(string $label = null)
+     * @method Show\Field|Collection submission_timeout(string $label = null)
+     * @method Show\Field|Collection channel_id(string $label = null)
      * @method Show\Field|Collection group(string $label = null)
      * @method Show\Field|Collection uuid(string $label = null)
      * @method Show\Field|Collection connection(string $label = null)
@@ -248,8 +274,10 @@ namespace Dcat\Admin {
      * @method Show\Field|Collection payload(string $label = null)
      * @method Show\Field|Collection exception(string $label = null)
      * @method Show\Field|Collection failed_at(string $label = null)
+     * @method Show\Field|Collection message_id(string $label = null)
      * @method Show\Field|Collection text(string $label = null)
      * @method Show\Field|Collection posted_by(string $label = null)
+     * @method Show\Field|Collection posted_by_id(string $label = null)
      * @method Show\Field|Collection is_anonymous(string $label = null)
      * @method Show\Field|Collection data(string $label = null)
      * @method Show\Field|Collection appendix(string $label = null)
@@ -257,7 +285,6 @@ namespace Dcat\Admin {
      * @method Show\Field|Collection reject(string $label = null)
      * @method Show\Field|Collection one_approved(string $label = null)
      * @method Show\Field|Collection one_reject(string $label = null)
-     * @method Show\Field|Collection email(string $label = null)
      * @method Show\Field|Collection tokenable_type(string $label = null)
      * @method Show\Field|Collection tokenable_id(string $label = null)
      * @method Show\Field|Collection abilities(string $label = null)
@@ -265,34 +292,34 @@ namespace Dcat\Admin {
      * @method Show\Field|Collection expires_at(string $label = null)
      * @method Show\Field|Collection review_group_id(string $label = null)
      * @method Show\Field|Collection auditor_id(string $label = null)
-     * @method Show\Field|Collection bot_id(string $label = null)
      * @method Show\Field|Collection group_id(string $label = null)
+     * @method Show\Field|Collection email(string $label = null)
      * @method Show\Field|Collection email_verified_at(string $label = null)
      */
-    class Show
-    {
-    }
+    class Show {}
 
-    class Form
-    {
-    }
+    /**
+     
+     */
+    class Form {}
 
 }
 
 namespace Dcat\Admin\Grid {
+    /**
+     
+     */
+    class Column {}
 
-    class Column
-    {
-    }
-
-    class Filter
-    {
-    }
+    /**
+     
+     */
+    class Filter {}
 }
 
 namespace Dcat\Admin\Show {
-
-    class Field
-    {
-    }
+    /**
+     
+     */
+    class Field {}
 }

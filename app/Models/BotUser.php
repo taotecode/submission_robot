@@ -9,7 +9,7 @@ class BotUser extends Model
 {
     use HasDateTimeFormatter;
 
-    protected $table = 'submission_user';
+    protected $table = 'bot_users';
 
     protected $fillable = [
         'bot_id',

@@ -34,4 +34,7 @@ Route::group([
 
     $router->resource('submission_user', 'SubmissionUserController');
 
+    //机器人用户群
+    $router->resource('bot_user', 'BotUserController');
+
 });
