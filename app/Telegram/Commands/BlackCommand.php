@@ -22,7 +22,7 @@ class BlackCommand extends Command
 
     protected string $pattern = '{user_id}';
 
-    public function handle()
+    public function handle(): string
     {
         $chat = $this->getUpdate()->getChat();
         $message = $this->getUpdate()->getMessage();
