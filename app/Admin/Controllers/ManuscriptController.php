@@ -69,7 +69,6 @@ class ManuscriptController extends AdminController
                 if (empty($one_approved)) {
                     return '无';
                 }
-
                 return get_posted_by($one_approved);
             })->expand(function () {
                 // 返回显示的详情
