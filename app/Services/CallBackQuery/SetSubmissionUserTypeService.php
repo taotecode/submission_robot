@@ -7,6 +7,7 @@ use App\Enums\SubmissionUserType;
 use App\Models\Bot;
 use App\Models\Manuscript;
 use App\Models\SubmissionUser;
+use Illuminate\Support\Facades\Log;
 use Telegram\Bot\Objects\User;
 
 class SetSubmissionUserTypeService
@@ -39,6 +40,10 @@ class SetSubmissionUserTypeService
         }
 
         if (! in_array($commandArray[1], SubmissionUserType::getKey())) {
+            Log::info('参数不存在！',[
+                'commandArray'=>$commandArray,
+                'key'=>SubmissionUserType::getKey(),
+            ]);
             $telegram->answerCallbackQuery([
                 'callback_query_id' => $callbackQuery->id,
                 'text' => "参数不存在！",
