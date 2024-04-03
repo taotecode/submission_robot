@@ -50,7 +50,7 @@ class ListCommand extends Command
             'inline_keyboard' => [
                 [
                     [
-                        'text' => '刷新',
+                        'text' => '刷新 🔄',
                         'callback_data' => 'refresh_pending_manuscript_list',
                     ],
                 ],
@@ -62,7 +62,7 @@ class ListCommand extends Command
             foreach ($manuscript as $item){
                 $inline_keyboard['inline_keyboard'][] = [
                     [
-                        'text' => $item->text,
+                        'text' => "【".$item->text."】",
                         'callback_data' => 'show_pending_manuscript:'.$item->id,
                     ],
                 ];

@@ -9,6 +9,7 @@ use App\Models\Manuscript;
 use App\Models\ReviewGroupAuditor;
 use App\Services\CallBackQuery\ApprovedAndRejectedSubmissionService;
 use App\Services\CallBackQuery\DeleteSubmissionMessageService;
+use App\Services\CallBackQuery\PendingManuscriptService;
 use App\Services\CallBackQuery\PrivateMessageService;
 use App\Services\CallBackQuery\QuickSubmissionService;
 use App\Services\CallBackQuery\SetSubmissionUserTypeService;
@@ -86,6 +87,9 @@ class CallBackQueryService
             case 'set_submission_user_type':
                 $this->setSubmissionUserType($telegram, $botInfo, $from, $callbackQuery,$commandArray,$manuscriptId,$manuscript,$chatId,$messageId);
                 break;
+            case 'refresh_pending_manuscript_list':
+                $this->refreshPendingManuscriptList($telegram, $botInfo, $chatId, $from, $messageId, $callbackQuery);
+                break;
         }
     }
 
@@ -161,5 +165,10 @@ class CallBackQueryService
     private function setSubmissionUserType(Api $telegram, $botInfo, User $from, ?CallbackQuery $callbackQuery,array $commandArray,$manuscriptId,$manuscript,$chatId,$messageId)
     {
         return (new SetSubmissionUserTypeService())->setSubmissionUserType($telegram, $botInfo, $from, $callbackQuery, $commandArray,$manuscriptId,$manuscript,$chatId,$messageId);
+    }
+
+    private function refreshPendingManuscriptList(Api $telegram, $botInfo, mixed $chatId, mixed $messageId)
+    {
+        return (new PendingManuscriptService())->refresh($telegram, $botInfo, $chatId, $messageId);
     }
 }

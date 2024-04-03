@@ -82,7 +82,6 @@ class DeleteSubmissionMessageService
             return 'ok';
         } catch (TelegramSDKException $telegramSDKException) {
             Log::error($telegramSDKException);
-
             return 'error';
         }
     }
