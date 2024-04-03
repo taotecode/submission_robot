@@ -2,6 +2,7 @@
 
 namespace App\Services\CallBackQuery;
 
+use App\Enums\KeyBoardData;
 use App\Models\Manuscript;
 use App\Services\SendTelegramMessageService;
 use Illuminate\Support\Facades\Log;
@@ -71,7 +72,48 @@ class PendingManuscriptService
 
     public function show(Api $telegram, $botInfo,?Manuscript $manuscript)
     {
+        //机器人的审核数
+        $review_num = $botInfo->review_num;
+        //稿件ID
+        $manuscriptId = $manuscript->id;
+        //通过人员名单
+        $approved = $manuscript->approved;
+        //通过人员数量
+        $approvedNum = count($approved);
+        //拒绝人员名单
+        $reject = $manuscript->reject;
+        //拒绝人员数量
+        $rejectNum = count($reject);
+
+        $inline_keyboard=null;
+
+        if ($approvedNum>=$review_num || $rejectNum>=$review_num){
+            if ($approvedNum>=$review_num) {
+                $inline_keyboard=KeyBoardData::REVIEW_GROUP_APPROVED;
+                $inline_keyboard['inline_keyboard'][0][0]['callback_data'] .= ":".$manuscript->id;
+                $inline_keyboard['inline_keyboard'][0][1]['url'] .= $botInfo->channel->name."/".$manuscript->message_id;
+                $inline_keyboard['inline_keyboard'][1][0]['callback_data'] .= ':'.$manuscript->id;
+            }elseif ($rejectNum>=$review_num){
+                $inline_keyboard=KeyBoardData::REVIEW_GROUP_REJECT;
+                $inline_keyboard['inline_keyboard'][0][0]['callback_data'] .= ":".$manuscript->id;
+            }
+        }else{
+            $inline_keyboard = KeyBoardData::REVIEW_GROUP;
+
+            $inline_keyboard['inline_keyboard'][0][0]['text'] .= "($approvedNum/$review_num)";
+            $inline_keyboard['inline_keyboard'][0][0]['callback_data'] .= ":$manuscriptId";
+
+            $inline_keyboard['inline_keyboard'][0][1]['text'] .= "($rejectNum/$review_num)";
+            $inline_keyboard['inline_keyboard'][0][1]['callback_data'] .= ":$manuscriptId";
+
+            $inline_keyboard['inline_keyboard'][0][2]['callback_data'] .= ":$manuscriptId";
+
+            $inline_keyboard['inline_keyboard'][1][0]['callback_data'] .= ":$manuscriptId";
+            $inline_keyboard['inline_keyboard'][1][1]['callback_data'] .= ":$manuscriptId";
+        }
+
         // 发送消息到审核群组
-        return $this->sendGroupMessage($telegram, $botInfo, $manuscript->data, $manuscript->type, $manuscript->id);
+        $this->sendGroupMessage($telegram, $botInfo, $manuscript->data, $manuscript->type, $manuscript->id,$inline_keyboard);
+        return 'ok';
     }
 }

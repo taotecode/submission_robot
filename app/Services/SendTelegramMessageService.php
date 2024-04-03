@@ -24,9 +24,10 @@ trait SendTelegramMessageService
      * @param $message
      * @param $objectType
      * @param $manuscriptId
+     * @param null $inline_keyboard
      * @return mixed
      */
-    public function sendGroupMessage(Api $telegram, $botInfo, $message, $objectType, $manuscriptId): mixed
+    public function sendGroupMessage(Api $telegram, $botInfo, $message, $objectType, $manuscriptId,$inline_keyboard=null): mixed
     {
         if (!empty($botInfo->review_group->name)) {
             $chatId = '@' . $botInfo->review_group->name;
@@ -36,18 +37,20 @@ trait SendTelegramMessageService
 
         $review_num = $botInfo->review_num;
 
-        $inline_keyboard = KeyBoardData::REVIEW_GROUP;
+        if ($inline_keyboard===null){
+            $inline_keyboard = KeyBoardData::REVIEW_GROUP;
 
-        $inline_keyboard['inline_keyboard'][0][0]['text'] .= "(0/$review_num)";
-        $inline_keyboard['inline_keyboard'][0][0]['callback_data'] .= ":$manuscriptId";
+            $inline_keyboard['inline_keyboard'][0][0]['text'] .= "(0/$review_num)";
+            $inline_keyboard['inline_keyboard'][0][0]['callback_data'] .= ":$manuscriptId";
 
-        $inline_keyboard['inline_keyboard'][0][1]['text'] .= "(0/$review_num)";
-        $inline_keyboard['inline_keyboard'][0][1]['callback_data'] .= ":$manuscriptId";
+            $inline_keyboard['inline_keyboard'][0][1]['text'] .= "(0/$review_num)";
+            $inline_keyboard['inline_keyboard'][0][1]['callback_data'] .= ":$manuscriptId";
 
-        $inline_keyboard['inline_keyboard'][0][2]['callback_data'] .= ":$manuscriptId";
+            $inline_keyboard['inline_keyboard'][0][2]['callback_data'] .= ":$manuscriptId";
 
-        $inline_keyboard['inline_keyboard'][1][0]['callback_data'] .= ":$manuscriptId";
-        $inline_keyboard['inline_keyboard'][1][1]['callback_data'] .= ":$manuscriptId";
+            $inline_keyboard['inline_keyboard'][1][0]['callback_data'] .= ":$manuscriptId";
+            $inline_keyboard['inline_keyboard'][1][1]['callback_data'] .= ":$manuscriptId";
+        }
 
         return $this->objectTypeHandle($telegram, $botInfo, $chatId, $objectType, $message, $inline_keyboard, true, true);
     }
