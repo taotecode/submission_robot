@@ -15,7 +15,7 @@ return new class extends Migration
     {
         if (Schema::hasTable('bot_users')) {
             Schema::table('bot_users', function (Blueprint $table) {
-                $table->string('user_id',100)->nullable()->comment('用户id')->change();
+                $table->string('userId',100)->nullable()->comment('用户id')->change();
             });
         }
     }
