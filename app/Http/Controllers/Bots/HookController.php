@@ -36,8 +36,6 @@ class HookController extends Controller
         if (config('app.env') === 'local') {
             Log::info('机器人请求', $request->all());
         }
-
-        Log::info('机器人请求', $request->all());
         //查询机器人信息
         $botInfo = $this->botModel->with('review_group')->find($id);
         if (! $botInfo) {
@@ -60,6 +58,8 @@ class HookController extends Controller
         ]);
 
         $updateData = $telegram->commandsHandler(true);
+
+        Log::info('机器人请求', $updateData->getChat()->toArray());
 
         //存入使用机器人的用户
 //        $this->save_bot_user($botInfo, $updateData->getChat());
