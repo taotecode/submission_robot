@@ -17,7 +17,7 @@ class BotUserController extends AdminController
      */
     protected function grid()
     {
-        return Grid::make(new BotUser(), function (Grid $grid) {
+        return Grid::make(new BotUser('bot'), function (Grid $grid) {
 
             // 禁用
             $grid->disableCreateButton();
@@ -25,15 +25,28 @@ class BotUserController extends AdminController
             $grid->model()->orderBy('id', 'desc');
 
             $grid->column('id')->sortable();
-            $grid->column('bot_id');
+            $grid->column('bot.appellation');
             $grid->column('userId');
-            $grid->column('user_data');
+            $grid->column('user_name')->display(function () {
+                return get_posted_by($this->user_data);
+            });
             $grid->column('created_at');
             $grid->column('updated_at')->sortable();
 
-            $grid->filter(function (Grid\Filter $filter) {
-                $filter->equal('id');
+            $grid->actions(function (Grid\Displayers\Actions $actions) {
+                $actions->disableEdit();
+                $actions->disableQuickEdit();
+            });
 
+            $grid->filter(function (Grid\Filter $filter) {
+                $filter->panel();
+                $filter->equal('id');
+                $filter->equal('bot_id')->select(function () {
+                    return \App\Models\Bot::all()->pluck('appellation', 'id');
+                });
+                $filter->equal('userId');
+                $filter->like('user_data','用户名称');
+                $filter->between('created_at')->datetime();
             });
         });
     }
@@ -47,11 +60,13 @@ class BotUserController extends AdminController
      */
     protected function detail($id)
     {
-        return Show::make($id, new BotUser(), function (Show $show) {
+        return Show::make($id, new BotUser('bot'), function (Show $show) {
             $show->field('id');
-            $show->field('bot_id');
+            $show->field('bot.appellation');
             $show->field('userId');
-            $show->field('user_data');
+            $show->field('user_name')->as(function () {
+                return get_posted_by($this->user_data);
+            });
             $show->field('created_at');
             $show->field('updated_at');
         });

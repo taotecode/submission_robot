@@ -24,6 +24,7 @@ class AdminMenuAddSeeder extends Seeder
             ['id' => 13, 'parent_id' => 2, 'order' => 13, 'title' => '配置表', 'icon' => 'fa-bullhorn', 'uri' => '/config', 'extension' => '', 'show' => 1, 'created_at' => '2023-08-30 06:28:08', 'updated_at' => '2023-08-30 06:28:08'],
             ['id' => 14, 'parent_id' => 0, 'order' => 14, 'title' => '稿件管理', 'icon' => 'fa-newspaper-o', 'uri' => '/manuscript', 'extension' => '', 'show' => 1, 'created_at' => '2023-08-30 06:28:08', 'updated_at' => '2023-08-30 06:28:08'],
             ['id' => 15, 'parent_id' => 0, 'order' => 15, 'title' => '投稿人管理', 'icon' => 'fa-user', 'uri' => '/submission_user', 'extension' => '', 'show' => 1, 'created_at' => '2023-08-30 06:28:08', 'updated_at' => '2023-08-30 06:28:08'],
+            ['id' => 16, 'parent_id' => 0, 'order' => 16, 'title' => '机器人用户群', 'icon' => 'fa-users', 'uri' => '/bot_user', 'extension' => '', 'show' => 1, 'created_at' => '2023-08-30 06:28:08', 'updated_at' => '2023-08-30 06:28:08'],
         ];
         foreach ($data as $item) {
             DB::table('admin_menu')->updateOrInsert(['id' => $item['id']], $item);

@@ -6,8 +6,12 @@ return [
     ],
     'fields' => [
         'bot_id' => '所属机器人',
+        'bot'=>[
+            'appellation' => '所属机器人',
+        ],
         'userId' => '用户ID',
         'user_data' => '用户信息',
+        'user_name'=> '用户名称',
     ],
     'options' => [
     ],
