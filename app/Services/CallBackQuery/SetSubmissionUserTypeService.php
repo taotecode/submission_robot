@@ -33,6 +33,9 @@ class SetSubmissionUserTypeService
         }
 
         if (empty($commandArray[2])|| empty($commandArray[3])) {
+            Log::info('参数错误！',[
+                'commandArray'=>$commandArray,
+            ]);
             try {
                 $telegram->answerCallbackQuery([
                     'callback_query_id' => $callbackQuery->id,
