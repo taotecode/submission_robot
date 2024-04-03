@@ -88,6 +88,7 @@ class CallBackQueryService
                 $this->setSubmissionUserType($telegram, $botInfo, $from, $callbackQuery,$commandArray,$manuscriptId,$manuscript,$chatId,$messageId);
                 break;
             case 'refresh_pending_manuscript_list':
+                Log::info('update data', $updateData->toArray());
                 $this->refreshPendingManuscriptList($telegram, $botInfo, $chatId, $messageId);
                 break;
         }
