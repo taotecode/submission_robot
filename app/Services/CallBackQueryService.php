@@ -41,6 +41,7 @@ class CallBackQueryService
         $chatId = $chat->id;
         $messageId = $updateData->getMessage()->messageId;
         $callbackQuery = $updateData->callbackQuery;
+        $message = $updateData->getMessage();
         //执行人
         $from = $callbackQuery->from;
         $command = $callbackQuery->data;
@@ -88,8 +89,7 @@ class CallBackQueryService
                 $this->setSubmissionUserType($telegram, $botInfo, $from, $callbackQuery,$commandArray,$manuscriptId,$manuscript,$chatId,$messageId);
                 break;
             case 'refresh_pending_manuscript_list':
-                Log::info('update data', $updateData->toArray());
-                $this->refreshPendingManuscriptList($telegram, $botInfo, $chatId, $messageId);
+                $this->refreshPendingManuscriptList($telegram, $botInfo, $chatId, $messageId,$message);
                 break;
         }
     }
@@ -168,8 +168,8 @@ class CallBackQueryService
         return (new SetSubmissionUserTypeService())->setSubmissionUserType($telegram, $botInfo, $from, $callbackQuery, $commandArray,$manuscriptId,$manuscript,$chatId,$messageId);
     }
 
-    private function refreshPendingManuscriptList(Api $telegram, $botInfo, mixed $chatId, mixed $messageId)
+    private function refreshPendingManuscriptList(Api $telegram, $botInfo, mixed $chatId, mixed $messageId,$message)
     {
-        return (new PendingManuscriptService())->refresh($telegram, $botInfo, $chatId, $messageId);
+        return (new PendingManuscriptService())->refresh($telegram, $botInfo, $chatId, $messageId,$message);
     }
 }

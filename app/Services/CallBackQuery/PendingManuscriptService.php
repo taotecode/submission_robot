@@ -5,10 +5,11 @@ namespace App\Services\CallBackQuery;
 use Illuminate\Support\Facades\Log;
 use Telegram\Bot\Api;
 use Telegram\Bot\Exceptions\TelegramSDKException;
+use Telegram\Bot\Objects\Message;
 
 class PendingManuscriptService
 {
-    public function refresh(Api $telegram, $botInfo,$chatId,$messageId)
+    public function refresh(Api $telegram, $botInfo,$chatId,$messageId,Message $message)
     {
         $inline_keyboard=[
             'inline_keyboard' => [
@@ -32,6 +33,15 @@ class PendingManuscriptService
                 ];
             }
         }
+
+        if ($message->replyMarkup){
+            $messageInlineKeyboard = json_decode($message->replyMarkup,true);
+            //检查是否与当前的inline_keyboard一致
+            if ($messageInlineKeyboard == $inline_keyboard){
+                Log::info('inline_keyboard is same');
+            }
+        }
+
         try {
             $telegram->editMessageReplyMarkup([
                 'chat_id' => $chatId,
