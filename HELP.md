@@ -26,6 +26,10 @@
 
 ![image](https://github.com/taotecode/submission_robot/blob/master/docs/images/black.jpg)
 
+- `/s` 检索投稿（需要携带关键词，如：`/s 关键词`）
+
+![image](https://github.com/taotecode/submission_robot/blob/master/docs/images/s.jpg)
+
 ***
 
 ## 后台使用

@@ -43,8 +43,8 @@ class ManuscriptSearchService
         $manuscript = (new Manuscript())
             ->where('bot_id', $botInfo->id)
             ->where('status', ManuscriptStatus::APPROVED)
-//            ->where('text', 'like', '%'.$keyword.'%')
-//            ->where('data', 'like', '%'.$keyword.'%')
+            ->where('text', 'like', '%'.$keyword.'%')
+            ->where('data', 'like', '%'.$keyword.'%')
             ->orderBy('id', 'desc')
             ->paginate(10, ['*'], 'page', $page);
 
