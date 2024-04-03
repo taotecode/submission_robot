@@ -81,7 +81,7 @@ class SearchCommand extends Command
         }
 
         $this->replyWithMessage([
-            'text' => "<b>检索结果：</b>",
+            'text' => "<b>检索结果：【 $keyword 】</b>",
             'parse_mode' => 'HTML',
             'reply_markup'=>json_encode($inline_keyboard),
             'reply_to_message_id' => $message->id,
