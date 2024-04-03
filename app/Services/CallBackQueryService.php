@@ -88,7 +88,7 @@ class CallBackQueryService
                 $this->setSubmissionUserType($telegram, $botInfo, $from, $callbackQuery,$commandArray,$manuscriptId,$manuscript,$chatId,$messageId);
                 break;
             case 'refresh_pending_manuscript_list':
-                $this->refreshPendingManuscriptList($telegram, $botInfo, $chatId, $from, $messageId, $callbackQuery);
+                $this->refreshPendingManuscriptList($telegram, $botInfo, $chatId, $messageId);
                 break;
         }
     }
