@@ -91,6 +91,9 @@ class CallBackQueryService
             case 'refresh_pending_manuscript_list':
                 $this->refreshPendingManuscriptList($telegram, $botInfo, $chatId, $messageId,$message,$callbackQuery->id);
                 break;
+            case 'show_pending_manuscript':
+                $this->showPendingManuscript($telegram, $botInfo, $manuscript);
+                break;
         }
     }
 
@@ -171,5 +174,10 @@ class CallBackQueryService
     private function refreshPendingManuscriptList(Api $telegram, $botInfo, mixed $chatId, mixed $messageId,$message,$callbackQueryId)
     {
         return (new PendingManuscriptService())->refresh($telegram, $botInfo, $chatId, $messageId,$message,$callbackQueryId);
+    }
+
+    private function showPendingManuscript(Api $telegram, $botInfo, ?Manuscript $manuscript)
+    {
+        return (new PendingManuscriptService())->show($telegram, $botInfo, $manuscript);
     }
 }

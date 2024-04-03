@@ -2,6 +2,8 @@
 
 namespace App\Services\CallBackQuery;
 
+use App\Models\Manuscript;
+use App\Services\SendTelegramMessageService;
 use Illuminate\Support\Facades\Log;
 use Telegram\Bot\Api;
 use Telegram\Bot\Exceptions\TelegramSDKException;
@@ -9,6 +11,8 @@ use Telegram\Bot\Objects\Message;
 
 class PendingManuscriptService
 {
+    use SendTelegramMessageService;
+
     public function refresh(Api $telegram, $botInfo,$chatId,$messageId,Message $message,$callbackQueryId)
     {
         $inline_keyboard=[
@@ -63,5 +67,11 @@ class PendingManuscriptService
             Log::error($telegramSDKException);
             return 'error';
         }
+    }
+
+    public function show(Api $telegram, $botInfo,?Manuscript $manuscript)
+    {
+        // 发送消息到审核群组
+        return $this->sendGroupMessage($telegram, $botInfo, $manuscript->data, $manuscript->type, $manuscript->id);
     }
 }
