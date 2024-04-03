@@ -101,11 +101,6 @@ class SetSubmissionUserTypeService
             ];
         }
 
-//        $telegram->editMessageReplyMarkup([
-//            'chat_id' => $chatId,
-//            'message_id' => $messageId,
-//        ]);
-
         try {
             $telegram->editMessageText([
                 'chat_id' => $chatId,
