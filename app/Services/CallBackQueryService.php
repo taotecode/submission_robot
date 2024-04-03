@@ -9,6 +9,7 @@ use App\Models\Manuscript;
 use App\Models\ReviewGroupAuditor;
 use App\Services\CallBackQuery\ApprovedAndRejectedSubmissionService;
 use App\Services\CallBackQuery\DeleteSubmissionMessageService;
+use App\Services\CallBackQuery\ManuscriptSearchService;
 use App\Services\CallBackQuery\PendingManuscriptService;
 use App\Services\CallBackQuery\PrivateMessageService;
 use App\Services\CallBackQuery\QuickSubmissionService;
@@ -93,6 +94,9 @@ class CallBackQueryService
                 break;
             case 'show_pending_manuscript':
                 $this->showPendingManuscript($telegram, $botInfo, $manuscript);
+                break;
+            case 'manuscript_search_show_link':
+                $this->manuscriptSearchShowLink($telegram, $botInfo, $manuscript, $chatId);
                 break;
         }
     }
@@ -179,5 +183,10 @@ class CallBackQueryService
     private function showPendingManuscript(Api $telegram, $botInfo, ?Manuscript $manuscript)
     {
         return (new PendingManuscriptService())->show($telegram, $botInfo, $manuscript);
+    }
+
+    private function manuscriptSearchShowLink(Api $telegram, $botInfo, ?Manuscript $manuscript, mixed $chatId)
+    {
+        return (new ManuscriptSearchService())->link($telegram, $botInfo, $manuscript, $chatId);
     }
 }
