@@ -22,4 +22,9 @@ class SubmissionUserType
             self::BLACK => '黑名单',
         ];
     }
+
+    public static function getKey(): array
+    {
+        return array_keys(self::MAP);
+    }
 }

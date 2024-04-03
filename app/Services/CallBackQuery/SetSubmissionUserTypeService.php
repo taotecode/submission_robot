@@ -3,6 +3,7 @@
 namespace App\Services\CallBackQuery;
 
 use App\Enums\AuditorRole;
+use App\Enums\SubmissionUserType;
 use App\Models\Bot;
 use App\Models\Manuscript;
 use App\Models\SubmissionUser;
@@ -37,7 +38,7 @@ class SetSubmissionUserTypeService
             return 'ok';
         }
 
-        if (! in_array($commandArray[1], AuditorRole::ALL_ROLE)) {
+        if (! in_array($commandArray[1], SubmissionUserType::getKey())) {
             $telegram->answerCallbackQuery([
                 'callback_query_id' => $callbackQuery->id,
                 'text' => "参数不存在！",
