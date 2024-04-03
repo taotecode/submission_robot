@@ -12,6 +12,20 @@
 
 - `/get_group_id` 获取当前群组的 ID
 
+### 审核群组中使用
+
+- `/list` 查看未审核的投稿
+
+![image](https://github.com/taotecode/submission_robot/blob/master/docs/images/list.jpg)
+
+- `/who` 查看投稿用户（需要回复投稿的稿件消息）
+
+![image](https://github.com/taotecode/submission_robot/blob/master/docs/images/who.jpg)
+
+- `/black` 拉黑用户（需要携带用户ID，如：`/black 12345678`）
+
+![image](https://github.com/taotecode/submission_robot/blob/master/docs/images/black.jpg)
+
 ***
 
 ## 后台使用
