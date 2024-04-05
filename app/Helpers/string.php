@@ -99,3 +99,10 @@ function get_text_title($string)
     $limitedString = Str::limit($replaced);
     return Str::before($limitedString, PHP_EOL);
 }
+
+function get_file_url($file_id)
+{
+    $telegram = new \Telegram\Bot\Api(config('services.telegram.bot_token'));
+    $file = $telegram->getFile(['file_id' => $file_id]);
+    return 'https://api.telegram.org/file/bot'.config('services.telegram.bot_token').'/'.$file_id;
+}

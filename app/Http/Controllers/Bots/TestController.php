@@ -16,13 +16,16 @@ class TestController extends Controller
     {
         $telegram = new Api(env('TELEGRAM_BOT_TOKEN'));
 
-        $text="稿件消息<a href='https://t.me/123'>123</a>";
+        $file=$telegram->getFile(['file_id'=>'AgACAgEAAxkBAAIB2GYPabtpIuMVtmNIYreBYbEagoq7AALHqzEbvsSARJrVHae73dkSAQADAgADcwADNAQ']);
+        dd($file);
 
-        dd($telegram->sendMessage([
-            'chat_id' => '6247385123',
-            'text' => $text,
-            'parse_mode' => 'HTML',
-        ]));
+//        $text="稿件消息<a href='https://t.me/123'>123</a>";
+//
+//        dd($telegram->sendMessage([
+//            'chat_id' => '6247385123',
+//            'text' => $text,
+//            'parse_mode' => 'HTML',
+//        ]));
     }
 
 
