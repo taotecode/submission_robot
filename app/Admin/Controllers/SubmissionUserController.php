@@ -30,6 +30,9 @@ class SubmissionUserController extends AdminController
             })->label();
             $grid->column('userId')->copyable();
             $grid->column('name')->expand(function () {
+                if (empty($this->userData)) {
+                    return '暂无信息';
+                }
                 if ($this->userData['type'] != 'private'){
                     return "<div style='padding:10px 10px'><p>title: {$this->userData['title']}</p></div>";
                 }
