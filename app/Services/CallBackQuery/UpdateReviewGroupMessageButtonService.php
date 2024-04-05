@@ -108,7 +108,7 @@ trait UpdateReviewGroupMessageButtonService
                 return true;
             } catch (TelegramSDKException $telegramSDKException) {
                 Log::error($telegramSDKException);
-
+                Log::info('$messageId:'.$messageId);
                 Log::info('text:'.$text);
                 return 'error';
             }
