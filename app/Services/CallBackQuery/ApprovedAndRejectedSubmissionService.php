@@ -131,8 +131,8 @@ class ApprovedAndRejectedSubmissionService
 
                 return 'ok';
             } catch (TelegramSDKException $telegramSDKException) {
+                Log::info('text:'.$text);
                 Log::error($telegramSDKException);
-
                 return 'error';
             }
         }
@@ -272,8 +272,8 @@ class ApprovedAndRejectedSubmissionService
 
                 return 'ok';
             } catch (TelegramSDKException $telegramSDKException) {
+                Log::info('text:'.$text);
                 Log::error($telegramSDKException);
-
                 return 'error';
             }
         }
