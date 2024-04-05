@@ -40,6 +40,8 @@ class Manuscript extends Model
         'one_reject' => 'json',
     ];
 
+    const TYPE_TEXT = 'text';
+
     public function bot()
     {
         return $this->belongsTo(Bot::class,'id', 'bot_id');

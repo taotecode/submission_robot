@@ -117,11 +117,16 @@ class ApprovedAndRejectedSubmissionService
                     'chat_id' => $chatId,
                     'message_id' => $messageId,
                     'reply_markup' => json_encode($inline_keyboard_approved),
-                    'text' => $text,
                     'parse_mode' => 'HTML',
                 ];
 
-                $telegram->editMessageText($params);
+                if ($manuscript->type!=Manuscript::TYPE_TEXT){
+                    $params['caption']=$text;
+                    $telegram->editMessageText($params);
+                }else{
+                    $params['text']=$text;
+                    $telegram->editMessageCaption($params);
+                }
 
                 $channelMessageId = $this->sendChannelMessage($telegram, $botInfo, $manuscript);
                 $this->sendPostedByMessage($telegram, $manuscript,$botInfo, ManuscriptStatus::APPROVED);
@@ -131,7 +136,6 @@ class ApprovedAndRejectedSubmissionService
 
                 return 'ok';
             } catch (TelegramSDKException $telegramSDKException) {
-                Log::info('text:'.$text);
                 Log::error($telegramSDKException);
                 return 'error';
             }
@@ -260,20 +264,25 @@ class ApprovedAndRejectedSubmissionService
                 $manuscript->status = ManuscriptStatus::REJECTED;
                 $manuscript->save();
 
-                $telegram->editMessageText([
+                $params=[
                     'chat_id' => $chatId,
                     'message_id' => $messageId,
                     'reply_markup' => json_encode($inline_keyboard_reject),
-                    'text' => $text,
                     'parse_mode' => 'HTML',
-                ]);
+                ];
+
+                if ($manuscript->type!=Manuscript::TYPE_TEXT){
+                    $params['caption']=$text;
+                    $telegram->editMessageCaption($params);
+                }else{
+                    $params['text']=$text;
+                    $telegram->editMessageText($params);
+                }
 
                 $this->sendPostedByMessage($telegram, $manuscript,$botInfo, ManuscriptStatus::REJECTED);
 
                 return 'ok';
             } catch (TelegramSDKException $telegramSDKException) {
-                Log::info('$messageId:'.$messageId);
-                Log::info('text:'.$text);
                 Log::error($telegramSDKException);
                 return 'error';
             }

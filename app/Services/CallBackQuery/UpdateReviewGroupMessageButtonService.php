@@ -59,13 +59,20 @@ trait UpdateReviewGroupMessageButtonService
         if ($approvedNum >= $review_num && !$isDelete) {
             try {
 
-                $telegram->editMessageText([
+                $params = [
                     'chat_id' => $chatId,
                     'message_id' => $messageId,
                     'reply_markup' => json_encode($inline_keyboard_approved),
-                    'text' => $text,
                     'parse_mode' => 'HTML',
-                ]);
+                ];
+
+                if ($manuscript->type!=Manuscript::TYPE_TEXT){
+                    $params['caption']=$text;
+                    $telegram->editMessageText($params);
+                }else{
+                    $params['text']=$text;
+                    $telegram->editMessageCaption($params);
+                }
 
                 if ($manuscript->status != ManuscriptStatus::APPROVED) {
                     $manuscript->status = ManuscriptStatus::APPROVED;
@@ -91,13 +98,20 @@ trait UpdateReviewGroupMessageButtonService
         if ($rejectNum >= $review_num && !$isDelete) {
             try {
 
-                $telegram->editMessageText([
+                $params = [
                     'chat_id' => $chatId,
                     'message_id' => $messageId,
                     'reply_markup' => json_encode($inline_keyboard_reject),
-                    'text' => $text,
                     'parse_mode' => 'HTML',
-                ]);
+                ];
+
+                if ($manuscript->type!=Manuscript::TYPE_TEXT){
+                    $params['caption']=$text;
+                    $telegram->editMessageText($params);
+                }else{
+                    $params['text']=$text;
+                    $telegram->editMessageCaption($params);
+                }
 
                 if ($manuscript->status!=ManuscriptStatus::REJECTED){
                     $manuscript->status = ManuscriptStatus::REJECTED;
