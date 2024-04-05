@@ -45,7 +45,7 @@ class BotUserController extends AdminController
                 $last_name = $this->user_data['last_name'] ?? '';
                 $username = $this->user_data['username'] ?? '';
                 return "<div style='padding:10px 10px'><p>UID: $uid</p><p>first name: $first_name</p><p>last name: $last_name</p><p>用户名: $username</p></div>";
-            });;
+            });
             $grid->column('created_at');
             $grid->column('updated_at')->sortable();
 

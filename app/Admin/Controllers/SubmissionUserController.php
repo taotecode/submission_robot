@@ -29,7 +29,17 @@ class SubmissionUserController extends AdminController
                 return SubmissionUserType::MAP[$type];
             })->label();
             $grid->column('userId')->copyable();
-            $grid->column('name');
+            $grid->column('name')->expand(function () {
+                if ($this->userData['type'] != 'private'){
+                    return "<div style='padding:10px 10px'><p>title: {$this->userData['title']}</p></div>";
+                }
+                // 返回显示的详情
+                $uid = $this->userData['id'] ?? '';
+                $first_name = $this->userData['first_name'] ?? '';
+                $last_name = $this->userData['last_name'] ?? '';
+                $username = $this->userData['username'] ?? '';
+                return "<div style='padding:10px 10px'><p>UID: $uid</p><p>first name: $first_name</p><p>last name: $last_name</p><p>用户名: $username</p></div>";
+            });
             $grid->column('created_at');
             $grid->column('updated_at')->sortable();
 
