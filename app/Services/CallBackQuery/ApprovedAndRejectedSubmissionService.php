@@ -122,10 +122,10 @@ class ApprovedAndRejectedSubmissionService
 
                 if ($manuscript->type!=Manuscript::TYPE_TEXT){
                     $params['caption']=$text;
-                    $telegram->editMessageText($params);
+                    $telegram->editMessageCaption($params);
                 }else{
                     $params['text']=$text;
-                    $telegram->editMessageCaption($params);
+                    $telegram->editMessageText($params);
                 }
 
                 $channelMessageId = $this->sendChannelMessage($telegram, $botInfo, $manuscript);

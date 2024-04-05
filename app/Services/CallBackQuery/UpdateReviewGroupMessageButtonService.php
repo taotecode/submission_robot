@@ -68,10 +68,10 @@ trait UpdateReviewGroupMessageButtonService
 
                 if ($manuscript->type!=Manuscript::TYPE_TEXT){
                     $params['caption']=$text;
-                    $telegram->editMessageText($params);
+                    $telegram->editMessageCaption($params);
                 }else{
                     $params['text']=$text;
-                    $telegram->editMessageCaption($params);
+                    $telegram->editMessageText($params);
                 }
 
                 if ($manuscript->status != ManuscriptStatus::APPROVED) {
@@ -107,10 +107,10 @@ trait UpdateReviewGroupMessageButtonService
 
                 if ($manuscript->type!=Manuscript::TYPE_TEXT){
                     $params['caption']=$text;
-                    $telegram->editMessageText($params);
+                    $telegram->editMessageCaption($params);
                 }else{
                     $params['text']=$text;
-                    $telegram->editMessageCaption($params);
+                    $telegram->editMessageText($params);
                 }
 
                 if ($manuscript->status!=ManuscriptStatus::REJECTED){
