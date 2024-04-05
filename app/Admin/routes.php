@@ -36,5 +36,6 @@ Route::group([
 
     //机器人用户群
     $router->resource('bot_user', 'BotUserController');
+    $router->resource('bot_message', 'BotMessageController');
 
 });

@@ -39,6 +39,8 @@ namespace Dcat\Admin {
      * @property Grid\Column|Collection userId
      * @property Grid\Column|Collection role
      * @property Grid\Column|Collection bot_id
+     * @property Grid\Column|Collection userData
+     * @property Grid\Column|Collection data
      * @property Grid\Column|Collection user_data
      * @property Grid\Column|Collection appellation
      * @property Grid\Column|Collection token
@@ -64,7 +66,6 @@ namespace Dcat\Admin {
      * @property Grid\Column|Collection posted_by
      * @property Grid\Column|Collection posted_by_id
      * @property Grid\Column|Collection is_anonymous
-     * @property Grid\Column|Collection data
      * @property Grid\Column|Collection appendix
      * @property Grid\Column|Collection approved
      * @property Grid\Column|Collection reject
@@ -109,6 +110,8 @@ namespace Dcat\Admin {
      * @method Grid\Column|Collection userId(string $label = null)
      * @method Grid\Column|Collection role(string $label = null)
      * @method Grid\Column|Collection bot_id(string $label = null)
+     * @method Grid\Column|Collection userData(string $label = null)
+     * @method Grid\Column|Collection data(string $label = null)
      * @method Grid\Column|Collection user_data(string $label = null)
      * @method Grid\Column|Collection appellation(string $label = null)
      * @method Grid\Column|Collection token(string $label = null)
@@ -134,7 +137,6 @@ namespace Dcat\Admin {
      * @method Grid\Column|Collection posted_by(string $label = null)
      * @method Grid\Column|Collection posted_by_id(string $label = null)
      * @method Grid\Column|Collection is_anonymous(string $label = null)
-     * @method Grid\Column|Collection data(string $label = null)
      * @method Grid\Column|Collection appendix(string $label = null)
      * @method Grid\Column|Collection approved(string $label = null)
      * @method Grid\Column|Collection reject(string $label = null)
@@ -184,6 +186,8 @@ namespace Dcat\Admin {
      * @property Show\Field|Collection userId
      * @property Show\Field|Collection role
      * @property Show\Field|Collection bot_id
+     * @property Show\Field|Collection userData
+     * @property Show\Field|Collection data
      * @property Show\Field|Collection user_data
      * @property Show\Field|Collection appellation
      * @property Show\Field|Collection token
@@ -209,7 +213,6 @@ namespace Dcat\Admin {
      * @property Show\Field|Collection posted_by
      * @property Show\Field|Collection posted_by_id
      * @property Show\Field|Collection is_anonymous
-     * @property Show\Field|Collection data
      * @property Show\Field|Collection appendix
      * @property Show\Field|Collection approved
      * @property Show\Field|Collection reject
@@ -254,6 +257,8 @@ namespace Dcat\Admin {
      * @method Show\Field|Collection userId(string $label = null)
      * @method Show\Field|Collection role(string $label = null)
      * @method Show\Field|Collection bot_id(string $label = null)
+     * @method Show\Field|Collection userData(string $label = null)
+     * @method Show\Field|Collection data(string $label = null)
      * @method Show\Field|Collection user_data(string $label = null)
      * @method Show\Field|Collection appellation(string $label = null)
      * @method Show\Field|Collection token(string $label = null)
@@ -279,7 +284,6 @@ namespace Dcat\Admin {
      * @method Show\Field|Collection posted_by(string $label = null)
      * @method Show\Field|Collection posted_by_id(string $label = null)
      * @method Show\Field|Collection is_anonymous(string $label = null)
-     * @method Show\Field|Collection data(string $label = null)
      * @method Show\Field|Collection appendix(string $label = null)
      * @method Show\Field|Collection approved(string $label = null)
      * @method Show\Field|Collection reject(string $label = null)
