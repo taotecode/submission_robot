@@ -10,7 +10,7 @@ class BotMessage extends Model
 {
     use HasDateTimeFormatter;
 
-    protected $table = 'bot_users';
+    protected $table = 'bot_messages';
 
     protected $fillable = [
         'bot_id',
