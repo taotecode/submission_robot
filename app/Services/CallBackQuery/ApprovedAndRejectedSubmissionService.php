@@ -10,6 +10,7 @@ use App\Models\Manuscript;
 use App\Services\SendPostedByMessageService;
 use App\Services\SendTelegramMessageService;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 use Telegram\Bot\Api;
 use Telegram\Bot\Exceptions\TelegramSDKException;
 use Telegram\Bot\Objects\CallbackQuery;
@@ -81,6 +82,21 @@ class ApprovedAndRejectedSubmissionService
         }
 
         $text=$manuscript->text;
+
+        $lexiconPath = null;
+        if ($botInfo->is_auto_keyword == 1) {
+            //检查是否有词库
+            if (Storage::exists("public/lexicon_{$botInfo->id}.txt")) {
+                $lexiconPath = storage_path("app/public/lexicon_{$botInfo->id}.txt");
+            }
+        }
+
+        //自动关键词
+        $text .= $this->addKeyWord($botInfo->is_auto_keyword, $botInfo->keyword, $lexiconPath, $text);
+        // 加入匿名
+        $text .= $this->addAnonymous($manuscript);
+        //加入自定义尾部内容
+        $text .= $this->addTailContent($botInfo->tail_content);
 
         $text .= "\r\n ------------------- \r\n";
 
@@ -231,6 +247,21 @@ class ApprovedAndRejectedSubmissionService
         }
 
         $text=$manuscript->text;
+
+        $lexiconPath = null;
+        if ($botInfo->is_auto_keyword == 1) {
+            //检查是否有词库
+            if (Storage::exists("public/lexicon_{$botInfo->id}.txt")) {
+                $lexiconPath = storage_path("app/public/lexicon_{$botInfo->id}.txt");
+            }
+        }
+
+        //自动关键词
+        $text .= $this->addKeyWord($botInfo->is_auto_keyword, $botInfo->keyword, $lexiconPath, $text);
+        // 加入匿名
+        $text .= $this->addAnonymous($manuscript);
+        //加入自定义尾部内容
+        $text .= $this->addTailContent($botInfo->tail_content);
 
         $text .= "\r\n ------------------- \r\n";
 

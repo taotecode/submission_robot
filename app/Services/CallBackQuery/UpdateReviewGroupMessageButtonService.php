@@ -8,6 +8,7 @@ use App\Models\Bot;
 use App\Models\Manuscript;
 use App\Services\SendTelegramMessageService;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 use Telegram\Bot\Api;
 use Telegram\Bot\Exceptions\TelegramSDKException;
 
@@ -30,6 +31,21 @@ trait UpdateReviewGroupMessageButtonService
         $inline_keyboard_delete['inline_keyboard'][0][0]['callback_data'] .= ":".$manuscript->id;
 
         $text=$manuscript->text;
+
+        $lexiconPath = null;
+        if ($botInfo->is_auto_keyword == 1) {
+            //检查是否有词库
+            if (Storage::exists("public/lexicon_{$botInfo->id}.txt")) {
+                $lexiconPath = storage_path("app/public/lexicon_{$botInfo->id}.txt");
+            }
+        }
+
+        //自动关键词
+        $text .= $this->addKeyWord($botInfo->is_auto_keyword, $botInfo->keyword, $lexiconPath, $text);
+        // 加入匿名
+        $text .= $this->addAnonymous($manuscript);
+        //加入自定义尾部内容
+        $text .= $this->addTailContent($botInfo->tail_content);
 
         $text .= "\r\n ------------------- \r\n";
 
@@ -88,8 +104,6 @@ trait UpdateReviewGroupMessageButtonService
                 return true;
             } catch (TelegramSDKException $telegramSDKException) {
                 Log::error($telegramSDKException);
-
-                Log::info('text:'.$text);
                 return 'error';
             }
         }
@@ -122,8 +136,6 @@ trait UpdateReviewGroupMessageButtonService
                 return true;
             } catch (TelegramSDKException $telegramSDKException) {
                 Log::error($telegramSDKException);
-                Log::info('$messageId:'.$messageId);
-                Log::info('text:'.$text);
                 return 'error';
             }
         }
