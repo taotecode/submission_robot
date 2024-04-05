@@ -232,8 +232,8 @@ class ApprovedAndRejectedSubmissionService
 
         $text .= "\r\n审核通过人员：";
 
-        foreach ($manuscript->approved as $approved){
-            $text .= "\r\n".get_posted_by($approved);
+        foreach ($approved as $approved_val){
+            $text .= "\r\n".get_posted_by($approved_val);
         }
 
         if (!empty($manuscript->one_approved)){
@@ -242,8 +242,12 @@ class ApprovedAndRejectedSubmissionService
 
         $text .= "\r\n审核拒绝人员：";
 
-        foreach ($manuscript->reject as $reject){
-            $text .= "\r\n".get_posted_by($reject);
+        foreach ($reject as $reject_val){
+            $text .= "\r\n".get_posted_by($reject_val);
+        }
+
+        if (!empty($manuscript->one_reject)){
+            $text .= "\r\n".get_posted_by($manuscript->one_reject);
         }
 
         $text .= "\r\n审核通过时间：".date('Y-m-d H:i:s',time());
