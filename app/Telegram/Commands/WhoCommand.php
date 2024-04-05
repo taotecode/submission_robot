@@ -112,6 +112,7 @@ class WhoCommand extends Command
             'type' => SubmissionUserType::NORMAL,
             'bot_id'=>$botInfo->id,
             'userId' => $submissionUser['id'],
+            'userData' => $submissionUser,
             'name' => "未知",
         ]);
 

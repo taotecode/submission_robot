@@ -13,13 +13,15 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('bot_users', function (Blueprint $table) {
-            $table->bigIncrements('id');
-            $table->unsignedInteger('bot_id')->nullable()->comment('所属机器人');
-            $table->unsignedInteger('userId')->nullable()->comment('用户ID');
-            $table->json('user_data')->nullable()->comment('用户信息');
-            $table->timestamps();
-        });
+        if (!Schema::hasTable('bot_users')) {
+            Schema::create('bot_users', function (Blueprint $table) {
+                $table->bigIncrements('id');
+                $table->unsignedInteger('bot_id')->nullable()->comment('所属机器人');
+                $table->unsignedInteger('userId')->nullable()->comment('用户ID');
+                $table->json('user_data')->nullable()->comment('用户信息');
+                $table->timestamps();
+            });
+        }
     }
 
     /**

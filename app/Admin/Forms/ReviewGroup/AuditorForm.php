@@ -10,7 +10,9 @@ use Dcat\Admin\Widgets\Form;
 
 class AuditorForm extends Form implements LazyRenderable
 {
-    use LazyWidget; // 使用异步加载功能
+    use LazyWidget;
+
+    // 使用异步加载功能
 
     // 处理请求
     public function handle(array $input)
@@ -23,9 +25,11 @@ class AuditorForm extends Form implements LazyRenderable
         $sqlData = [];
 
         foreach ($id as $key => $auditorId) {
-            if (! in_array($auditorId, $auditor_id)) {
+            // 如果不在提交的审核员中，则删除
+            if (!in_array($auditorId, $auditor_id)) {
                 $model->destroy($key);
             } else {
+                // 如果在提交的审核员中，则从数组中删除
                 if (in_array($auditorId, $auditor_id)) {
                     continue;
                 }
@@ -36,16 +40,17 @@ class AuditorForm extends Form implements LazyRenderable
             }
         }
 
-        if (! empty($id) && empty($sqlData)) {
-            return $this->response()->success('操作成功')->refresh();
-        }
 
-        if (empty($id) && empty($sqlData)) {
-            foreach ($auditor_id as $auditorId) {
-                $sqlData[] = [
-                    'review_group_id' => $review_group_id,
-                    'auditor_id' => $auditorId,
-                ];
+        foreach ($auditor_id as $auditorId) {
+            foreach ($id as $value) {
+                if ($value==$auditorId) {
+                    continue;
+                }else{
+                    $sqlData[] = [
+                        'review_group_id' => $review_group_id,
+                        'auditor_id' => $auditorId,
+                    ];
+                }
             }
         }
 
@@ -75,14 +80,5 @@ class AuditorForm extends Form implements LazyRenderable
 
         $this->hidden('review_group_id')->default($review_group_id);
         $this->hidden('id')->default(json_encode($reviewGroupAuditor));
-    }
-
-    // 返回表单数据，如不需要可以删除此方法
-    public function default()
-    {
-        return [
-            'auditor_id' => '',
-            'id' => '',
-        ];
     }
 }

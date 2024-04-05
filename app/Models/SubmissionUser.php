@@ -15,6 +15,11 @@ class SubmissionUser extends Model
         'bot_id',
         'type',
         'userId',
+        'userData',
         'name',
+    ];
+
+    protected $casts = [
+        'userData' => 'json',
     ];
 }

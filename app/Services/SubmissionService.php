@@ -366,6 +366,7 @@ class SubmissionService
         ], [
             'type' => 0,
             'userId' => $chat->id,
+            'userData' => $chat->toArray(),
             'name' => get_posted_by($chat->toArray()),
         ]);
 
