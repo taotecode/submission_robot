@@ -272,6 +272,7 @@ class ApprovedAndRejectedSubmissionService
 
                 return 'ok';
             } catch (TelegramSDKException $telegramSDKException) {
+                Log::info('$messageId:'.$messageId);
                 Log::info('text:'.$text);
                 Log::error($telegramSDKException);
                 return 'error';
