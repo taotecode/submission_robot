@@ -49,6 +49,10 @@ trait UpdateReviewGroupMessageButtonService
             $text .= "\r\n".get_posted_by($reject);
         }
 
+        if (!empty($manuscript->one_reject)){
+            $text .= "\r\n".get_posted_by($manuscript->one_reject);
+        }
+
         $text .= "\r\n审核通过时间：".date('Y-m-d H:i:s',time());
 
         //如果通过人员数量大于等于审核数，则不再审核
