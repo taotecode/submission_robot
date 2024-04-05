@@ -374,7 +374,7 @@ class SubmissionService
         $sqlData = [
             'bot_id' => $botInfo->id,
             'type' => $objectType,
-            'text' => '',
+            'text' => $messageText,
             'posted_by' => $chat->toArray(),
             'posted_by_id' => $submissionUser->id,
             'is_anonymous' => $is_anonymous,
@@ -391,11 +391,6 @@ class SubmissionService
 
         //白名单用户直接发布
         if ($submissionUser->type == SubmissionUserType::WHITE) {
-            $replaced = Str::replace('\r\n', PHP_EOL, $messageText);
-            $limitedString = Str::limit($replaced);
-            $firstLine = Str::before($limitedString, PHP_EOL);
-
-            $manuscript->text = $firstLine;
             $manuscript->status = 1;
             $channelMessageId = $this->sendChannelMessage($telegram, $botInfo, $manuscript);
             if (!$channelMessageId){
@@ -407,10 +402,10 @@ class SubmissionService
 
             $chatText=get_config('submission.confirm_white_list');
 
-            if (empty($manuscript->text)){
+            if (empty(get_text_title($manuscript->text))){
                 $chatText .= "\r\n\r\n稿件消息直达链接：<a href='https://t.me/" . $botInfo->channel->name . "/" . $manuscript->message_id . "'>点击查看</a>";
             } else {
-                $chatText .= "\r\n\r\n稿件消息直达链接：<a href='https://t.me/" . $botInfo->channel->name . "/" . $manuscript->message_id . "'>" . $manuscript->text . "</a>";
+                $chatText .= "\r\n\r\n稿件消息直达链接：<a href='https://t.me/" . $botInfo->channel->name . "/" . $manuscript->message_id . "'>" . get_text_title($manuscript->text) . "</a>";
             }
 
             $this->sendTelegramMessage($telegram, 'sendMessage', [
@@ -426,12 +421,6 @@ class SubmissionService
         // 发送消息到审核群组
         $text = $this->sendGroupMessage($telegram, $botInfo, $messageCache, $objectType, $manuscript->id);
         //            $text=$this->sendGroupMessage($telegram,$botInfo,$messageCache,$objectType,1);
-        $replaced = Str::replace('\r\n', PHP_EOL, $text);
-        $limitedString = Str::limit($replaced);
-        $firstLine = Str::before($limitedString, PHP_EOL);
-
-        $manuscript->text = $firstLine;
-        $manuscript->save();
 
         Cache::tags($this->cacheTag.'.'.$chatId)->flush();
 

@@ -29,14 +29,38 @@ trait UpdateReviewGroupMessageButtonService
         $inline_keyboard_delete = KeyBoardData::REVIEW_GROUP_DELETE;
         $inline_keyboard_delete['inline_keyboard'][0][0]['callback_data'] .= ":".$manuscript->id;
 
+        $text=$manuscript->text;
+
+        $text .= "\r\n ------------------- \r\n";
+
+        $text .= "\r\n审核通过人员：";
+
+        foreach ($manuscript->approved as $approved){
+            $text .= "\r\n".get_posted_by($approved);
+        }
+
+        if (!empty($manuscript->one_approved)){
+            $text .= "\r\n".get_posted_by($manuscript->one_approved);
+        }
+
+        $text .= "\r\n审核拒绝人员：";
+
+        foreach ($manuscript->reject as $reject){
+            $text .= "\r\n".get_posted_by($reject);
+        }
+
+        $text .= "\r\n审核通过时间：".date('Y-m-d H:i:s',time());
+
         //如果通过人员数量大于等于审核数，则不再审核
         if ($approvedNum >= $review_num && !$isDelete) {
             try {
 
-                $telegram->editMessageReplyMarkup([
+                $telegram->editMessageText([
                     'chat_id' => $chatId,
                     'message_id' => $messageId,
                     'reply_markup' => json_encode($inline_keyboard_approved),
+                    'text' => $text,
+                    'parse_mode' => 'HTML',
                 ]);
 
                 if ($manuscript->status != ManuscriptStatus::APPROVED) {
@@ -61,10 +85,13 @@ trait UpdateReviewGroupMessageButtonService
         //如果拒绝人员数量大于等于审核数，则不再审核
         if ($rejectNum >= $review_num && !$isDelete) {
             try {
-                $telegram->editMessageReplyMarkup([
+
+                $telegram->editMessageText([
                     'chat_id' => $chatId,
                     'message_id' => $messageId,
                     'reply_markup' => json_encode($inline_keyboard_reject),
+                    'text' => $text,
+                    'parse_mode' => 'HTML',
                 ]);
 
                 if ($manuscript->status!=ManuscriptStatus::REJECTED){

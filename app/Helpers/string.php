@@ -2,6 +2,7 @@
 
 use Fukuball\Jieba\Finalseg;
 use Fukuball\Jieba\Jieba;
+use Illuminate\Support\Str;
 
 function get_posted_by($data)
 {
@@ -16,6 +17,14 @@ function get_posted_by($data)
     }
     if (! empty($data['username'])) {
         return $data['username'];
+    }
+
+    if (! empty($data['title'])) {
+        return $data['title'];
+    }
+
+    if (! empty($data['id'])) {
+        return $data['id'];
     }
 
     return '未知';
@@ -81,4 +90,12 @@ function quickCut($text, $lexicon_path)
     }
 
     return Jieba::cut($text);
+}
+
+
+function get_text_title($string)
+{
+    $replaced = Str::replace('\r\n', PHP_EOL, $string);
+    $limitedString = Str::limit($replaced);
+    return Str::before($limitedString, PHP_EOL);
 }
