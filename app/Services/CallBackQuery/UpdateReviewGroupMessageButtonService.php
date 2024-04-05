@@ -82,6 +82,7 @@ trait UpdateReviewGroupMessageButtonService
             } catch (TelegramSDKException $telegramSDKException) {
                 Log::error($telegramSDKException);
 
+                Log::info('text:'.$text);
                 return 'error';
             }
         }
@@ -108,6 +109,7 @@ trait UpdateReviewGroupMessageButtonService
             } catch (TelegramSDKException $telegramSDKException) {
                 Log::error($telegramSDKException);
 
+                Log::info('text:'.$text);
                 return 'error';
             }
         }
