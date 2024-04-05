@@ -123,11 +123,12 @@ trait SendTelegramMessageService
      * @param mixed $botInfo 机器人信息
      * @param string|int|array $chatId 频道id或者频道ID数组或者用户id
      * @param string $objectType 类型
+     * @param $message
      * @param array|null $inline_keyboard 按键
      * @param bool $isReviewGroup 是否是审核群
      * @param bool $isReturnText 是否返回文本
+     * @param bool $isReturnTelegramMessage
      * @param null $manuscript 投稿信息
-     * @param bool $isChannel 是否是频道
      * @return mixed|string
      */
     private function objectTypeHandle(Api $telegram, $botInfo, $chatId, $objectType, $message, ?array $inline_keyboard = null, bool $isReviewGroup = false, bool $isReturnText = false, bool $isReturnTelegramMessage=false, $manuscript = null): mixed
@@ -145,19 +146,11 @@ trait SendTelegramMessageService
             ]);
         }
 
-        $lexiconPath = null;
-        if ($botInfo->is_auto_keyword == 1) {
-            //检查是否有词库
-            if (Storage::exists("public/lexicon_{$botInfo->id}.txt")) {
-                $lexiconPath = storage_path("app/public/lexicon_{$botInfo->id}.txt");
-            }
-        }
-
         switch ($objectType) {
             case 'text':
                 $text = $message['text'] ?? '';
                 //自动关键词
-                $text .= $this->addKeyWord($botInfo->is_auto_keyword, $botInfo->keyword, $lexiconPath, $text);
+                $text .= $this->addKeyWord($botInfo->is_auto_keyword, $botInfo->keyword, $botInfo->id, $text);
                 // 加入匿名
                 $text .= $this->addAnonymous($manuscript);
                 //加入自定义尾部内容
@@ -176,7 +169,7 @@ trait SendTelegramMessageService
                 $file_id = $message['photo'][0]['file_id'];
                 $caption = $message['caption'] ?? '';
                 //自动关键词
-                $caption .= $this->addKeyWord($botInfo->is_auto_keyword, $botInfo->keyword, $lexiconPath, $caption);
+                $caption .= $this->addKeyWord($botInfo->is_auto_keyword, $botInfo->keyword, $botInfo->id, $caption);
                 // 加入匿名
                 $caption .= $this->addAnonymous($manuscript);
                 //加入自定义尾部内容
@@ -200,7 +193,7 @@ trait SendTelegramMessageService
                 $height = $message['video']['height'];
                 $caption = $message['caption'] ?? '';
                 //自动关键词
-                $caption .= $this->addKeyWord($botInfo->is_auto_keyword, $botInfo->keyword, $lexiconPath, $caption);
+                $caption .= $this->addKeyWord($botInfo->is_auto_keyword, $botInfo->keyword, $botInfo->id, $caption);
                 // 加入匿名
                 $caption .= $this->addAnonymous($manuscript);
                 //加入自定义尾部内容
@@ -243,7 +236,7 @@ trait SendTelegramMessageService
                     if (!empty($item['caption'] ?? '')) {
                         $caption = $item['caption'] ?? '';
                         //自动关键词
-                        $caption .= $this->addKeyWord($botInfo->is_auto_keyword, $botInfo->keyword, $lexiconPath, $caption);
+                        $caption .= $this->addKeyWord($botInfo->is_auto_keyword, $botInfo->keyword, $botInfo->id, $caption);
                         // 加入匿名
                         $caption .= $this->addAnonymous($manuscript);
                         //加入自定义尾部内容
@@ -282,7 +275,7 @@ trait SendTelegramMessageService
                 $title = $message['audio']['file_name'];
                 $caption = $message['caption'] ?? '';
                 //自动关键词
-                $caption .= $this->addKeyWord($botInfo->is_auto_keyword, $botInfo->keyword, $lexiconPath, $caption);
+                $caption .= $this->addKeyWord($botInfo->is_auto_keyword, $botInfo->keyword, $botInfo->id, $caption);
                 // 加入匿名
                 $caption .= $this->addAnonymous($manuscript);
                 //加入自定义尾部内容
@@ -317,7 +310,7 @@ trait SendTelegramMessageService
                     }
                     $text = $textMessage['text'];
                     //自动关键词
-                    $text .= $this->addKeyWord($botInfo->is_auto_keyword, $botInfo->keyword, $lexiconPath, $text);
+                    $text .= $this->addKeyWord($botInfo->is_auto_keyword, $botInfo->keyword, $botInfo->id, $text);
                     // 加入匿名
                     $text .= $this->addAnonymous($manuscript);
                     //加入自定义尾部内容
@@ -365,7 +358,7 @@ trait SendTelegramMessageService
                         if (!empty($item['caption'] ?? '')) {
                             $caption = $item['caption'] ?? '';
                             //自动关键词
-                            $caption .= $this->addKeyWord($botInfo->is_auto_keyword, $botInfo->keyword, $lexiconPath, $caption);
+                            $caption .= $this->addKeyWord($botInfo->is_auto_keyword, $botInfo->keyword, $botInfo->id, $caption);
                             // 加入匿名
                             $caption .= $this->addAnonymous($manuscript);
                             //加入自定义尾部内容
@@ -405,7 +398,7 @@ trait SendTelegramMessageService
         }
     }
 
-    private function addKeyWord($is_auto_keyword, $keyword, $lexiconPath, $text): string
+    private function addKeyWord($is_auto_keyword, $keyword, $botId, $text): string
     {
         if (empty($keyword)) {
             return '';
@@ -416,6 +409,12 @@ trait SendTelegramMessageService
             return '';
         }
         if ($is_auto_keyword == 1) {
+            $lexiconPath = null;
+            //检查是否有词库
+            if (Storage::exists("public/lexicon_{$botId}.txt")) {
+                $lexiconPath = storage_path("app/public/lexicon_{$botId}.txt");
+            }
+
             //分词
             $quickCut = quickCut($text, $lexiconPath);
             $keywords = [];
@@ -462,6 +461,34 @@ trait SendTelegramMessageService
         }
 
         return '';
+    }
+
+    public function addReviewEndText($approved,$one_approved,$reject,$one_reject): string
+    {
+        $text = "\r\n ------------------- \r\n";
+        $text .= "审核通过人员：";
+
+        foreach ($approved as $approved_val){
+            $text .= "\r\n <code>".get_posted_by($approved_val)." </code>";
+        }
+
+        if (!empty($one_approved)){
+            $text .= "\r\n <code>".get_posted_by($one_approved)." </code>";
+        }
+
+        $text .= "\r\n审核拒绝人员：";
+
+        foreach ($reject as $reject_val){
+            $text .= "\r\n <code>".get_posted_by($reject_val)." </code>";
+        }
+
+        if (!empty($one_reject)){
+            $text .= "\r\n <code>".get_posted_by($one_reject)." </code>";
+        }
+
+        $text .= "\r\n审核通过时间：".date('Y-m-d H:i:s',time());
+
+        return $text;
     }
 
     public function sendTelegramMessage($telegram, string $method, array $params, bool $isReturnTelegramMessage = false): mixed

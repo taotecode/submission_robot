@@ -92,35 +92,13 @@ class ApprovedAndRejectedSubmissionService
         }
 
         //自动关键词
-        $text .= $this->addKeyWord($botInfo->is_auto_keyword, $botInfo->keyword, $lexiconPath, $text);
+        $text .= $this->addKeyWord($botInfo->is_auto_keyword, $botInfo->keyword, $botInfo->id, $text);
         // 加入匿名
         $text .= $this->addAnonymous($manuscript);
         //加入自定义尾部内容
         $text .= $this->addTailContent($botInfo->tail_content);
 
-        $text .= "\r\n ------------------- \r\n";
-
-        $text .= "\r\n审核通过人员：";
-
-        foreach ($approved as $approved_val){
-            $text .= "\r\n".get_posted_by($approved_val);
-        }
-
-        if (!empty($manuscript->one_approved)){
-            $text .= "\r\n".get_posted_by($manuscript->one_approved);
-        }
-
-        $text .= "\r\n审核拒绝人员：";
-
-        foreach ($reject as $reject_val){
-            $text .= "\r\n".get_posted_by($reject_val);
-        }
-
-        if (!empty($manuscript->one_reject)){
-            $text .= "\r\n".get_posted_by($manuscript->one_reject);
-        }
-
-        $text .= "\r\n审核通过时间：".date('Y-m-d H:i:s',time());
+        $text .= $this->addReviewEndText($approved,$manuscript->one_approved,$reject, $manuscript->one_reject);
 
         // 如果通过人员数量大于等于审核数，则不再审核
         if ($approvedNum >= $review_num) {
@@ -248,44 +226,14 @@ class ApprovedAndRejectedSubmissionService
 
         $text=$manuscript->text;
 
-        $lexiconPath = null;
-        if ($botInfo->is_auto_keyword == 1) {
-            //检查是否有词库
-            if (Storage::exists("public/lexicon_{$botInfo->id}.txt")) {
-                $lexiconPath = storage_path("app/public/lexicon_{$botInfo->id}.txt");
-            }
-        }
-
         //自动关键词
-        $text .= $this->addKeyWord($botInfo->is_auto_keyword, $botInfo->keyword, $lexiconPath, $text);
+        $text .= $this->addKeyWord($botInfo->is_auto_keyword, $botInfo->keyword, $botInfo->id, $text);
         // 加入匿名
         $text .= $this->addAnonymous($manuscript);
         //加入自定义尾部内容
         $text .= $this->addTailContent($botInfo->tail_content);
 
-        $text .= "\r\n ------------------- \r\n";
-
-        $text .= "\r\n审核通过人员：";
-
-        foreach ($approved as $approved_val){
-            $text .= "\r\n".get_posted_by($approved_val);
-        }
-
-        if (!empty($manuscript->one_approved)){
-            $text .= "\r\n".get_posted_by($manuscript->one_approved);
-        }
-
-        $text .= "\r\n审核拒绝人员：";
-
-        foreach ($reject as $reject_val){
-            $text .= "\r\n".get_posted_by($reject_val);
-        }
-
-        if (!empty($manuscript->one_reject)){
-            $text .= "\r\n".get_posted_by($manuscript->one_reject);
-        }
-
-        $text .= "\r\n审核通过时间：".date('Y-m-d H:i:s',time());
+        $text .= $this->addReviewEndText($approved,$manuscript->one_approved,$reject, $manuscript->one_reject);
 
         // 如果拒绝人员数量大于等于审核数，则不再审核
         if ($rejectNum >= $review_num) {
