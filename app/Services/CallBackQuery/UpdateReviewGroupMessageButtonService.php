@@ -23,7 +23,7 @@ trait UpdateReviewGroupMessageButtonService
     {
         $inline_keyboard_approved=KeyBoardData::REVIEW_GROUP_APPROVED;
         $inline_keyboard_approved['inline_keyboard'][0][0]['callback_data'] .= ":".$manuscript->id;
-        $inline_keyboard_approved['inline_keyboard'][0][1]['url'] .= $botInfo->channel->name."/".$manuscript->message_id;
+        $inline_keyboard_approved['inline_keyboard'][0][1]['url'] .= $manuscript->channel->name."/".$manuscript->message_id;
         $inline_keyboard_approved['inline_keyboard'][1][0]['callback_data'] .= ':'.$manuscript->id;
 
         $inline_keyboard_reject=KeyBoardData::REVIEW_GROUP_REJECT;
