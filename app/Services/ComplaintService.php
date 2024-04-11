@@ -393,6 +393,14 @@ class ComplaintService
         $botUser=(new BotUser())->where('user_id',$chatId)->first();
 
         $forward_origin_data=Cache::tags(CacheKey::Complaint . '.' . $chatId)->get('forward_origin');
+        if (empty($forward_origin_data)) {
+            return $this->sendTelegramMessage($telegram, 'sendMessage', [
+                'chat_id' => $chatId,
+                'text' => get_config('complaint.start_empty_forward_origin'),
+                'parse_mode' => 'HTML',
+                'reply_markup' => json_encode(KeyBoardData::Cancel),
+            ]);
+        }
         $channel_data=$forward_origin_data['channel_data'];
         $manuscript_data=$forward_origin_data['manuscript_data'];
 
