@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Enums\CacheKey;
 use App\Enums\KeyBoardData;
 use App\Enums\KeyBoardName;
+use App\Models\Bot;
 use Illuminate\Support\Facades\Cache;
 use Telegram\Bot\Api;
 use Telegram\Bot\Objects\Update;
@@ -14,7 +15,7 @@ class StartService
 
     use SendTelegramMessageService;
 
-    public function index($botInfo, Update $updateData, Api $telegram)
+    public function index(Bot $botInfo, Update $updateData, Api $telegram)
     {
         $chat = $updateData->getChat();
         $chatId = $chat->id;
@@ -24,6 +25,7 @@ class StartService
 
         $submissionService = new SubmissionService();
         $feedbackService = new FeedbackService();
+        $complaintService = new ComplaintService();
 
         //如果用户已经进入投稿状态，直接进入投稿服务
         if (Cache::tags(CacheKey::Submission.'.'.$chatId)->has($chatId)) {
@@ -31,7 +33,7 @@ class StartService
         }
         //如果用户已经进入投诉状态，直接进入投诉服务
         if (Cache::tags(CacheKey::Complaint.'.'.$chatId)->has($chatId)) {
-            return $this->index($botInfo, $updateData, $telegram);
+            return $complaintService->index($botInfo, $updateData, $telegram);
         }
         //如果用户已经进入建议状态，直接进入建议服务
         if (Cache::tags(CacheKey::Suggestion.'.'.$chatId)->has($chatId)) {
@@ -42,6 +44,7 @@ class StartService
             'text' => match ($message->text) {
                 KeyBoardName::StartSubmission => $submissionService->start($telegram, $botInfo, $chatId, $chat, get_config('submission.start')),
                 KeyBoardName::Feedback => $feedbackService->feedback($telegram, $chatId),
+                KeyBoardName::SubmitComplaint => $complaintService->start($telegram, $chatId, $chat),
                 KeyBoardName::HelpCenter => $this->help($telegram, $chatId),
                 default => $this->error_for_text($telegram, $chatId, $messageId),
             },

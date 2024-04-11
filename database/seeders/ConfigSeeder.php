@@ -189,17 +189,36 @@ class ConfigSeeder extends Seeder
             ],
             [
                 'id' => 20,
-                'group' => 'feedback',
-                'name' => 'start_complaint',
+                'group' => 'complaint',
+                'name' => 'start',
                 'value' => "请向这里转发您想要投诉的频道消息\r\n请注意，您必须转发您要投诉的频道消息过来，其他方式无效。",
                 'description' => '开始投诉提示语',
                 'created_at' => '2023-09-17 08:48:16',
                 'updated_at' => '2023-09-17 08:48:41',
             ],
+
+            [
+                'id' => 21,
+                'group' => 'complaint',
+                'name' => 'start_text_tips',
+                'value' => "已记录到草稿中。\r\n您可以继续发送新的内容来替换上一次的内容。\r\n当您觉得投诉内容合适时，点击下方的 “结束发送”。\r\n投诉草稿有效期为1天",
+                'description' => '开始投诉输入内容的提示语',
+                'created_at' => '2023-09-17 08:43:16',
+                'updated_at' => '2023-09-17 08:43:48',
+            ],
+            [
+                'id' => 22,
+                'group' => 'complaint',
+                'name' => 'start_update_text_tips',
+                'value' => "已更新当前投诉内容。\r\n您可以继续发送新的内容来替换上一次的内容。\r\n当您觉得投诉内容合适时，点击下方的 “结束发送”。\r\n投诉草稿有效期为1天",
+                'description' => '开始投诉更新输入内容的提示语',
+                'created_at' => '2023-09-17 08:45:06',
+                'updated_at' => '2023-09-17 08:45:30',
+            ],
         ];
         //        DB::table('config')->insert($data);
         foreach ($data as $item) {
-            (new Config())->firstOrCreate(['id' => $item['id']], $item);
+            (new Config())->updateOrCreate(['id' => $item['id']], $item);
         }
     }
 }
