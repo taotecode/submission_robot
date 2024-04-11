@@ -189,12 +189,16 @@ trait SendTelegramMessageService
             $inline_keyboard = json_encode($inline_keyboard);
         }
 
-        $tail_content_button = $botInfo->tail_content_button;
-        if (!empty($tail_content_button) && !$isReviewGroup) {
-            $inline_keyboard = json_encode([
-                'inline_keyboard' => $tail_content_button,
-            ]);
+        if ($is_addTailContent){
+            //自定义尾部按钮
+            $tail_content_button = $botInfo->tail_content_button;
+            if (!empty($tail_content_button) && !$isReviewGroup) {
+                $inline_keyboard = json_encode([
+                    'inline_keyboard' => $tail_content_button,
+                ]);
+            }
         }
+
 
         $text = '';
         $textStr = '';
@@ -366,6 +370,8 @@ trait SendTelegramMessageService
         if (!empty($custom_tail_content)) {
             $text .= $custom_tail_content;
         }
+
+        Log::info('text: ' . $text);
         if ($objectType === 'media_group_audio') {
             $this->sendTelegramMessage($telegram, 'sendMessage', [
                 'chat_id' => $chatId,
