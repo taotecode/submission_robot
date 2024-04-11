@@ -326,7 +326,8 @@ class ComplaintService
 
         $custom_header_content = get_config('complaint.custom_header_content');
         $custom_tail_content = get_config('complaint.custom_tail_content');
-        $url='https://t.me/'.$channel_data->name.'/'.$manuscript_data->message_id??'';
+//        $url='https://t.me/'.$channel_data->name.'/'.$manuscript_data->message_id??'';
+        $url='https://t.me/'.$channel_data->name.'/';
         //替换$custom_tail_content中的{url}变量
         $custom_tail_content=str_replace('{url}',$url,$custom_tail_content);
 
