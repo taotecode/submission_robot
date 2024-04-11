@@ -101,6 +101,9 @@ class TestController extends Controller
         $bot=Bot::find(1);
 //        Cache::put('test', [
 //            'bot'=>$bot,
+//            'asd'=>[
+//                123
+//            ]
 //        ], 60*60*24*7);
 
 
