@@ -19,6 +19,7 @@ class Manuscript extends Model
         'type',
         'text',
         'posted_by',
+        'posted_by_id',
         'is_anonymous',
         'data',
         'appendix',
