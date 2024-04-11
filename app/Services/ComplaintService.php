@@ -193,7 +193,7 @@ class ComplaintService
         $manuscript=(new Manuscript())->where([
             'bot_id'=>$botInfo->id,
             'channel_id'=>$channel->id,
-            'message_id'=>$message['forward_origin']['message_id'],
+            'message_id'=>$message->forwardFromMessageId
         ])->first();
         if (!empty($manuscript)) {
             return $this->sendTelegramMessage($telegram, 'sendMessage', [
