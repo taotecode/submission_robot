@@ -17,7 +17,9 @@ trait UpdateReviewGroupMessageButtonService
 
     use SendTelegramMessageService;
 
-    public function update_review_group_message_button(Api $telegram,Bot $botInfo,$chatId,$messageId,Manuscript $manuscript,$review_num,$approvedNum,$rejectNum,$isDelete=false)
+    public function update_review_group_message_button(
+        Api $telegram,Bot $botInfo,$chatId,$messageId,Manuscript $manuscript,
+        $review_approved_num,$review_reject_num,$approvedNum,$rejectNum,$isDelete=false)
     {
         $inline_keyboard_approved=KeyBoardData::REVIEW_GROUP_APPROVED;
         $inline_keyboard_approved['inline_keyboard'][0][0]['callback_data'] .= ":".$manuscript->id;
@@ -42,7 +44,7 @@ trait UpdateReviewGroupMessageButtonService
         $text .= $this->addReviewEndText($manuscript->approved,$manuscript->one_approved,$manuscript->reject, $manuscript->one_reject);
 
         //如果通过人员数量大于等于审核数，则不再审核
-        if ($approvedNum >= $review_num && !$isDelete) {
+        if ($approvedNum >= $review_approved_num && !$isDelete) {
             try {
 
                 $params = [
@@ -79,7 +81,7 @@ trait UpdateReviewGroupMessageButtonService
         }
 
         //如果拒绝人员数量大于等于审核数，则不再审核
-        if ($rejectNum >= $review_num && !$isDelete) {
+        if ($rejectNum >= $review_reject_num && !$isDelete) {
             try {
 
                 $params = [

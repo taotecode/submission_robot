@@ -30,7 +30,8 @@ class ApprovedAndRejectedSubmissionService
         $reviewGroup = $botInfo->review_group;
 
         //机器人的审核数
-        $review_num = $botInfo->review_num;
+        $review_approved_num = $botInfo->review_approved_num;
+        $review_reject_num = $botInfo->review_reject_num;
         //稿件ID
         $manuscriptId = $manuscript->id;
         //通过人员名单
@@ -58,7 +59,7 @@ class ApprovedAndRejectedSubmissionService
             return 'ok';
         }
 
-        if ($this->update_review_group_message_button($telegram, $botInfo, $chatId, $messageId, $manuscript, $review_num, $approvedNum, $rejectNum) === true) {
+        if ($this->update_review_group_message_button($telegram, $botInfo, $chatId, $messageId, $manuscript, $review_approved_num,$review_reject_num, $approvedNum, $rejectNum) === true) {
             return 'ok';
         }
 
@@ -101,7 +102,7 @@ class ApprovedAndRejectedSubmissionService
         $text .= $this->addReviewEndText($approved,$manuscript->one_approved,$reject, $manuscript->one_reject);
 
         // 如果通过人员数量大于等于审核数，则不再审核
-        if ($approvedNum >= $review_num) {
+        if ($approvedNum >= $review_approved_num) {
             try {
                 $manuscript->approved = $approved;
                 $manuscript->reject = $reject;
@@ -137,10 +138,10 @@ class ApprovedAndRejectedSubmissionService
 
         $inline_keyboard = KeyBoardData::REVIEW_GROUP;
 
-        $inline_keyboard['inline_keyboard'][0][0]['text'] .= "($approvedNum/$review_num)";
+        $inline_keyboard['inline_keyboard'][0][0]['text'] .= "($approvedNum/$review_approved_num)";
         $inline_keyboard['inline_keyboard'][0][0]['callback_data'] .= ":$manuscriptId";
 
-        $inline_keyboard['inline_keyboard'][0][1]['text'] .= "($rejectNum/$review_num)";
+        $inline_keyboard['inline_keyboard'][0][1]['text'] .= "($rejectNum/$review_reject_num)";
         $inline_keyboard['inline_keyboard'][0][1]['callback_data'] .= ":$manuscriptId";
 
         $inline_keyboard['inline_keyboard'][0][2]['callback_data'] .= ":$manuscriptId";
@@ -175,7 +176,8 @@ class ApprovedAndRejectedSubmissionService
         $reviewGroup = $botInfo->review_group;
 
         //机器人的审核数
-        $review_num = $botInfo->review_num;
+        $review_approved_num = $botInfo->review_approved_num;
+        $review_reject_num = $botInfo->review_reject_num;
         //稿件ID
         $manuscriptId = $manuscript->id;
         //通过人员名单
@@ -201,7 +203,7 @@ class ApprovedAndRejectedSubmissionService
             return 'ok';
         }
 
-        if ($this->update_review_group_message_button($telegram, $botInfo, $chatId, $messageId, $manuscript, $review_num, $approvedNum, $rejectNum) === true) {
+        if ($this->update_review_group_message_button($telegram, $botInfo, $chatId, $messageId, $manuscript, $review_approved_num,$review_reject_num, $approvedNum, $rejectNum) === true) {
             return 'ok';
         }
 
@@ -236,7 +238,7 @@ class ApprovedAndRejectedSubmissionService
         $text .= $this->addReviewEndText($approved,$manuscript->one_approved,$reject, $manuscript->one_reject);
 
         // 如果拒绝人员数量大于等于审核数，则不再审核
-        if ($rejectNum >= $review_num) {
+        if ($rejectNum >= $review_reject_num) {
             try {
                 $manuscript->approved = $approved;
                 $manuscript->reject = $reject;
@@ -269,10 +271,10 @@ class ApprovedAndRejectedSubmissionService
 
         $inline_keyboard = KeyBoardData::REVIEW_GROUP;
 
-        $inline_keyboard['inline_keyboard'][0][0]['text'] .= "($approvedNum/$review_num)";
+        $inline_keyboard['inline_keyboard'][0][0]['text'] .= "($approvedNum/$review_approved_num)";
         $inline_keyboard['inline_keyboard'][0][0]['callback_data'] .= ":$manuscriptId";
 
-        $inline_keyboard['inline_keyboard'][0][1]['text'] .= "($rejectNum/$review_num)";
+        $inline_keyboard['inline_keyboard'][0][1]['text'] .= "($rejectNum/$review_reject_num)";
         $inline_keyboard['inline_keyboard'][0][1]['callback_data'] .= ":$manuscriptId";
 
         $inline_keyboard['inline_keyboard'][0][2]['callback_data'] .= ":$manuscriptId";

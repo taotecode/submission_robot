@@ -35,15 +35,16 @@ trait SendTelegramMessageService
             $chatId = $botInfo->review_group->group_id;
         }
 
-        $review_num = $botInfo->review_num;
+        $review_approved_num = $botInfo->review_approved_num;
+        $review_reject_num = $botInfo->review_reject_num;
 
         if ($inline_keyboard===null){
             $inline_keyboard = KeyBoardData::REVIEW_GROUP;
 
-            $inline_keyboard['inline_keyboard'][0][0]['text'] .= "(0/$review_num)";
+            $inline_keyboard['inline_keyboard'][0][0]['text'] .= "(0/$review_approved_num)";
             $inline_keyboard['inline_keyboard'][0][0]['callback_data'] .= ":$manuscriptId";
 
-            $inline_keyboard['inline_keyboard'][0][1]['text'] .= "(0/$review_num)";
+            $inline_keyboard['inline_keyboard'][0][1]['text'] .= "(0/$review_reject_num)";
             $inline_keyboard['inline_keyboard'][0][1]['callback_data'] .= ":$manuscriptId";
 
             $inline_keyboard['inline_keyboard'][0][2]['callback_data'] .= ":$manuscriptId";

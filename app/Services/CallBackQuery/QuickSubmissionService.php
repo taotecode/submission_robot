@@ -22,7 +22,8 @@ class QuickSubmissionService
         $reviewGroup = $botInfo->review_group;
 
         //机器人的审核数
-        $review_num = $botInfo->review_num;
+        $review_approved_num = $botInfo->review_approved_num;
+        $review_reject_num = $botInfo->review_reject_num;
         //通过人员名单
         $approved = $manuscript->approved;
         //通过人员数量
@@ -51,7 +52,7 @@ class QuickSubmissionService
             return 'ok';
         }
 
-        if ($this->update_review_group_message_button($telegram, $botInfo, $chatId, $messageId, $manuscript, $review_num, $approvedNum, $rejectNum) === true) {
+        if ($this->update_review_group_message_button($telegram, $botInfo, $chatId, $messageId, $manuscript, $review_approved_num,$review_reject_num, $approvedNum, $rejectNum) === true) {
             return 'ok';
         }
 
