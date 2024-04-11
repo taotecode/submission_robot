@@ -233,6 +233,7 @@ class ComplaintService
         $isEmpty=false;
 
         $forward_origin_data=Cache::tags(CacheKey::Complaint . '.' . $chatId)->get('forward_origin');
+        Log::info('forward_origin_data'.json_encode($forward_origin_data));
         if (empty($forward_origin_data)) {
             return $this->sendTelegramMessage($telegram, 'sendMessage', [
                 'chat_id' => $chatId,
