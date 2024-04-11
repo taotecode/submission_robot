@@ -2,9 +2,12 @@
 
 namespace App\Services;
 
+use App\Enums\CacheKey;
 use App\Enums\KeyBoardData;
+use App\Models\Bot;
 use App\Models\Channel;
 use App\Models\Manuscript;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Telegram\Bot\Api;
@@ -12,9 +15,17 @@ use Telegram\Bot\Exceptions\TelegramSDKException;
 
 trait SendTelegramMessageService
 {
-    public function sendPreviewMessage(Api $telegram, $botInfo, string $chatId, array $message, string $objectType): mixed
+    public function sendPreviewMessage(
+        Api         $telegram, $botInfo, string $chatId, array $message, string $objectType,
+        bool        $is_addKeyWord = true, bool $is_addAnonymous = true, bool $is_addTailContent = true,
+        string|null $custom_header_content = null, string|null $custom_tail_content = null
+    ): mixed
     {
-        return $this->objectTypeHandle($telegram, $botInfo, $chatId, $objectType, $message);
+        return $this->objectTypeHandle(
+            $telegram, $botInfo, $chatId, $objectType, $message, null, false, true,
+            false, null, $is_addKeyWord, $is_addAnonymous, $is_addTailContent,
+            $custom_header_content, $custom_tail_content
+        );
     }
 
     /**
@@ -27,7 +38,12 @@ trait SendTelegramMessageService
      * @param null $inline_keyboard
      * @return mixed
      */
-    public function sendGroupMessage(Api $telegram, $botInfo, $message, $objectType, $manuscriptId,$inline_keyboard=null): mixed
+    public function sendGroupMessage(
+        Api $telegram, $botInfo, $message, $objectType, $manuscriptId,
+            $inline_keyboard = null, $inline_keyboard_enums = null,
+        bool        $is_addKeyWord = true, bool $is_addAnonymous = true, bool $is_addTailContent = true,
+        string|null $custom_header_content = null, string|null $custom_tail_content = null
+    ): mixed
     {
         if (!empty($botInfo->review_group->name)) {
             $chatId = '@' . $botInfo->review_group->name;
@@ -38,8 +54,12 @@ trait SendTelegramMessageService
         $review_approved_num = $botInfo->review_approved_num;
         $review_reject_num = $botInfo->review_reject_num;
 
-        if ($inline_keyboard===null){
-            $inline_keyboard = KeyBoardData::REVIEW_GROUP;
+        if ($inline_keyboard === null) {
+            if (empty($inline_keyboard_enums)) {
+                $inline_keyboard = KeyBoardData::REVIEW_GROUP;
+            } else {
+                $inline_keyboard = $inline_keyboard_enums;
+            }
 
             $inline_keyboard['inline_keyboard'][0][0]['text'] .= "(0/$review_approved_num)";
             $inline_keyboard['inline_keyboard'][0][0]['callback_data'] .= ":$manuscriptId";
@@ -53,10 +73,22 @@ trait SendTelegramMessageService
             $inline_keyboard['inline_keyboard'][1][1]['callback_data'] .= ":$manuscriptId";
         }
 
-        return $this->objectTypeHandle($telegram, $botInfo, $chatId, $objectType, $message, $inline_keyboard, true, true);
+        return $this->objectTypeHandle(
+            $telegram, $botInfo, $chatId, $objectType, $message, $inline_keyboard, true, true,
+            false, null, $is_addKeyWord, $is_addAnonymous, $is_addTailContent,
+            $custom_header_content, $custom_tail_content
+        );
     }
 
-    public function sendGroupMessageWhiteUser(Api $telegram, $botInfo, $manuscript,$channel)
+    /**
+     * 发送审核群消息
+     * @param Api $telegram
+     * @param $botInfo
+     * @param $manuscript
+     * @param $channel
+     * @return mixed
+     */
+    public function sendGroupMessageWhiteUser(Api $telegram, $botInfo, $manuscript, $channel): mixed
     {
         if (!empty($botInfo->review_group->name)) {
             $chatId = '@' . $botInfo->review_group->name;
@@ -70,11 +102,11 @@ trait SendTelegramMessageService
 
         $username = get_posted_by($manuscript->posted_by);
 
-        $text="白名单用户<b>【 {$username} 】</b>的投稿";
-        if (empty($manuscript->text)){
+        $text = "白名单用户<b>【 {$username} 】</b>的投稿";
+        if (empty($manuscript->text)) {
             $text .= "已自动通过审核。";
         } else {
-            $text .= "<a href='https://t.me/" . $channel->name . "/" . $manuscript->message_id . "'>“ ".get_text_title($manuscript->text)." ”</a> 已自动通过审核。";
+            $text .= "<a href='https://t.me/" . $channel->name . "/" . $manuscript->message_id . "'>“ " . get_text_title($manuscript->text) . " ”</a> 已自动通过审核。";
         }
 
         return $this->sendTelegramMessage($telegram, 'sendMessage', [
@@ -85,6 +117,13 @@ trait SendTelegramMessageService
         ]);
     }
 
+    /**
+     * 发送频道消息
+     * @param Api $telegram
+     * @param $botInfo
+     * @param Manuscript $manuscript
+     * @return mixed
+     */
     public function sendChannelMessage(Api $telegram, $botInfo, Manuscript $manuscript): mixed
     {
 
@@ -95,7 +134,7 @@ trait SendTelegramMessageService
         //频道ID
         if (!empty($manuscript->channel->name)) {
             $chatId = '@' . $botInfo->channel->name;
-        }else{
+        } else {
             $this->sendTelegramMessage($telegram, 'sendMessage', [
                 'chat_id' => $manuscript->posted_by,
                 'text' => '频道ID不存在，请联系管理员',
@@ -122,7 +161,7 @@ trait SendTelegramMessageService
      *
      * @param Api $telegram telegram 实例
      * @param mixed $botInfo 机器人信息
-     * @param string|int|array $chatId 频道id或者频道ID数组或者用户id
+     * @param array|int|string $chatId 频道id或者频道ID数组或者用户id
      * @param string $objectType 类型
      * @param $message
      * @param array|null $inline_keyboard 按键
@@ -130,9 +169,19 @@ trait SendTelegramMessageService
      * @param bool $isReturnText 是否返回文本
      * @param bool $isReturnTelegramMessage
      * @param null $manuscript 投稿信息
+     * @param bool $is_addKeyWord
+     * @param bool $is_addAnonymous
+     * @param bool $is_addTailContent
+     * @param string|null $custom_header_content
+     * @param string|null $custom_tail_content
      * @return mixed|string
      */
-    private function objectTypeHandle(Api $telegram, $botInfo, $chatId, $objectType, $message, ?array $inline_keyboard = null, bool $isReviewGroup = false, bool $isReturnText = false, bool $isReturnTelegramMessage=false, $manuscript = null): mixed
+    private function objectTypeHandle(
+        Api         $telegram, mixed $botInfo, array|int|string $chatId, string $objectType, $message, ?array $inline_keyboard = null,
+        bool        $isReviewGroup = false, bool $isReturnText = false, bool $isReturnTelegramMessage = false,
+                    $manuscript = null, bool $is_addKeyWord = true, bool $is_addAnonymous = true, bool $is_addTailContent = true,
+        string|null $custom_header_content = null, string|null $custom_tail_content = null
+    ): mixed
     {
         if (empty($inline_keyboard)) {
             $inline_keyboard = null;
@@ -147,76 +196,84 @@ trait SendTelegramMessageService
             ]);
         }
 
+        $text = '';
+        $textStr = '';
+        $isReviewGroupText = '';
+        $media = [];
+
+        if (!empty($custom_header_content)) {
+            $text .= $custom_header_content;
+        }
+
+        $method = 'sendMessage';
+
+        $params = [
+            'chat_id' => $chatId,
+            'parse_mode' => 'HTML',
+            'reply_markup' => $inline_keyboard,
+        ];
+
+        //公用，仅限单条消息或媒体消息
+        if (!empty($message['text']) || !empty($message['caption'])) {
+            if (!empty($message['text'])) {
+                $text .= $message['text'];
+                $textStr = $message['text'];
+            }
+            if (!empty($message['caption'])) {
+                $text .= $message['caption'];
+                $textStr = $message['caption'];
+            }
+            //自动关键词
+            if ($is_addKeyWord) {
+                $text .= $this->addKeyWord($botInfo->is_auto_keyword, $botInfo->keyword, $botInfo->id, $textStr);
+            }
+            // 加入匿名
+            if ($is_addAnonymous) {
+                $text .= $this->addAnonymous($manuscript);
+            }
+            //加入自定义尾部内容
+            if ($is_addTailContent) {
+                $text .= $this->addTailContent($botInfo->tail_content);
+            }
+        }
+
         switch ($objectType) {
             case 'text':
-                $text = $message['text'] ?? '';
-                //自动关键词
-                $text .= $this->addKeyWord($botInfo->is_auto_keyword, $botInfo->keyword, $botInfo->id, $text);
-                // 加入匿名
-                $text .= $this->addAnonymous($manuscript);
-                //加入自定义尾部内容
-                $text .= $this->addTailContent($botInfo->tail_content);
-                $result = $this->sendTelegramMessage($telegram, 'sendMessage', [
-                    'chat_id' => $chatId,
-                    'text' => $text,
-                    'parse_mode' => 'HTML',
-                    'reply_markup' => $inline_keyboard,
-                ], $isReturnTelegramMessage);
-                if ($isReturnText) {
-                    return $text;
-                }
-                return $result;
+                $text .= $message['text'] ?? '';
+                $params['text'] = $text;
+                break;
             case 'photo':
                 $file_id = $message['photo'][0]['file_id'];
-                $caption = $message['caption'] ?? '';
-                //自动关键词
-                $caption .= $this->addKeyWord($botInfo->is_auto_keyword, $botInfo->keyword, $botInfo->id, $caption);
-                // 加入匿名
-                $caption .= $this->addAnonymous($manuscript);
-                //加入自定义尾部内容
-                $caption .= $this->addTailContent($botInfo->tail_content);
-
-                $result = $this->sendTelegramMessage($telegram, 'sendPhoto', [
-                    'chat_id' => $chatId,
-                    'photo' => $file_id,
-                    'caption' => $caption,
-                    'parse_mode' => 'HTML',
-                    'reply_markup' => $inline_keyboard,
-                ], $isReturnTelegramMessage);
-                if ($isReturnText) {
-                    return $caption;
-                }
-                return $result;
+                $params['photo'] = $file_id;
+                $params['caption'] = $text;
+                $method = 'sendPhoto';
+                break;
             case 'video':
                 $file_id = $message['video']['file_id'];
                 $duration = $message['video']['duration'];
                 $width = $message['video']['width'];
                 $height = $message['video']['height'];
-                $caption = $message['caption'] ?? '';
-                //自动关键词
-                $caption .= $this->addKeyWord($botInfo->is_auto_keyword, $botInfo->keyword, $botInfo->id, $caption);
-                // 加入匿名
-                $caption .= $this->addAnonymous($manuscript);
-                //加入自定义尾部内容
-                $caption .= $this->addTailContent($botInfo->tail_content);
-                $result = $this->sendTelegramMessage($telegram, 'sendVideo', [
-                    'chat_id' => $chatId,
-                    'video' => $file_id,
-                    'duration' => $duration,
-                    'width' => $width,
-                    'height' => $height,
-                    'caption' => $caption,
-                    'parse_mode' => 'HTML',
-                    'reply_markup' => $inline_keyboard,
-                ], $isReturnTelegramMessage);
-                if ($isReturnText) {
-                    return $caption;
-                }
-                return $result;
+
+                $params['video'] = $file_id;
+                $params['duration'] = $duration;
+                $params['width'] = $width;
+                $params['height'] = $height;
+                $params['caption'] = $text;
+                $method = 'sendVideo';
+                break;
+            case 'audio':
+                $file_id = $message['audio']['file_id'];
+                $duration = $message['audio']['duration'];
+                $title = $message['audio']['file_name'];
+
+                $params['audio'] = $file_id;
+                $params['duration'] = $duration;
+                $params['title'] = $title;
+                $params['caption'] = $text;
+                $method = 'sendAudio';
+                break;
             case 'media_group_photo':
             case 'media_group_video':
-                $media = [];
-                $caption = '';
                 foreach ($message as $key => $item) {
                     $temp_array = [];
                     if (isset($item['photo'])) {
@@ -235,70 +292,30 @@ trait SendTelegramMessageService
                         ];
                     }
                     if (!empty($item['caption'] ?? '')) {
-                        $caption = $item['caption'] ?? '';
+                        $text .= $item['caption'] ?? '';
                         //自动关键词
-                        $caption .= $this->addKeyWord($botInfo->is_auto_keyword, $botInfo->keyword, $botInfo->id, $caption);
+                        if ($is_addKeyWord) {
+                            $text .= $this->addKeyWord($botInfo->is_auto_keyword, $botInfo->keyword, $botInfo->id, $item['caption']);
+                        }
                         // 加入匿名
-                        $caption .= $this->addAnonymous($manuscript);
+                        if ($is_addAnonymous) {
+                            $text .= $this->addAnonymous($manuscript);
+                        }
                         //加入自定义尾部内容
-                        $caption .= $this->addTailContent($botInfo->tail_content);
-                        $temp_array['caption'] = $caption;
+                        if ($is_addTailContent) {
+                            $text .= $this->addTailContent($botInfo->tail_content);
+                        }
+                        $temp_array['caption'] = $text;
                         $temp_array['parse_mode'] = 'HTML';
                     }
                     $media[] = $temp_array;
                 }
-
-                if ($isReviewGroup) {
-                    $mediaResult = $this->sendTelegramMessage($telegram, 'sendMediaGroup', [
-                        'chat_id' => $chatId,
-                        'media' => json_encode($media),
-                    ], true);
-                    $result = $this->sendTelegramMessage($telegram, 'sendMessage', [
-                        'chat_id' => $chatId,
-                        'text' => '收到包含多张图片/视频的提交 👆',
-                        'reply_to_message_id' => $mediaResult[0]['message_id'],
-                        'parse_mode' => 'HTML',
-                        'reply_markup' => $inline_keyboard,
-                    ], $isReturnTelegramMessage);
-                }else{
-                    $result = $this->sendTelegramMessage($telegram, 'sendMediaGroup', [
-                        'chat_id' => $chatId,
-                        'media' => json_encode($media),
-                    ], $isReturnTelegramMessage);
-                }
-                if ($isReturnText) {
-                    return $caption;
-                }
-                return $result;
-            case 'audio':
-                $file_id = $message['audio']['file_id'];
-                $duration = $message['audio']['duration'];
-                $title = $message['audio']['file_name'];
-                $caption = $message['caption'] ?? '';
-                //自动关键词
-                $caption .= $this->addKeyWord($botInfo->is_auto_keyword, $botInfo->keyword, $botInfo->id, $caption);
-                // 加入匿名
-                $caption .= $this->addAnonymous($manuscript);
-                //加入自定义尾部内容
-                $caption .= $this->addTailContent($botInfo->tail_content);
-
-                $result = $this->sendTelegramMessage($telegram, 'sendAudio', [
-                    'chat_id' => $chatId,
-                    'audio' => $file_id,
-                    'duration' => $duration,
-                    'caption' => $caption,
-                    'title' => $title,
-                    'parse_mode' => 'HTML',
-                    'reply_markup' => $inline_keyboard,
-                ], $isReturnTelegramMessage);
-
-                if ($isReturnText) {
-                    return $caption;
-                }
-                return $result;
+                $params['media'] = json_encode($media);
+                $method = 'sendMediaGroup';
+                $isReviewGroupText = '收到包含多张图片/视频的提交 👆';
+                break;
             case 'media_group_audio':
                 if (isset($message['text'])) {
-                    $textMessage = $message['text'];
                     $audioMessage = $message['audio'];
                     $media = [];
                     foreach ($audioMessage as $key => $item) {
@@ -309,44 +326,7 @@ trait SendTelegramMessageService
                             'duration' => $item['audio']['duration'],
                         ];
                     }
-                    $text = $textMessage['text'];
-                    //自动关键词
-                    $text .= $this->addKeyWord($botInfo->is_auto_keyword, $botInfo->keyword, $botInfo->id, $text);
-                    // 加入匿名
-                    $text .= $this->addAnonymous($manuscript);
-                    //加入自定义尾部内容
-                    $text .= $this->addTailContent($botInfo->tail_content);
-                    $this->sendTelegramMessage($telegram, 'sendMessage', [
-                        'chat_id' => $chatId,
-                        'text' => $text,
-                        'parse_mode' => 'HTML',
-                    ]);
-
-
-
-                    if ($isReviewGroup) {
-                        $mediaResult = $this->sendTelegramMessage($telegram, 'sendMediaGroup', [
-                            'chat_id' => $chatId,
-                            'media' => json_encode($media),
-                        ], true);
-                        $result = $this->sendTelegramMessage($telegram, 'sendMessage', [
-                            'chat_id' => $chatId,
-                            'text' => '收到包含多个音频的提交 👆',
-                            'reply_to_message_id' => $mediaResult[0]['message_id'],
-                            'parse_mode' => 'HTML',
-                            'reply_markup' => $inline_keyboard,
-                        ], $isReturnTelegramMessage);
-                    }else{
-                        $result = $this->sendTelegramMessage($telegram, 'sendMediaGroup', [
-                            'chat_id' => $chatId,
-                            'media' => json_encode($media),
-                        ], $isReturnTelegramMessage);
-                    }
-
-                    if ($isReturnText) {
-                        return $text;
-                    }
-                    return $result;
+                    $isReviewGroupText = '收到包含多个音频的提交 👆';
                 } else {
                     $media = [];
                     foreach ($message as $key => $item) {
@@ -357,48 +337,179 @@ trait SendTelegramMessageService
                             'duration' => $item['audio']['duration'],
                         ];
                         if (!empty($item['caption'] ?? '')) {
-                            $caption = $item['caption'] ?? '';
+                            $text .= $item['caption'] ?? '';
                             //自动关键词
-                            $caption .= $this->addKeyWord($botInfo->is_auto_keyword, $botInfo->keyword, $botInfo->id, $caption);
+                            if ($is_addKeyWord) {
+                                $text .= $this->addKeyWord($botInfo->is_auto_keyword, $botInfo->keyword, $botInfo->id, $item['caption']);
+                            }
                             // 加入匿名
-                            $caption .= $this->addAnonymous($manuscript);
+                            if ($is_addAnonymous) {
+                                $text .= $this->addAnonymous($manuscript);
+                            }
                             //加入自定义尾部内容
-                            $caption .= $this->addTailContent($botInfo->tail_content);
-                            $temp_array['caption'] = $caption;
+                            if ($is_addTailContent) {
+                                $text .= $this->addTailContent($botInfo->tail_content);
+                            }
+                            $temp_array['caption'] = $text;
                             $temp_array['parse_mode'] = 'HTML';
                         }
                         $media[] = $temp_array;
                     }
-
-                    if ($isReviewGroup) {
-                        $mediaResult = $this->sendTelegramMessage($telegram, 'sendMediaGroup', [
-                            'chat_id' => $chatId,
-                            'media' => json_encode($media),
-                        ], true);
-                        $result = $this->sendTelegramMessage($telegram, 'sendMessage', [
-                            'chat_id' => $chatId,
-                            'text' => '收到包含多个音频的提交 👆',
-                            'reply_to_message_id' => $mediaResult[0]['message_id'],
-                            'parse_mode' => 'HTML',
-                            'reply_markup' => $inline_keyboard,
-                        ], $isReturnTelegramMessage);
-                    }else{
-                        $result = $this->sendTelegramMessage($telegram, 'sendMediaGroup', [
-                            'chat_id' => $chatId,
-                            'media' => json_encode($media),
-                        ], $isReturnTelegramMessage);
-                    }
-                    if ($isReturnText) {
-                        return '';
-                    }
-                    return $result;
+                    $params['media'] = json_encode($media);
+                    $method = 'sendMediaGroup';
                 }
                 break;
             default:
                 return 'error';
         }
+
+        if (!empty($custom_tail_content)) {
+            $text .= $custom_tail_content;
+        }
+        if ($objectType === 'media_group_audio') {
+            $this->sendTelegramMessage($telegram, 'sendMessage', [
+                'chat_id' => $chatId,
+                'text' => $text,
+                'parse_mode' => 'HTML',
+            ]);
+        }
+        if ($isReviewGroup) {
+            $mediaResult = $this->sendTelegramMessage($telegram, 'sendMediaGroup', [
+                'chat_id' => $chatId,
+                'media' => json_encode($media),
+            ], true);
+            $result = $this->sendTelegramMessage($telegram, 'sendMessage', [
+                'chat_id' => $chatId,
+                'text' => $isReviewGroupText,
+                'reply_to_message_id' => $mediaResult[0]['message_id'],
+                'parse_mode' => 'HTML',
+                'reply_markup' => $inline_keyboard,
+            ], $isReturnTelegramMessage);
+        } else {
+            $result = $this->sendTelegramMessage($telegram, $method, $params, $isReturnTelegramMessage);
+        }
+        if ($isReturnText) {
+            return $textStr;
+        }
+        return $result;
     }
 
+    /**
+     * 记录投稿、投诉、意见反馈等文本消息
+     * @param Api $telegram
+     * @param mixed $chatId
+     * @param mixed $messageId
+     * @param $message
+     * @param string $cacheKey 缓存key
+     * @param array $reply_markup 回复键盘
+     * @param string $text_1 第一次记录的提示语
+     * @param string $text_2 后续记录的提示语
+     * @return mixed
+     */
+    public function updateByText(Api $telegram, mixed $chatId, mixed $messageId, $message, string $cacheKey, array $reply_markup, string $text_1, string $text_2): mixed
+    {
+        if (empty(Cache::tags($cacheKey)->get('text'))) {
+            $text = $text_1;
+        } else {
+            $text = $text_2;
+        }
+
+        $messageCacheData = $message->toArray();
+
+        if (!empty($messageCacheData['text'])) {
+            //消息文字预处理
+            $messageCacheData['text'] = htmlspecialchars($messageCacheData['text'], ENT_QUOTES, 'UTF-8');
+        }
+
+        Cache::tags($cacheKey)->put('text', $messageCacheData, now()->addDay());
+        Cache::tags($cacheKey)->put('objectType', 'text', now()->addDay());
+
+        return $this->sendTelegramMessage($telegram, 'sendMessage', [
+            'chat_id' => $chatId,
+            'reply_to_message_id' => $messageId,
+            'text' => $text,
+            'parse_mode' => 'HTML',
+            'reply_markup' => json_encode($reply_markup),
+        ]);
+    }
+
+    /**
+     * 记录投稿、投诉、意见反馈等多媒体消息
+     * @param Api $telegram
+     * @param mixed $chatId
+     * @param mixed $messageId
+     * @param $message
+     * @param $type
+     * @param string $cacheKey 缓存key
+     * @param array $reply_markup 回复键盘
+     * @param string $text_1 第一次记录的提示语
+     * @param string $text_2 后续记录的提示语
+     * @return mixed
+     */
+    public function updateByMedia(Api $telegram, mixed $chatId, mixed $messageId, $message, $type, string $cacheKey, array $reply_markup, string $text_1, string $text_2): mixed
+    {
+        $media_group_id = $message->media_group_id ?? '';
+        $cacheKeyByType = $type;
+        $cacheKeyGroup = 'media_group';
+        $cacheKeyGroupId = 'media_group' . ':' . $media_group_id;
+        $objectType = $type;
+        if (!empty($media_group_id)) {
+            $objectType = 'media_group_' . $type;
+
+            $messageCacheData = $message->toArray();
+
+            if (!empty($messageCacheData['caption'])) {
+                //消息文字预处理
+                $messageCacheData['caption'] = htmlspecialchars($messageCacheData['caption'], ENT_QUOTES, 'UTF-8');
+            }
+
+            //存入缓存，等待所有图片接收完毕
+            if (Cache::tags($cacheKey)->has($cacheKeyGroupId)) {
+                //如果存在缓存，则将消息合并
+                $messageCache = Cache::tags($cacheKey)->get($cacheKeyGroupId);
+                $messageCache[] = $messageCacheData;
+                $text = $text_2;
+            } else {
+                $messageCache = [$messageCacheData];
+                $text = $text_1;
+            }
+            Cache::tags($cacheKey)->put($cacheKeyGroup, $media_group_id, now()->addDay());
+            Cache::tags($cacheKey)->put($cacheKeyGroupId, $messageCache, now()->addDay());
+        } else {
+
+            $messageCacheData = $message->toArray();
+
+            if (!empty($messageCacheData['caption'])) {
+                //消息文字预处理
+                $messageCacheData['caption'] = htmlspecialchars($messageCacheData['caption'], ENT_QUOTES, 'UTF-8');
+            }
+
+            if (Cache::tags($cacheKey)->has($cacheKeyByType)) {
+                $text = $text_2;
+            } else {
+                $text = $text_1;
+            }
+            Cache::tags($cacheKey)->put($cacheKeyByType, $messageCacheData, now()->addDay());
+        }
+        Cache::tags($cacheKey)->put('objectType', $objectType, now()->addDay());
+
+        return $this->sendTelegramMessage($telegram, 'sendMessage', [
+            'chat_id' => $chatId,
+            'reply_to_message_id' => $messageId,
+            'text' => $text,
+            'parse_mode' => 'HTML',
+            'reply_markup' => json_encode($reply_markup),
+        ]);
+    }
+
+    /**
+     * 添加自动关键词
+     * @param $is_auto_keyword
+     * @param $keyword
+     * @param $botId
+     * @param $text
+     * @return string
+     */
     private function addKeyWord($is_auto_keyword, $keyword, $botId, $text): string
     {
         if (empty($keyword)) {
@@ -440,6 +551,11 @@ trait SendTelegramMessageService
         return '';
     }
 
+    /**
+     * 添加匿名或投稿人
+     * @param $manuscript
+     * @return string
+     */
     private function addAnonymous($manuscript): string
     {
         if (!empty($manuscript)) {
@@ -455,6 +571,11 @@ trait SendTelegramMessageService
         return '';
     }
 
+    /**
+     * 添加自定义尾部内容
+     * @param $tail_content
+     * @return string
+     */
     private function addTailContent($tail_content): string
     {
         if (!empty($tail_content)) {
@@ -464,34 +585,50 @@ trait SendTelegramMessageService
         return '';
     }
 
-    public function addReviewEndText($approved,$one_approved,$reject,$one_reject): string
+    /**
+     * 添加审核结束文本
+     * @param $approved
+     * @param $one_approved
+     * @param $reject
+     * @param $one_reject
+     * @return string
+     */
+    public function addReviewEndText($approved, $one_approved, $reject, $one_reject): string
     {
         $text = "\r\n ------------------- \r\n";
         $text .= "审核通过人员：";
 
-        foreach ($approved as $approved_val){
-            $text .= "\r\n <code>".get_posted_by($approved_val)." </code>";
+        foreach ($approved as $approved_val) {
+            $text .= "\r\n <code>" . get_posted_by($approved_val) . " </code>";
         }
 
-        if (!empty($one_approved)){
-            $text .= "\r\n <code>".get_posted_by($one_approved)." </code>";
+        if (!empty($one_approved)) {
+            $text .= "\r\n <code>" . get_posted_by($one_approved) . " </code>";
         }
 
         $text .= "\r\n审核拒绝人员：";
 
-        foreach ($reject as $reject_val){
-            $text .= "\r\n <code>".get_posted_by($reject_val)." </code>";
+        foreach ($reject as $reject_val) {
+            $text .= "\r\n <code>" . get_posted_by($reject_val) . " </code>";
         }
 
-        if (!empty($one_reject)){
-            $text .= "\r\n <code>".get_posted_by($one_reject)." </code>";
+        if (!empty($one_reject)) {
+            $text .= "\r\n <code>" . get_posted_by($one_reject) . " </code>";
         }
 
-        $text .= "\r\n审核通过时间：".date('Y-m-d H:i:s',time());
+        $text .= "\r\n审核通过时间：" . date('Y-m-d H:i:s', time());
 
         return $text;
     }
 
+    /**
+     * 发送消息
+     * @param $telegram
+     * @param string $method
+     * @param array $params
+     * @param bool $isReturnTelegramMessage
+     * @return mixed
+     */
     public function sendTelegramMessage($telegram, string $method, array $params, bool $isReturnTelegramMessage = false): mixed
     {
         foreach ($params as $key => $value) {

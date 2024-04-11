@@ -38,13 +38,13 @@ class SubmissionService
                     KeyBoardName::SelectChannel, KeyBoardName::SelectChannelAgain => $this->selectChannel($telegram, $chatId, $botInfo),
                     KeyBoardName::ConfirmSubmissionOpen => $this->confirm($telegram, $chatId, $chat, $botInfo, 0),
                     KeyBoardName::ConfirmSubmissionAnonymous => $this->confirm($telegram, $chatId, $chat, $botInfo, 1),
-                    KeyBoardName::Cancel => $this->start($telegram, $chatId, $chat, $botInfo, '已取消'),
-                    default => $this->updateByText($telegram, $chatId, $messageId, $message),
+                    KeyBoardName::Cancel => $this->cancel($telegram, $chatId, $chat, $botInfo, '已取消'),
+                    default => $this->startUpdateByText($telegram, $chatId, $messageId, $message),
                 };
             case 'photo':
             case 'video':
             case 'audio':
-                $this->media($telegram, $chatId, $messageId, $message, $objectType);
+                $this->startUpdateByMedia($telegram, $chatId, $messageId, $message, $objectType);
                 break;
         }
     }
@@ -123,6 +123,7 @@ class SubmissionService
         $objectType = Cache::tags(CacheKey::Submission . '.' . $chatId)->get('objectType');
         $messageId = '';
         $messageCache = [];
+        $isEmpty=false;
 
         //根据不同的类型获取缓存数据,并判断是否为空
         switch ($objectType) {
@@ -130,15 +131,7 @@ class SubmissionService
                 $messageCache = Cache::tags(CacheKey::Submission . '.' . $chatId)->get('text');
                 $messageId = $messageCache['message_id'] ?? '';
                 if (!isset($messageCache['text']) || empty($messageCache['text'])) {
-                    $this->sendTelegramMessage($telegram, 'sendMessage', [
-                        'chat_id' => $chatId,
-                        'reply_to_message_id' => $messageId,
-                        'text' => get_config('submission.submission_is_empty'),
-                        'parse_mode' => 'HTML',
-                        'reply_markup' => json_encode(KeyBoardData::START_SUBMISSION),
-                    ]);
-
-                    return 'ok';
+                    $isEmpty=true;
                 }
                 break;
             case 'photo':
@@ -147,15 +140,7 @@ class SubmissionService
                 if (
                     !isset($messageCache['photo'][0]['file_id']) || empty($messageCache['photo'][0]['file_id'])
                 ) {
-                    $this->sendTelegramMessage($telegram, 'sendMessage', [
-                        'chat_id' => $chatId,
-                        'reply_to_message_id' => $messageId,
-                        'text' => get_config('submission.submission_is_empty'),
-                        'parse_mode' => 'HTML',
-                        'reply_markup' => json_encode(KeyBoardData::START_SUBMISSION),
-                    ]);
-
-                    return 'ok';
+                    $isEmpty=true;
                 }
                 break;
             case 'video':
@@ -164,15 +149,7 @@ class SubmissionService
                 if (
                     !isset($messageCache['video']['file_id']) || empty($messageCache['video']['file_id'])
                 ) {
-                    $this->sendTelegramMessage($telegram, 'sendMessage', [
-                        'chat_id' => $chatId,
-                        'reply_to_message_id' => $messageId,
-                        'text' => get_config('submission.submission_is_empty'),
-                        'parse_mode' => 'HTML',
-                        'reply_markup' => json_encode(KeyBoardData::START_SUBMISSION),
-                    ]);
-
-                    return 'ok';
+                    $isEmpty=true;
                 }
                 break;
             case 'media_group_photo':
@@ -183,15 +160,7 @@ class SubmissionService
                 if (
                     !isset($messageCache[0]['photo'][0]['file_id']) && !isset($messageCache[0]['video']['file_id'])
                 ) {
-                    $this->sendTelegramMessage($telegram, 'sendMessage', [
-                        'chat_id' => $chatId,
-                        'reply_to_message_id' => $messageId,
-                        'text' => get_config('submission.submission_is_empty'),
-                        'parse_mode' => 'HTML',
-                        'reply_markup' => json_encode(KeyBoardData::START_SUBMISSION),
-                    ]);
-
-                    return 'ok';
+                    $isEmpty=true;
                 }
                 break;
             case 'audio':
@@ -200,15 +169,7 @@ class SubmissionService
                 if (
                     !isset($messageCache['audio']['file_id']) || empty($messageCache['audio']['file_id'])
                 ) {
-                    $this->sendTelegramMessage($telegram, 'sendMessage', [
-                        'chat_id' => $chatId,
-                        'reply_to_message_id' => $messageId,
-                        'text' => get_config('submission.submission_is_empty'),
-                        'parse_mode' => 'HTML',
-                        'reply_markup' => json_encode(KeyBoardData::START_SUBMISSION),
-                    ]);
-
-                    return 'ok';
+                    $isEmpty=true;
                 }
                 break;
             case 'media_group_audio':
@@ -229,15 +190,18 @@ class SubmissionService
                 }
                 break;
             default:
-                $this->sendTelegramMessage($telegram, 'sendMessage', [
-                    'chat_id' => $chatId,
-                    'reply_to_message_id' => $messageId,
-                    'text' => get_config('submission.submission_is_empty'),
-                    'parse_mode' => 'HTML',
-                    'reply_markup' => json_encode(KeyBoardData::START_SUBMISSION),
-                ]);
+                $isEmpty=true;
+                break;
+        }
 
-                return 'ok';
+        if ($isEmpty) {
+            return $this->sendTelegramMessage($telegram, 'sendMessage', [
+                'chat_id' => $chatId,
+                'reply_to_message_id' => $messageId,
+                'text' => get_config('submission.submission_is_empty'),
+                'parse_mode' => 'HTML',
+                'reply_markup' => json_encode(KeyBoardData::START_SUBMISSION),
+            ]);
         }
 
         //发送预览消息
@@ -293,19 +257,10 @@ class SubmissionService
 
         switch ($objectType) {
             case 'text':
-                $messageCache = Cache::tags(CacheKey::Submission . '.' . $chatId)->get('text');
-                $messageId = $messageCache['message_id'] ?? '';
-                $messageText = $messageCache['text'] ?? '';
-                break;
             case 'photo':
-                $messageCache = Cache::tags(CacheKey::Submission . '.' . $chatId)->get('photo');
-                $messageId = $messageCache['message_id'] ?? '';
-                $messageText = $messageCache['caption'] ?? '';
-                break;
             case 'video':
-                $messageCache = Cache::tags(CacheKey::Submission . '.' . $chatId)->get('video');
-                $messageId = $messageCache['message_id'] ?? '';
-                $messageText = $messageCache['caption'] ?? '';
+            case 'audio':
+                list($messageCache, $messageId, $messageText) = getCacheMessageData($objectType, $chatId, CacheKey::Submission);
                 break;
             case 'media_group_photo':
             case 'media_group_video':
@@ -315,11 +270,6 @@ class SubmissionService
                 foreach ($messageCache as $key => $value) {
                     $messageText .= $value['caption'] ?? '';
                 }
-                break;
-            case 'audio':
-                $messageCache = Cache::tags(CacheKey::Submission . '.' . $chatId)->get('audio');
-                $messageId = $messageCache['message_id'] ?? '';
-                $messageText = $messageCache['caption'] ?? '';
                 break;
             case 'media_group_audio':
                 //特殊情况，需要先判断有没有文字，如果有，那就是文字+多音频
@@ -377,7 +327,6 @@ class SubmissionService
             'reject' => [],
             'one_approved' => [],
             'one_reject' => [],
-            'status' => 0,
             'status' => 0,
         ];
 
@@ -438,91 +387,26 @@ class SubmissionService
      * @param Collection $message 要更新的消息。
      * @return string 更新的状态。
      */
-    private function updateByText(
+    private function startUpdateByText(
         Api        $telegram,
         string     $chatId,
         string     $messageId,
         Collection $message
     ): string
     {
-        if (empty(Cache::tags(CacheKey::Submission . '.' . $chatId)->get('text'))) {
-            $text = get_config('submission.start_text_tips');
-        } else {
-            $text = get_config('submission.start_update_text_tips');
-        }
-
-        $messageCacheData = $message->toArray();
-
-        if (!empty($messageCacheData['text'])) {
-            //消息文字预处理
-            $messageCacheData['text'] = htmlspecialchars($messageCacheData['text'], ENT_QUOTES, 'UTF-8');
-        }
-
-        Cache::tags(CacheKey::Submission . '.' . $chatId)->put('text', $messageCacheData, now()->addDay());
-        Cache::tags(CacheKey::Submission . '.' . $chatId)->put('objectType', 'text', now()->addDay());
-
-        return $this->sendTelegramMessage($telegram, 'sendMessage', [
-            'chat_id' => $chatId,
-            'reply_to_message_id' => $messageId,
-            'text' => $text,
-            'parse_mode' => 'HTML',
-            'reply_markup' => json_encode(KeyBoardData::START_SUBMISSION),
-        ]);
+        return $this->updateByText(
+            $telegram, $chatId, $messageId, $message,
+            CacheKey::Submission . '.' . $chatId, KeyBoardData::START_SUBMISSION,
+            get_config('submission.start_text_tips'), get_config('submission.start_update_text_tips')
+        );
     }
 
-    private function media(Api $telegram, $chatId, $messageId, Collection $message, $type): string
+    private function startUpdateByMedia(Api $telegram, $chatId, $messageId, Collection $message, $type): string
     {
-        $media_group_id = $message->media_group_id ?? '';
-        $cacheKey = $type;
-        $cacheKeyGroup = 'media_group';
-        $cacheKeyGroupId = 'media_group' . ':' . $media_group_id;
-        $objectType = $type;
-        if (!empty($media_group_id)) {
-            $objectType = 'media_group_' . $type;
-
-            $messageCacheData = $message->toArray();
-
-            if (!empty($messageCacheData['caption'])) {
-                //消息文字预处理
-                $messageCacheData['caption'] = htmlspecialchars($messageCacheData['caption'], ENT_QUOTES, 'UTF-8');
-            }
-
-            //存入缓存，等待所有图片接收完毕
-            if (Cache::tags(CacheKey::Submission . '.' . $chatId)->has($cacheKeyGroupId)) {
-                //如果存在缓存，则将消息合并
-                $messageCache = Cache::tags(CacheKey::Submission . '.' . $chatId)->get($cacheKeyGroupId);
-                $messageCache[] = $messageCacheData;
-                $text = get_config('submission.start_update_text_tips');
-            } else {
-                $messageCache = [$messageCacheData];
-                $text = get_config('submission.start_text_tips');
-            }
-            Cache::tags(CacheKey::Submission . '.' . $chatId)->put($cacheKeyGroup, $media_group_id, now()->addDay());
-            Cache::tags(CacheKey::Submission . '.' . $chatId)->put($cacheKeyGroupId, $messageCache, now()->addDay());
-        } else {
-
-            $messageCacheData = $message->toArray();
-
-            if (!empty($messageCacheData['caption'])) {
-                //消息文字预处理
-                $messageCacheData['caption'] = htmlspecialchars($messageCacheData['caption'], ENT_QUOTES, 'UTF-8');
-            }
-
-            if (Cache::tags(CacheKey::Submission . '.' . $chatId)->has($cacheKey)) {
-                $text = get_config('submission.start_update_text_tips');
-            } else {
-                $text = get_config('submission.start_text_tips');
-            }
-            Cache::tags(CacheKey::Submission . '.' . $chatId)->put($cacheKey, $messageCacheData, now()->addDay());
-        }
-        Cache::tags(CacheKey::Submission . '.' . $chatId)->put('objectType', $objectType, now()->addDay());
-
-        return $this->sendTelegramMessage($telegram, 'sendMessage', [
-            'chat_id' => $chatId,
-            'reply_to_message_id' => $messageId,
-            'text' => $text,
-            'parse_mode' => 'HTML',
-            'reply_markup' => json_encode(KeyBoardData::START_SUBMISSION),
-        ]);
+        return $this->updateByMedia(
+            $telegram, $chatId, $messageId, $message, $type,
+            CacheKey::Submission . '.' . $chatId, KeyBoardData::START_SUBMISSION,
+            get_config('submission.start_text_tips'), get_config('submission.start_update_text_tips')
+        );
     }
 }

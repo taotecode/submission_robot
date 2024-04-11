@@ -74,6 +74,22 @@ class KeyBoardData
             ],
         ],
     ];
+    /**
+     * 审核群组键盘
+     */
+    const REVIEW_GROUP_COMPLAINT = [
+        'inline_keyboard' => [
+            [
+                ['text' => KeyBoardName::Approved, 'callback_data' => 'approved_complaint'],
+                ['text' => KeyBoardName::Rejected, 'callback_data' => 'reject_complaint'],
+                ['text' => KeyBoardName::PrivateChat, 'callback_data' => 'private_message'],
+            ],
+            [
+                ['text' => KeyBoardName::QuickApproved, 'callback_data' => 'approved_complaint_quick'],
+                ['text' => KeyBoardName::QuickRejected, 'callback_data' => 'reject_complaint_quick'],
+            ],
+        ],
+    ];
 
     /**
      * 审核群组稿件通过键盘
@@ -189,6 +205,36 @@ class KeyBoardData
             [
                 KeyBoardName::SubmitComplaint,
                 KeyBoardName::SubmitSuggestion,
+            ],
+            [
+                KeyBoardName::Cancel,
+            ],
+        ],
+        'resize_keyboard' => true, // 让键盘大小适应屏幕
+        'one_time_keyboard' => false, // 是否只显示一次
+    ];
+
+    /**
+     * 用户开始投诉键盘
+     */
+    const START_COMPLAINT = [
+        'keyboard' => [
+            [
+                KeyBoardName::EndSending,
+            ],
+            [
+                KeyBoardName::Restart,
+                KeyBoardName::Cancel,
+            ],
+        ],
+        'resize_keyboard' => true, // 让键盘大小适应屏幕
+        'one_time_keyboard' => false, // 是否只显示一次
+    ];
+
+    const END_COMPLAINT = [
+        'keyboard' => [
+            [
+                KeyBoardName::ConfirmComplaint,
             ],
             [
                 KeyBoardName::Cancel,

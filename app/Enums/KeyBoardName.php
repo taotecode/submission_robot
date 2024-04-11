@@ -16,6 +16,10 @@ class KeyBoardName
 
     const CancelSubmission='取消投稿';
 
+    const CancelComplaint='取消投诉';
+
+    const ConfirmComplaint='确认投诉';
+
     //确认投稿（公开）
     const ConfirmSubmissionOpen='确认投稿（公开）';
 

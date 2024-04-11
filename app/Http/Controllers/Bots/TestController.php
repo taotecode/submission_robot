@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Bot;
 use App\Services\BaseService;
 use App\Telegram\Commands\StartCommand;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Telegram\Bot\Api;
 
@@ -14,10 +15,10 @@ class TestController extends Controller
 {
     public function pa()
     {
-        $telegram = new Api(env('TELEGRAM_BOT_TOKEN'));
+//        $telegram = new Api(env('TELEGRAM_BOT_TOKEN'));
 
-        $file=$telegram->getFile(['file_id'=>'AgACAgEAAxkBAAIB2GYPabtpIuMVtmNIYreBYbEagoq7AALHqzEbvsSARJrVHae73dkSAQADAgADcwADNAQ']);
-        dd($file);
+//        $file=$telegram->getFile(['file_id'=>'AgACAgEAAxkBAAIB2GYPabtpIuMVtmNIYreBYbEagoq7AALHqzEbvsSARJrVHae73dkSAQADAgADcwADNAQ']);
+//        dd($file);
 
 //        $text="稿件消息<a href='https://t.me/123'>123</a>";
 //
@@ -97,40 +98,13 @@ class TestController extends Controller
         $response = $telegram->getMe();
         dd($response);*/
 
-        $keyword='关键字';
+        $bot=Bot::find(1);
+//        Cache::put('test', [
+//            'bot'=>$bot,
+//        ], 60*60*24*7);
 
-        $manuscript = (new \App\Models\Manuscript())
-            ->where('bot_id', 1)
-            ->where('status', ManuscriptStatus::APPROVED)
-//            ->where('text', 'like', '%关键字%')
-            ->orderBy('id', 'desc')
-            ->paginate(10, ['*'], 'page');
 
-        $inline_keyboard=[
-            'inline_keyboard' => []
-        ];
-
-        $manuscript->each(function ($item) use (&$inline_keyboard){
-            $inline_keyboard['inline_keyboard'][] = [
-                ['text' => $item->text, 'callback_data' => 'manuscript_search_show_link:'.$item->id]
-            ];
-        });
-
-        $pageInlineKeyboardNum = count($inline_keyboard['inline_keyboard'])+1;
-
-        if ($manuscript->currentPage() > 1) {
-            $inline_keyboard['inline_keyboard'][$pageInlineKeyboardNum][] = [
-                'text' => '上一页', 'callback_data' => 'manuscript_search_page:prev:'.$keyword.':'.($manuscript->currentPage()-1)
-            ];
-        }
-        if ($manuscript->lastPage() !== $manuscript->currentPage()) {
-            $inline_keyboard['inline_keyboard'][$pageInlineKeyboardNum][] = [
-                'text' => '下一页', 'callback_data' => 'manuscript_search_page:next:'.$keyword.':'.($manuscript->currentPage()+1)
-            ];
-        }
-
-        dump($inline_keyboard);
-        dd($manuscript->toArray());
+        dd(Cache::get('test'));
     }
 
     public function webapp_hook()
