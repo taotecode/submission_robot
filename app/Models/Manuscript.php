@@ -14,6 +14,7 @@ class Manuscript extends Model
      */
     protected $fillable = [
         'bot_id',
+        'channel_id',
         'message_id',
         'type',
         'text',
