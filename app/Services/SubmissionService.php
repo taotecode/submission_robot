@@ -364,7 +364,7 @@ class SubmissionService
             return $this->sendGroupMessageWhiteUser($telegram, $botInfo, $manuscript, $channel);
         }
 
-        $custom_tail_content = "\r\n\r\n 用户投稿至频道：" . $channel->appellation;
+        $custom_tail_content = "\r\n\r\n 用户投稿至频道：<a href='https://t.me/". $channel->name ."'>" . $channel->appellation. "</a>";
 
         // 发送消息到审核群组
         $this->sendGroupMessage(

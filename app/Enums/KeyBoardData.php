@@ -36,6 +36,11 @@ class KeyBoardData
                 KeyBoardName::CancelSubmission,
             ],
         ],
+        'inline_keyboard' => [
+            [
+                ['text' =>'或者点我直接快速进行投稿！', 'callback_data' => 'quick_submission'],
+            ],
+        ],
         'resize_keyboard' => true, // 让键盘大小适应屏幕
         'one_time_keyboard' => false, // 是否只显示一次
     ];

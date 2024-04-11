@@ -110,7 +110,10 @@ class CallBackQueryService
                 $this->selectChannel($telegram, $botInfo, $chatId, $messageId, $callbackQueryId,$commandArray);
                 break;
             case 'approved_complaint':
-                $this->approved_and_reject_complaint($telegram, $botInfo, $manuscriptId, $chatId, $from, $messageId, true, $callbackQuery);
+//                $this->approved_and_reject_complaint($telegram, $botInfo, $manuscriptId, $chatId, $from, $messageId, true, $callbackQuery);
+                break;
+            case 'quick_submission':
+                Log::info('quick_submission',$updateData->toArray());
                 break;
         }
     }
