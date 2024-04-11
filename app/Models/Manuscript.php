@@ -45,11 +45,11 @@ class Manuscript extends Model
 
     public function bot(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
-        return $this->belongsTo(Bot::class,'id', 'bot_id');
+        return $this->belongsTo(Bot::class,'bot_id', 'id');
     }
 
     public function channel(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
-        return $this->belongsTo(Channel::class,'id', 'channel_id');
+        return $this->belongsTo(Channel::class,'channel_id', 'id');
     }
 }

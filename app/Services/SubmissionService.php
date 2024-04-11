@@ -325,7 +325,7 @@ class SubmissionService
         $channels = (new Channel)->whereIn('id',$botInfo->channel_ids)->orderBy('sort_order', 'desc')->get();
         foreach ($channels as $channel){
             $inline_keyboard['inline_keyboard'][] = [
-                ['text' => $channel->name, 'callback_data' => 'select_channel:null:'.$channel->id],
+                ['text' => $channel->appellation, 'callback_data' => 'select_channel:null:'.$channel->id],
             ];
         }
 
