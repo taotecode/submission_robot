@@ -363,8 +363,14 @@ class SubmissionService
 
             return $this->sendGroupMessageWhiteUser($telegram, $botInfo, $manuscript, $channel);
         }
+
+        $custom_tail_content = "\r\n\r\n 用户投稿至频道：" . $channel->appellation;
+
         // 发送消息到审核群组
-        $text = $this->sendGroupMessage($telegram, $botInfo, $messageCache, $objectType, $manuscript->id);
+        $this->sendGroupMessage(
+            $telegram, $botInfo, $messageCache, $objectType, $manuscript->id,
+            null,null,true,true,true,null,$custom_tail_content
+        );
         //            $text=$this->sendGroupMessage($telegram,$botInfo,$messageCache,$objectType,1);
 
         Cache::tags(CacheKey::Submission . '.' . $chatId)->flush();
