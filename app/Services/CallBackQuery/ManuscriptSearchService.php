@@ -13,7 +13,7 @@ class ManuscriptSearchService
 
     public function link(Api $telegram, $botInfo,?Manuscript $manuscript,$chatId): string
     {
-        $url="https://t.me/".$botInfo->channel->name."/".$manuscript->message_id;
+        $url="https://t.me/".$manuscript->channel->name."/".$manuscript->message_id;
 
         $text= "<a href='$url'>【{$manuscript->text}】</a>";
 

@@ -2,8 +2,10 @@
 
 namespace App\Services;
 
+use App\Enums\CacheKey;
 use App\Enums\KeyBoardData;
 use App\Enums\SubmissionUserType;
+use App\Models\Channel;
 use App\Models\Manuscript;
 use App\Models\SubmissionUser;
 use Illuminate\Support\Collection;
@@ -19,8 +21,6 @@ class SubmissionService
     use SendTelegramMessageService;
 
     public Manuscript $manuscriptModel;
-
-    public string $cacheTag = 'start_submission';
 
     public function __construct(Manuscript $manuscriptModel)
     {
@@ -43,7 +43,7 @@ class SubmissionService
                 if ($message->text == '开始投稿') {
                     return $this->start($telegram,$botInfo, $chatId, $chat, get_config('submission.start'));
                 }
-                if (! Cache::tags($this->cacheTag.'.'.$chatId)->has($chatId)) {
+                if (! Cache::tags(CacheKey::StartSubmission.'.'.$chatId)->has($chatId)) {
                     return $this->error_for_text($telegram, $chatId, $messageId);
                 }
                 /*
@@ -62,6 +62,9 @@ class SubmissionService
                 if ($message->text == '结束发送') {
                     return $this->end($telegram, $chatId, $botInfo);
                 }
+                if ($message->text == '选择发布频道'||$message->text == '重新选择频道') {
+                    return $this->selectChannel($telegram, $chatId, $botInfo);
+                }
                 if ($message->text == '确认投稿（公开）') {
                     return $this->confirm($telegram, $chatId, $chat, $botInfo, 0);
                 }
@@ -74,7 +77,7 @@ class SubmissionService
             case 'photo':
             case 'video':
             case 'audio':
-                if (! Cache::tags($this->cacheTag.'.'.$chatId)->has($chatId)) {
+                if (! Cache::tags(CacheKey::StartSubmission.'.'.$chatId)->has($chatId)) {
                     return $this->error_for_text($telegram, $chatId, $messageId);
                 }
                 $this->media($telegram, $chatId, $messageId, $message, $objectType);
@@ -98,8 +101,8 @@ class SubmissionService
         Collection $chat,
         string $text = "请直接发送您要投稿的内容\r\n发送完毕后，请点击下方的 “结束发送” 按钮。",
     ): string {
-        Cache::tags($this->cacheTag.'.'.$chatId)->flush();
-        Cache::tags($this->cacheTag.'.'.$chatId)->put($chatId, $chat->toArray(), now()->addDay());
+        Cache::tags(CacheKey::StartSubmission.'.'.$chatId)->flush();
+        Cache::tags(CacheKey::StartSubmission.'.'.$chatId)->put($chatId, $chat->toArray(), now()->addDay());
 
         $submissionUser = (new SubmissionUser)->firstOrCreate([
             'bot_id' => $botInfo->id,
@@ -112,7 +115,7 @@ class SubmissionService
         ]);
 
         if ($submissionUser->type == SubmissionUserType::BLACK) {
-            Cache::tags($this->cacheTag.'.'.$chatId)->flush();
+            Cache::tags(CacheKey::StartSubmission.'.'.$chatId)->flush();
 
             return $this->sendTelegramMessage($telegram, 'sendMessage', [
                 'chat_id' => $chatId,
@@ -158,7 +161,7 @@ class SubmissionService
      */
     private function cancel(Api $telegram, string $chatId): string
     {
-        Cache::tags($this->cacheTag.'.'.$chatId)->flush();
+        Cache::tags(CacheKey::StartSubmission.'.'.$chatId)->flush();
 
         return $this->sendTelegramMessage($telegram, 'sendMessage', [
             'chat_id' => $chatId,
@@ -170,13 +173,14 @@ class SubmissionService
 
     private function end(Api $telegram, $chatId, $botInfo): string
     {
-        $objectType = Cache::tags($this->cacheTag.'.'.$chatId)->get('objectType');
+        $objectType = Cache::tags(CacheKey::StartSubmission.'.'.$chatId)->get('objectType');
         $messageId = '';
         $messageCache = [];
 
+        //根据不同的类型获取缓存数据,并判断是否为空
         switch ($objectType) {
             case 'text':
-                $messageCache = Cache::tags($this->cacheTag.'.'.$chatId)->get('text');
+                $messageCache = Cache::tags(CacheKey::StartSubmission.'.'.$chatId)->get('text');
                 $messageId = $messageCache['message_id'] ?? '';
                 if (! isset($messageCache['text']) || empty($messageCache['text'])) {
                     $this->sendTelegramMessage($telegram, 'sendMessage', [
@@ -191,7 +195,7 @@ class SubmissionService
                 }
                 break;
             case 'photo':
-                $messageCache = Cache::tags($this->cacheTag.'.'.$chatId)->get('photo');
+                $messageCache = Cache::tags(CacheKey::StartSubmission.'.'.$chatId)->get('photo');
                 $messageId = $messageCache['message_id'] ?? '';
                 if (
                     ! isset($messageCache['photo'][0]['file_id']) || empty($messageCache['photo'][0]['file_id'])
@@ -208,7 +212,7 @@ class SubmissionService
                 }
                 break;
             case 'video':
-                $messageCache = Cache::tags($this->cacheTag.'.'.$chatId)->get('video');
+                $messageCache = Cache::tags(CacheKey::StartSubmission.'.'.$chatId)->get('video');
                 $messageId = $messageCache['message_id'] ?? '';
                 if (
                     ! isset($messageCache['video']['file_id']) || empty($messageCache['video']['file_id'])
@@ -226,8 +230,8 @@ class SubmissionService
                 break;
             case 'media_group_photo':
             case 'media_group_video':
-                $media_group_id = Cache::tags($this->cacheTag.'.'.$chatId)->get('media_group');
-                $messageCache = Cache::tags($this->cacheTag.'.'.$chatId)->get('media_group:'.$media_group_id);
+                $media_group_id = Cache::tags(CacheKey::StartSubmission.'.'.$chatId)->get('media_group');
+                $messageCache = Cache::tags(CacheKey::StartSubmission.'.'.$chatId)->get('media_group:'.$media_group_id);
                 $messageId = $messageCache[0]['message_id'] ?? '';
                 if (
                     ! isset($messageCache[0]['photo'][0]['file_id']) && ! isset($messageCache[0]['video']['file_id'])
@@ -244,7 +248,7 @@ class SubmissionService
                 }
                 break;
             case 'audio':
-                $messageCache = Cache::tags($this->cacheTag.'.'.$chatId)->get('audio');
+                $messageCache = Cache::tags(CacheKey::StartSubmission.'.'.$chatId)->get('audio');
                 $messageId = $messageCache['message_id'] ?? '';
                 if (
                     ! isset($messageCache['audio']['file_id']) || empty($messageCache['audio']['file_id'])
@@ -262,18 +266,18 @@ class SubmissionService
                 break;
             case 'media_group_audio':
                 //特殊情况，需要先判断有没有文字，如果有，那就是文字+多音频
-                if (Cache::tags($this->cacheTag.'.'.$chatId)->has('text')) {
-                    $messageCache = Cache::tags($this->cacheTag.'.'.$chatId)->get('text');
+                if (Cache::tags(CacheKey::StartSubmission.'.'.$chatId)->has('text')) {
+                    $messageCache = Cache::tags(CacheKey::StartSubmission.'.'.$chatId)->get('text');
                     $messageId = $messageCache['message_id'] ?? '';
-                    $media_group_id = Cache::tags($this->cacheTag.'.'.$chatId)->get('media_group');
-                    $audioMessageCache = Cache::tags($this->cacheTag.'.'.$chatId)->get('media_group:'.$media_group_id);
+                    $media_group_id = Cache::tags(CacheKey::StartSubmission.'.'.$chatId)->get('media_group');
+                    $audioMessageCache = Cache::tags(CacheKey::StartSubmission.'.'.$chatId)->get('media_group:'.$media_group_id);
                     $messageCache = [
                         'text' => $messageCache,
                         'audio' => $audioMessageCache,
                     ];
                 } else {
-                    $media_group_id = Cache::tags($this->cacheTag.'.'.$chatId)->get('media_group');
-                    $messageCache = Cache::tags($this->cacheTag.'.'.$chatId)->get('media_group:'.$media_group_id);
+                    $media_group_id = Cache::tags(CacheKey::StartSubmission.'.'.$chatId)->get('media_group');
+                    $messageCache = Cache::tags(CacheKey::StartSubmission.'.'.$chatId)->get('media_group:'.$media_group_id);
                     $messageId = $messageCache[0]['message_id'] ?? '';
                 }
                 break;
@@ -289,7 +293,19 @@ class SubmissionService
                 return 'ok';
         }
 
+        //发送预览消息
         $this->sendPreviewMessage($telegram, $botInfo, $chatId, $messageCache, $objectType);
+
+        //new 如果bot绑定了多个频道，那么需要提供选择频道的按钮
+        if (count($botInfo->channel_ids)>1){
+            return $this->sendTelegramMessage($telegram, 'sendMessage', [
+                'chat_id' => $chatId,
+                'reply_to_message_id' => $messageId,
+                'text' => get_config('submission.preview_tips_channel'),
+                'parse_mode' => 'HTML',
+                'reply_markup' => json_encode(KeyBoardData::SELECT_CHANNEL),
+            ]);
+        }
 
         return $this->sendTelegramMessage($telegram, 'sendMessage', [
             'chat_id' => $chatId,
@@ -300,58 +316,79 @@ class SubmissionService
         ]);
     }
 
+    private function selectChannel(Api $telegram, $chatId, $botInfo): string
+    {
+        $inline_keyboard= [
+            'inline_keyboard' => [
+            ],
+        ];
+        $channels = (new Channel)->whereIn('id',$botInfo->channel_ids)->orderBy('sort_order', 'desc')->get();
+        foreach ($channels as $channel){
+            $inline_keyboard['inline_keyboard'][] = [
+                ['text' => $channel->name, 'callback_data' => 'select_channel:null:'.$channel->id],
+            ];
+        }
+
+        return $this->sendTelegramMessage($telegram, 'sendMessage', [
+            'chat_id' => $chatId,
+            'text' => get_config('submission.select_channel'),
+            'parse_mode' => 'HTML',
+            'reply_markup' => json_encode($inline_keyboard),
+        ]);
+    }
+
     private function confirm(Api $telegram, $chatId, $chat, $botInfo, $is_anonymous): string
     {
-        $objectType = Cache::tags($this->cacheTag.'.'.$chatId)->get('objectType');
+        $objectType = Cache::tags(CacheKey::StartSubmission.'.'.$chatId)->get('objectType');
         $messageId = '';
         $messageCache = [];
         $messageText = '';
 
         switch ($objectType) {
             case 'text':
-                $messageCache = Cache::tags($this->cacheTag.'.'.$chatId)->get('text');
+                $messageCache = Cache::tags(CacheKey::StartSubmission.'.'.$chatId)->get('text');
                 $messageId = $messageCache['message_id'] ?? '';
                 $messageText = $messageCache['text'] ?? '';
                 break;
             case 'photo':
-                $messageCache = Cache::tags($this->cacheTag.'.'.$chatId)->get('photo');
+                $messageCache = Cache::tags(CacheKey::StartSubmission.'.'.$chatId)->get('photo');
                 $messageId = $messageCache['message_id'] ?? '';
                 $messageText = $messageCache['caption'] ?? '';
                 break;
             case 'video':
-                $messageCache = Cache::tags($this->cacheTag.'.'.$chatId)->get('video');
+                $messageCache = Cache::tags(CacheKey::StartSubmission.'.'.$chatId)->get('video');
                 $messageId = $messageCache['message_id'] ?? '';
                 $messageText = $messageCache['caption'] ?? '';
                 break;
             case 'media_group_photo':
             case 'media_group_video':
-                $media_group_id = Cache::tags($this->cacheTag.'.'.$chatId)->get('media_group');
-                $messageCache = Cache::tags($this->cacheTag.'.'.$chatId)->get('media_group:'.$media_group_id);
+                $media_group_id = Cache::tags(CacheKey::StartSubmission.'.'.$chatId)->get('media_group');
+                $messageCache = Cache::tags(CacheKey::StartSubmission.'.'.$chatId)->get('media_group:'.$media_group_id);
                 $messageId = $messageCache[0]['message_id'] ?? '';
                 foreach ($messageCache as $key => $value) {
                     $messageText .= $value['caption'] ?? '';
                 }
                 break;
             case 'audio':
-                $messageCache = Cache::tags($this->cacheTag.'.'.$chatId)->get('audio');
+                $messageCache = Cache::tags(CacheKey::StartSubmission.'.'.$chatId)->get('audio');
                 $messageId = $messageCache['message_id'] ?? '';
                 $messageText = $messageCache['caption'] ?? '';
                 break;
             case 'media_group_audio':
                 //特殊情况，需要先判断有没有文字，如果有，那就是文字+多音频
-                if (Cache::tags($this->cacheTag.'.'.$chatId)->has('text')) {
-                    $messageCache = Cache::tags($this->cacheTag.'.'.$chatId)->get('text');
+                if (Cache::tags(CacheKey::StartSubmission.'.'.$chatId)->has('text')) {
+                    $messageCache = Cache::tags(CacheKey::StartSubmission.'.'.$chatId)->get('text');
                     $messageId = $messageCache['message_id'] ?? '';
-                    $media_group_id = Cache::tags($this->cacheTag.'.'.$chatId)->get('media_group');
-                    $audioMessageCache = Cache::tags($this->cacheTag.'.'.$chatId)->get('media_group:'.$media_group_id);
+                    $media_group_id = Cache::tags(CacheKey::StartSubmission.'.'.$chatId)->get('media_group');
+                    $audioMessageCache = Cache::tags(CacheKey::StartSubmission.'.'.$chatId)->get('media_group:'.$media_group_id);
                     $messageCache = [
                         'text' => $messageCache,
                         'audio' => $audioMessageCache,
                     ];
                     $messageText = $messageCache['text']['text'] ?? '';
                 } else {
-                    $media_group_id = Cache::tags($this->cacheTag.'.'.$chatId)->get('media_group');
-                    $messageCache = Cache::tags($this->cacheTag.'.'.$chatId)->get('media_group:'.$media_group_id);
+                    $media_group_id = Cache::tags(CacheKey::StartSubmission.'.'.$chatId)->get('media_group');
+                    $messageCache = Cache::tags(CacheKey::StartSubmission.'.'.$chatId)->get('media_group:'.$media_group_id);
                     $messageId = $messageCache[0]['message_id'] ?? '';
                     foreach ($messageCache as $key => $value) {
                         $messageText .= $value['caption'] ?? '';
@@ -370,9 +407,18 @@ class SubmissionService
             'name' => get_posted_by($chat->toArray()),
         ]);
 
+        if (count($botInfo->channel_ids)>1) {
+            $channelId=Cache::tags(CacheKey::StartSubmission.'.'.$chatId)->get('channel_id');
+        }else{
+            $channelId=$botInfo->channel_ids[0];
+        }
+
+        $channel=Channel::find($channelId);
+
         //将稿件信息存入数据库中
         $sqlData = [
             'bot_id' => $botInfo->id,
+            'channel_id' => $channelId,
             'type' => $objectType,
             'text' => $messageText,
             'posted_by' => $chat->toArray(),
@@ -398,14 +444,14 @@ class SubmissionService
             }
             $manuscript->message_id = $channelMessageId['message_id']??null;
             $manuscript->save();
-            Cache::tags($this->cacheTag.'.'.$chatId)->flush();
+            Cache::tags(CacheKey::StartSubmission.'.'.$chatId)->flush();
 
             $chatText=get_config('submission.confirm_white_list');
 
             if (empty(get_text_title($manuscript->text))){
-                $chatText .= "\r\n\r\n稿件消息直达链接：<a href='https://t.me/" . $botInfo->channel->name . "/" . $manuscript->message_id . "'>点击查看</a>";
+                $chatText .= "\r\n\r\n稿件消息直达链接：<a href='https://t.me/" . $channel->name . "/" . $manuscript->message_id . "'>点击查看</a>";
             } else {
-                $chatText .= "\r\n\r\n稿件消息直达链接：<a href='https://t.me/" . $botInfo->channel->name . "/" . $manuscript->message_id . "'>" . get_text_title($manuscript->text) . "</a>";
+                $chatText .= "\r\n\r\n稿件消息直达链接：<a href='https://t.me/" . $channel->name . "/" . $manuscript->message_id . "'>" . get_text_title($manuscript->text) . "</a>";
             }
 
             $this->sendTelegramMessage($telegram, 'sendMessage', [
@@ -416,13 +462,13 @@ class SubmissionService
                 'reply_markup' => json_encode(KeyBoardData::START),
             ]);
 
-            return $this->sendGroupMessageWhiteUser($telegram, $botInfo, $manuscript);
+            return $this->sendGroupMessageWhiteUser($telegram, $botInfo, $manuscript,$channel);
         }
         // 发送消息到审核群组
         $text = $this->sendGroupMessage($telegram, $botInfo, $messageCache, $objectType, $manuscript->id);
         //            $text=$this->sendGroupMessage($telegram,$botInfo,$messageCache,$objectType,1);
 
-        Cache::tags($this->cacheTag.'.'.$chatId)->flush();
+        Cache::tags(CacheKey::StartSubmission.'.'.$chatId)->flush();
 
         return $this->sendTelegramMessage($telegram, 'sendMessage', [
             'chat_id' => $chatId,
@@ -448,7 +494,7 @@ class SubmissionService
         string $messageId,
         Collection $message
     ): string {
-        if (empty(Cache::tags($this->cacheTag.'.'.$chatId)->get('text'))) {
+        if (empty(Cache::tags(CacheKey::StartSubmission.'.'.$chatId)->get('text'))) {
             $text = get_config('submission.start_text_tips');
         } else {
             $text = get_config('submission.start_update_text_tips');
@@ -461,8 +507,8 @@ class SubmissionService
             $messageCacheData['text'] = htmlspecialchars($messageCacheData['text'], ENT_QUOTES, 'UTF-8');
         }
 
-        Cache::tags($this->cacheTag.'.'.$chatId)->put('text', $messageCacheData, now()->addDay());
-        Cache::tags($this->cacheTag.'.'.$chatId)->put('objectType', 'text', now()->addDay());
+        Cache::tags(CacheKey::StartSubmission.'.'.$chatId)->put('text', $messageCacheData, now()->addDay());
+        Cache::tags(CacheKey::StartSubmission.'.'.$chatId)->put('objectType', 'text', now()->addDay());
 
         return $this->sendTelegramMessage($telegram, 'sendMessage', [
             'chat_id' => $chatId,
@@ -491,17 +537,17 @@ class SubmissionService
             }
 
             //存入缓存，等待所有图片接收完毕
-            if (Cache::tags($this->cacheTag.'.'.$chatId)->has($cacheKeyGroupId)) {
+            if (Cache::tags(CacheKey::StartSubmission.'.'.$chatId)->has($cacheKeyGroupId)) {
                 //如果存在缓存，则将消息合并
-                $messageCache = Cache::tags($this->cacheTag.'.'.$chatId)->get($cacheKeyGroupId);
+                $messageCache = Cache::tags(CacheKey::StartSubmission.'.'.$chatId)->get($cacheKeyGroupId);
                 $messageCache[] = $messageCacheData;
                 $text = get_config('submission.start_update_text_tips');
             } else {
                 $messageCache = [$messageCacheData];
                 $text = get_config('submission.start_text_tips');
             }
-            Cache::tags($this->cacheTag.'.'.$chatId)->put($cacheKeyGroup, $media_group_id, now()->addDay());
-            Cache::tags($this->cacheTag.'.'.$chatId)->put($cacheKeyGroupId, $messageCache, now()->addDay());
+            Cache::tags(CacheKey::StartSubmission.'.'.$chatId)->put($cacheKeyGroup, $media_group_id, now()->addDay());
+            Cache::tags(CacheKey::StartSubmission.'.'.$chatId)->put($cacheKeyGroupId, $messageCache, now()->addDay());
         } else {
 
             $messageCacheData = $message->toArray();
@@ -511,14 +557,14 @@ class SubmissionService
                 $messageCacheData['caption'] = htmlspecialchars($messageCacheData['caption'], ENT_QUOTES, 'UTF-8');
             }
 
-            if (Cache::tags($this->cacheTag.'.'.$chatId)->has($cacheKey)) {
+            if (Cache::tags(CacheKey::StartSubmission.'.'.$chatId)->has($cacheKey)) {
                 $text = get_config('submission.start_update_text_tips');
             } else {
                 $text = get_config('submission.start_text_tips');
             }
-            Cache::tags($this->cacheTag.'.'.$chatId)->put($cacheKey, $messageCacheData, now()->addDay());
+            Cache::tags(CacheKey::StartSubmission.'.'.$chatId)->put($cacheKey, $messageCacheData, now()->addDay());
         }
-        Cache::tags($this->cacheTag.'.'.$chatId)->put('objectType', $objectType, now()->addDay());
+        Cache::tags(CacheKey::StartSubmission.'.'.$chatId)->put('objectType', $objectType, now()->addDay());
 
         return $this->sendTelegramMessage($telegram, 'sendMessage', [
             'chat_id' => $chatId,

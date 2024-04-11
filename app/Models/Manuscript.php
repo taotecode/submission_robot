@@ -42,8 +42,13 @@ class Manuscript extends Model
 
     const TYPE_TEXT = 'text';
 
-    public function bot()
+    public function bot(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Bot::class,'id', 'bot_id');
+    }
+
+    public function channel(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(Channel::class,'id', 'channel_id');
     }
 }

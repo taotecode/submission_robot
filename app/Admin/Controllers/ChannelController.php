@@ -27,6 +27,7 @@ class ChannelController extends AdminController
                 return 'NULL';
             })->copyable();
             $grid->column('appellation');
+            $grid->column('sort_order')->sortable()->editable(true);
             $grid->column('created_at');
             $grid->column('updated_at')->sortable();
 
@@ -67,6 +68,7 @@ class ChannelController extends AdminController
             $form->display('id');
             $form->text('name')->help('频道公开链接，如：https://t.cn/this_a_channel，那么就可以填：this_a_channel，注意不要带@');
             $form->text('appellation')->help('频道名称，如：这是一个频道');
+            $form->number('sort_order');
 
             $form->display('created_at');
             $form->display('updated_at');

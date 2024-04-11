@@ -21,9 +21,9 @@ trait SendPostedByMessageService
                     $text = get_config('submission.review_approved_submission');
 
                     if (empty(get_text_title($manuscript->text))){
-                        $text .= "\r\n\r\n稿件消息直达链接：<a href='https://t.me/" . $botInfo->channel->name . "/" . $manuscript->message_id . "'>点击查看</a>";
+                        $text .= "\r\n\r\n稿件消息直达链接：<a href='https://t.me/" . $manuscript->channel->name . "/" . $manuscript->message_id . "'>点击查看</a>";
                     } else {
-                        $text .= "\r\n\r\n稿件消息直达链接：<a href='https://t.me/" . $botInfo->channel->name . "/" . $manuscript->message_id . "'>" . get_text_title($manuscript->text) . "</a>";
+                        $text .= "\r\n\r\n稿件消息直达链接：<a href='https://t.me/" . $manuscript->channel->name . "/" . $manuscript->message_id . "'>" . get_text_title($manuscript->text) . "</a>";
                     }
 
                     $telegram->sendMessage([

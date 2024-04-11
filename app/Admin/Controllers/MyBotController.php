@@ -33,7 +33,8 @@ class MyBotController extends AdminController
             $grid->column('name')->display(function ($name) {
                 return '@'.$name;
             })->copyable();
-            $grid->column('review_num')->badge();
+            $grid->column('review_approved_num')->badge();
+            $grid->column('review_reject_num')->badge();
             $grid->column('status')->switch();
             $grid->column('created_at');
             $grid->column('updated_at')->sortable();
@@ -92,7 +93,9 @@ class MyBotController extends AdminController
             $form->text('appellation')->help('机器人的用户名');
             $form->text('name')->help('不需要携带@符号，如：tougao_bot')->required();
             $form->password('token')->help('通过@BotFather创建机器人获取')->required();
-            $form->number('review_num')->min(1)->max(30)->default(1)->required()
+            $form->number('review_approved_num')->min(1)->max(30)->default(1)->required()
+                ->help('每条投稿消息的审核数量。如：设置1，那么只需要一个人就可以通过或拒绝。设置2，那么就需要两个人就可以通过或拒绝。<br>最小值为：1');
+            $form->number('review_reject_num')->min(1)->max(30)->default(1)->required()
                 ->help('每条投稿消息的审核数量。如：设置1，那么只需要一个人就可以通过或拒绝。设置2，那么就需要两个人就可以通过或拒绝。<br>最小值为：1');
 
             $form->switch('status')->default(1);

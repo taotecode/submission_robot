@@ -13,6 +13,7 @@ use App\Services\CallBackQuery\ManuscriptSearchService;
 use App\Services\CallBackQuery\PendingManuscriptService;
 use App\Services\CallBackQuery\PrivateMessageService;
 use App\Services\CallBackQuery\QuickSubmissionService;
+use App\Services\CallBackQuery\SelectChannelService;
 use App\Services\CallBackQuery\SetSubmissionUserTypeService;
 use Illuminate\Support\Facades\Log;
 use Telegram\Bot\Api;
@@ -101,6 +102,9 @@ class CallBackQueryService
                 break;
             case 'manuscript_search_page':
                 $this->manuscriptSearchPage($telegram, $botInfo, $manuscript, $chatId,$messageId,$callbackQueryId, $commandArray);
+                break;
+            case 'select_channel':
+                $this->selectChannel($telegram, $botInfo, $chatId, $messageId, $callbackQueryId,$commandArray);
                 break;
         }
     }
@@ -197,5 +201,10 @@ class CallBackQueryService
     private function manuscriptSearchPage(Api $telegram, $botInfo, ?Manuscript $manuscript, mixed $chatId,$messageId,$callbackQueryId, array $commandArray)
     {
         return (new ManuscriptSearchService())->page($telegram, $botInfo, $manuscript, $chatId,$messageId,$callbackQueryId, $commandArray);
+    }
+
+    private function selectChannel(Api $telegram, $botInfo, mixed $chatId, mixed $messageId, $callbackQueryId, array $commandArray)
+    {
+        return (new SelectChannelService())->select($telegram, $botInfo, $chatId, $messageId, $callbackQueryId, $commandArray);
     }
 }

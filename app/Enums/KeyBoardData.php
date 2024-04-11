@@ -152,4 +152,34 @@ class KeyBoardData
             ],
         ],
     ];
+
+    const SELECT_CHANNEL = [
+        'keyboard' => [
+            [
+                '选择发布频道',
+            ],
+            [
+                '重新开始',
+                '取消投稿',
+            ],
+        ],
+        'resize_keyboard' => true, // 让键盘大小适应屏幕
+        'one_time_keyboard' => false, // 是否只显示一次
+    ];
+
+    const SELECT_CHANNEL_END = [
+        'keyboard' => [
+            [
+                '确认投稿（公开）',
+                '确认投稿（匿名）',
+            ],
+            [
+                '重新开始',
+                '取消投稿',
+                '重新选择频道',
+            ],
+        ],
+        'resize_keyboard' => true, // 让键盘大小适应屏幕
+        'one_time_keyboard' => false, // 是否只显示一次
+    ];
 }

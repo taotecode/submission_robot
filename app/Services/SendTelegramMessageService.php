@@ -55,7 +55,7 @@ trait SendTelegramMessageService
         return $this->objectTypeHandle($telegram, $botInfo, $chatId, $objectType, $message, $inline_keyboard, true, true);
     }
 
-    public function sendGroupMessageWhiteUser(Api $telegram, $botInfo, $manuscript)
+    public function sendGroupMessageWhiteUser(Api $telegram, $botInfo, $manuscript,$channel)
     {
         if (!empty($botInfo->review_group->name)) {
             $chatId = '@' . $botInfo->review_group->name;
@@ -73,7 +73,7 @@ trait SendTelegramMessageService
         if (empty($manuscript->text)){
             $text .= "已自动通过审核。";
         } else {
-            $text .= "“ ".$manuscript->text." ” 已自动通过审核。";
+            $text .= "<a href='https://t.me/" . $channel->name . "/" . $manuscript->message_id . "'>“ ".get_text_title($manuscript->text)." ”</a> 已自动通过审核。";
         }
 
         return $this->sendTelegramMessage($telegram, 'sendMessage', [
@@ -92,7 +92,7 @@ trait SendTelegramMessageService
         $objectType = $manuscript->type;
 
         //频道ID
-        if (!empty($botInfo->channel_id)) {
+        if (!empty($manuscript->channel->name)) {
             $chatId = '@' . $botInfo->channel->name;
         }else{
             $this->sendTelegramMessage($telegram, 'sendMessage', [

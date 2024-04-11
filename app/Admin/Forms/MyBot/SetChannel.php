@@ -7,7 +7,7 @@ use Dcat\Admin\Contracts\LazyRenderable;
 use Dcat\Admin\Traits\LazyWidget;
 use Dcat\Admin\Widgets\Form;
 
-class Channel extends Form implements LazyRenderable
+class SetChannel extends Form implements LazyRenderable
 {
     use LazyWidget; // 使用异步加载功能
 
@@ -15,10 +15,11 @@ class Channel extends Form implements LazyRenderable
     public function handle(array $input)
     {
         $id = $input['id'];
-        $channel_id = $input['channel_id'];
+        $channel_ids = $input['channel_ids'];
+        $channel_ids = array_filter($channel_ids);// 过滤空值
 
         $bot = Bot::find($id);
-        $bot->channel_id = $channel_id;
+        $bot->channel_ids = $channel_ids;
         if ($bot->save()) {
             return $this->response()->success('操作成功')->refresh();
         } else {
@@ -31,15 +32,16 @@ class Channel extends Form implements LazyRenderable
     {
         // 获取外部传递参数
         $id = $this->payload['id'] ?? null;
-        $channel_id = $this->payload['channel_id'] ?? null;
-        if (empty($channel_id)) {
-            $channel_id=null;
+        $channel_ids = $this->payload['channel_ids'];
+        $channel_ids = json_decode($channel_ids, true);
+        if (count($channel_ids) == 0) {
+            $channel_ids = null;
         }
 
-        $this->select('channel_id', '发布频道')
+        $this->checkbox('channel_ids', '发布频道')
             ->options(\App\Models\Channel::all()->pluck('appellation', 'id'))
-            ->help('选择需要发布的频道，不可以多选。')
-            ->default($channel_id);
+            ->help('选择需要发布的频道，最终机器人显示顺序以【频道管理】中的排序为准。')
+            ->default($channel_ids);
 
         $this->hidden('id')->default($id);
     }

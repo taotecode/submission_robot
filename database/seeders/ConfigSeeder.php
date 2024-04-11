@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Config;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
@@ -141,10 +142,37 @@ class ConfigSeeder extends Seeder
                 'created_at' => '2023-11-23 21:13:00',
                 'updated_at' => '2023-11-23 21:13:00',
             ],
+            [
+                'id' => 15,
+                'group' => 'submission',
+                'name' => 'preview_tips_channel',
+                'value' => "已生成预览。\r\n请确认您的投稿信息。\r\n点击下方的 “选择发布频道” 按钮，选择将投稿发送到哪个频道。\r\n点击下方的 “重新编辑” 按钮，将返回到编辑状态。",
+                'description' => '预览投稿并选择频道提示语',
+                'created_at' => '2023-09-17 08:48:16',
+                'updated_at' => '2023-09-17 08:48:41',
+            ],
+            [
+                'id' => 16,
+                'group' => 'submission',
+                'name' => 'select_channel',
+                'value' => "请选择您需要发布的频道",
+                'description' => '选择频道提示语',
+                'created_at' => '2023-09-17 08:48:16',
+                'updated_at' => '2023-09-17 08:48:41',
+            ],
+            [
+                'id' => 17,
+                'group' => 'submission',
+                'name' => 'select_channel_end',
+                'value' => "您已选择频道，请点击下方的 “确认投稿” 按钮，或者点击下方的 “重新选择频道” 按钮。",
+                'description' => '选择频道后的提示语',
+                'created_at' => '2023-09-17 08:48:16',
+                'updated_at' => '2023-09-17 08:48:41',
+            ],
         ];
         //        DB::table('config')->insert($data);
         foreach ($data as $item) {
-            DB::table('config')->updateOrInsert(['id' => $item['id']], $item);
+            (new Config())->firstOrCreate(['id' => $item['id']], $item);
         }
     }
 }
