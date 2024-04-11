@@ -381,6 +381,8 @@ trait SendTelegramMessageService
             $params['caption'] = $text;
         }
 
+        Log::info('text: ' . $text);
+
         if ($objectType === 'media_group_audio') {
             $this->sendTelegramMessage($telegram, 'sendMessage', [
                 'chat_id' => $chatId,
@@ -663,7 +665,6 @@ trait SendTelegramMessageService
             Log::error('发送类型：' . $method);
             Log::error('发送参数：' . json_encode($params));
             Log::error($telegramSDKException);
-
             return 'error';
         }
     }
