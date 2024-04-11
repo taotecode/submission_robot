@@ -41,7 +41,7 @@ class ComplaintService
                     KeyBoardName::Restart => $this->restart($telegram, $chatId),
                     KeyBoardName::Cancel => $this->cancel($telegram, $chatId),
                     KeyBoardName::EndSending => $this->end($telegram,$botInfo, $chatId),
-                    KeyBoardName::ConfirmComplaint => $this->confirm($telegram,$botInfo, $chatId, $message),
+                    KeyBoardName::ConfirmComplaint => $this->confirm($telegram,$botInfo, $chatId, $chat),
                     default => $this->startUpdateByText($telegram,$botInfo, $chatId, $messageId, $message),
                 };
             case 'photo':
@@ -344,7 +344,7 @@ class ComplaintService
         ]);
     }
 
-    public function confirm(Api $telegram, $chatId, $chat, $botInfo)
+    public function confirm(Api $telegram,$botInfo, $chatId, $chat)
     {
         $objectType = Cache::tags(CacheKey::Complaint . '.' . $chatId)->get('objectType');
         $messageId = '';
