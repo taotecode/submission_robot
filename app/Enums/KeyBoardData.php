@@ -237,6 +237,7 @@ class KeyBoardData
                 KeyBoardName::ConfirmComplaint,
             ],
             [
+                KeyBoardName::Restart,
                 KeyBoardName::Cancel,
             ],
         ],
