@@ -10,6 +10,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Telegram\Bot\Api;
+use Telegram\Bot\Objects\Message;
 use Telegram\Bot\Objects\Update;
 
 class ComplaintService
@@ -26,7 +27,7 @@ class ComplaintService
         $objectType = $message->objectType();
         $forwardFrom = $message->forwardFrom ?? '';
         $forwardSignature = $message->forwardSignature ?? '';
-        Log::info('objectType', [$objectType]);
+        Log::info('message', $message->toArray());
 
         switch ($objectType) {
             case 'text':
@@ -62,6 +63,8 @@ class ComplaintService
 
     private function updateByText(Api $telegram, mixed $chatId, mixed $messageId, Collection $message)
     {
+        if (empty(Cache::tags(CacheKey::Submission . '.' . $chatId)->get('forward_origin'))) {
+        }
         return 'ok';
         /*if (empty(Cache::tags(CacheKey::Submission . '.' . $chatId)->get('forward_origin'))) {
             $text = get_config('complaint.start_text_tips');
@@ -92,5 +95,14 @@ class ComplaintService
             'parse_mode' => 'HTML',
             'reply_markup' => json_encode(KeyBoardData::START_SUBMISSION),
         ]);*/
+    }
+
+    public function record(Api $telegram, mixed $chatId,Message $message)
+    {
+        Cache::tags(CacheKey::Submission . '.' . $chatId)->put('forward_origin',[
+            'message_id'=>$message->forwardFromMessageId,
+            'chat'=>$message->forwardFromChat,
+            'from'=>$message->forwardFrom,
+        ], now()->addDay());
     }
 }
