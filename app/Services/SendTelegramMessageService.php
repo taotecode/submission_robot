@@ -390,7 +390,7 @@ trait SendTelegramMessageService
                 'parse_mode' => 'HTML',
             ]);
         }
-        if ($isReviewGroup) {
+        if ($isReviewGroup&&in_array($objectType, ['media_group_photo', 'media_group_video', 'media_group_audio'])) {
             $mediaResult = $this->sendTelegramMessage($telegram, 'sendMediaGroup', [
                 'chat_id' => $chatId,
                 'media' => json_encode($media),
