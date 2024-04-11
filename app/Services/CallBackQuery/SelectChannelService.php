@@ -28,7 +28,7 @@ class SelectChannelService
                 return 'error';
             }
         }
-        Cache::tags(CacheKey::StartSubmission.'.'.$chatId)->put('channel_id', $channelId, now()->addDay());
+        Cache::tags(CacheKey::Submission.'.'.$chatId)->put('channel_id', $channelId, now()->addDay());
 
         try {
             $telegram->sendMessage([

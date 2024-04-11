@@ -169,6 +169,24 @@ class ConfigSeeder extends Seeder
                 'created_at' => '2023-09-17 08:48:16',
                 'updated_at' => '2023-09-17 08:48:41',
             ],
+            [
+                'id' => 18,
+                'group' => 'help',
+                'name' => 'start',
+                'value' => "这里是帮助中心",
+                'description' => '帮助中心内容',
+                'created_at' => '2023-09-17 08:48:16',
+                'updated_at' => '2023-09-17 08:48:41',
+            ],
+            [
+                'id' => 19,
+                'group' => 'feedback',
+                'name' => 'start',
+                'value' => "这里是意见反馈\r\n请选择您是要投诉还是建议反馈",
+                'description' => '意见反馈开始提示语',
+                'created_at' => '2023-09-17 08:48:16',
+                'updated_at' => '2023-09-17 08:48:41',
+            ],
         ];
         //        DB::table('config')->insert($data);
         foreach ($data as $item) {

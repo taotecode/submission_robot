@@ -31,8 +31,11 @@ class ConfigController extends AdminController
             $grid->column('updated_at')->sortable();
 
             $grid->filter(function (Grid\Filter $filter) {
+                $filter->panel();
                 $filter->equal('id');
-
+                $filter->like('group');
+                $filter->like('description');
+                $filter->like('value');
             });
         });
     }
@@ -76,7 +79,7 @@ class ConfigController extends AdminController
                 'max' => '不能大于10个字符',
             ])->required();
             $form->text('description')->required();
-            $form->markdown('value');
+            $form->textarea('value')->help("支持html格式(参考<a href='https://core.telegram.org/bots/api#html-style' target='_blank'>https://core.telegram.org/bots/api#html-style</a>)。");
 
             $form->display('created_at');
             $form->display('updated_at');

@@ -2,6 +2,8 @@
 
 namespace App\Enums;
 
+use http\Env;
+
 class KeyBoardData
 {
     /**
@@ -10,12 +12,12 @@ class KeyBoardData
     const START = [
         'keyboard' => [
             [
-                '开始投稿',
+                KeyBoardName::StartSubmission,
             ],
-            /*[
-                '意见反馈',
-                '帮助中心',
-            ],*/
+            [
+                KeyBoardName::Feedback,
+                KeyBoardName::HelpCenter,
+            ],
         ],
         'resize_keyboard' => true, // 让键盘大小适应屏幕
         'one_time_keyboard' => false, // 是否只显示一次
@@ -27,11 +29,11 @@ class KeyBoardData
     const START_SUBMISSION = [
         'keyboard' => [
             [
-                '结束发送',
+                KeyBoardName::EndSending,
             ],
             [
-                '重新开始',
-                '取消投稿',
+                KeyBoardName::Restart,
+                KeyBoardName::CancelSubmission,
             ],
         ],
         'resize_keyboard' => true, // 让键盘大小适应屏幕
@@ -44,12 +46,12 @@ class KeyBoardData
     const END_SUBMISSION = [
         'keyboard' => [
             [
-                '确认投稿（公开）',
-                '确认投稿（匿名）',
+                KeyBoardName::ConfirmSubmissionOpen,
+                KeyBoardName::ConfirmSubmissionAnonymous,
             ],
             [
-                '重新开始',
-                '取消投稿',
+                KeyBoardName::Restart,
+                KeyBoardName::CancelSubmission,
             ],
         ],
         'resize_keyboard' => true, // 让键盘大小适应屏幕
@@ -62,13 +64,13 @@ class KeyBoardData
     const REVIEW_GROUP = [
         'inline_keyboard' => [
             [
-                ['text' => '通过', 'callback_data' => 'approved_submission'],
-                ['text' => '拒绝', 'callback_data' => 'reject_submission'],
-                ['text' => '私聊', 'callback_data' => 'private_message'],
+                ['text' => KeyBoardName::Approved, 'callback_data' => 'approved_submission'],
+                ['text' => KeyBoardName::Rejected, 'callback_data' => 'reject_submission'],
+                ['text' => KeyBoardName::PrivateChat, 'callback_data' => 'private_message'],
             ],
             [
-                ['text' => '快捷通过', 'callback_data' => 'approved_submission_quick'],
-                ['text' => '快捷拒绝', 'callback_data' => 'reject_submission_quick'],
+                ['text' => KeyBoardName::QuickApproved, 'callback_data' => 'approved_submission_quick'],
+                ['text' => KeyBoardName::QuickRejected, 'callback_data' => 'reject_submission_quick'],
             ],
         ],
     ];
@@ -79,11 +81,11 @@ class KeyBoardData
     const REVIEW_GROUP_APPROVED = [
         'inline_keyboard' => [
             [
-                ['text' => '已通过', 'callback_data' => 'approved_submission_button'],
-                ['text'=>'查看消息','url'=>'https://t.me/'],
+                ['text' => KeyBoardName::ApprovedEnd, 'callback_data' => 'approved_submission_button'],
+                ['text'=>KeyBoardName::ViewMessage,'url'=>'https://t.me/'],
             ],
             [
-                ['text' => '删除消息', 'callback_data' => 'delete_submission_message'],
+                ['text' => KeyBoardName::DeleteMessage, 'callback_data' => 'delete_submission_message'],
             ],
         ],
     ];
@@ -94,7 +96,7 @@ class KeyBoardData
     const REVIEW_GROUP_REJECT = [
         'inline_keyboard' => [
             [
-                ['text' => '已拒绝', 'callback_data' => 'reject_submission_button'],
+                ['text' => KeyBoardName::RejectedEnd, 'callback_data' => 'reject_submission_button'],
             ],
         ],
     ];
@@ -105,7 +107,7 @@ class KeyBoardData
     const REVIEW_GROUP_DELETE = [
         'inline_keyboard' => [
             [
-                ['text' => '消息已被删除', 'callback_data' => 'delete_submission_message_success'],
+                ['text' => KeyBoardName::MessageDeleted, 'callback_data' => 'delete_submission_message_success'],
             ]
         ],
     ];
@@ -123,8 +125,8 @@ class KeyBoardData
     const WHITE_LIST_USER_SUBMISSION = [
         'inline_keyboard' => [
             [
-                ['text'=>'查看消息','url'=>'https://t.me/'],
-                ['text' => '删除白名单用户投稿', 'callback_data' => 'delete_white_list_user_submission_message'],
+                ['text'=>KeyBoardName::ViewMessage,'url'=>'https://t.me/'],
+                ['text' => KeyBoardName::DeleteWhiteListUser, 'callback_data' => 'delete_white_list_user_submission_message'],
             ],
         ],
     ];
@@ -156,11 +158,11 @@ class KeyBoardData
     const SELECT_CHANNEL = [
         'keyboard' => [
             [
-                '选择发布频道',
+                KeyBoardName::SelectChannel,
             ],
             [
-                '重新开始',
-                '取消投稿',
+                KeyBoardName::Restart,
+                KeyBoardName::CancelSubmission,
             ],
         ],
         'resize_keyboard' => true, // 让键盘大小适应屏幕
@@ -170,13 +172,26 @@ class KeyBoardData
     const SELECT_CHANNEL_END = [
         'keyboard' => [
             [
-                '确认投稿（公开）',
-                '确认投稿（匿名）',
+                KeyBoardName::ConfirmSubmissionOpen,
+                KeyBoardName::ConfirmSubmissionAnonymous,
             ],
             [
-                '重新开始',
-                '取消投稿',
-                '重新选择频道',
+                KeyBoardName::Restart,
+                KeyBoardName::CancelSubmission,
+                KeyBoardName::SelectChannelAgain,
+            ],
+        ],
+        'resize_keyboard' => true, // 让键盘大小适应屏幕
+        'one_time_keyboard' => false, // 是否只显示一次
+    ];
+    const START_FEEDBACK = [
+        'keyboard' => [
+            [
+                KeyBoardName::SubmitComplaint,
+                KeyBoardName::SubmitSuggestion,
+            ],
+            [
+                KeyBoardName::Cancel,
             ],
         ],
         'resize_keyboard' => true, // 让键盘大小适应屏幕

@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Bot;
 use App\Services\CallBackQueryService;
 use App\Services\SaveBotUserService;
-use App\Services\SubmissionService;
+use App\Services\StartService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Telegram\Bot\Api;
@@ -17,17 +17,17 @@ class HookController extends Controller
 
     public Bot $botModel;
 
-    public SubmissionService $submissionService;
+    public StartService $startService;
 
     public CallBackQueryService $callBackQueryService;
 
     public function __construct(
         Bot $botModel,
-        SubmissionService $submissionService,
+        StartService $startService,
         CallBackQueryService $callBackQueryService
     ) {
         $this->botModel = $botModel;
-        $this->submissionService = $submissionService;
+        $this->startService = $startService;
         $this->callBackQueryService = $callBackQueryService;
     }
 
@@ -74,7 +74,7 @@ class HookController extends Controller
             if ($updateData->getChat()->type != 'private') {
                 return 'ok';
             }
-            $this->submissionService->index($botInfo, $updateData, $telegram);
+            $this->startService->index($botInfo, $updateData, $telegram);
         }
 
         //按键相应
