@@ -225,7 +225,7 @@ class ComplaintService
      * @param Bot $botInfo
      * @return mixed
      */
-    public function end(Api $telegram, $chatId, $botInfo)
+    public function end(Api $telegram, $botInfo,$chatId)
     {
         $objectType = Cache::tags(CacheKey::Complaint . '.' . $chatId)->get('objectType');
         $messageId = '';
