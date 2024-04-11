@@ -414,7 +414,6 @@ class ComplaintService
             'posted_by' => $chat->toArray(),
             'posted_by_id' => $botUser->id,
             'data' => $messageCache,
-            'appendix' => [],
             'approved' => [],
             'reject' => [],
             'one_approved' => [],
