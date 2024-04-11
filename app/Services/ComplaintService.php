@@ -434,7 +434,7 @@ class ComplaintService
         // 发送消息到审核群组
         $this->sendGroupMessage(
             $telegram, $botInfo, $messageCache, $objectType, $complaint->id,
-            false,false,false,
+            null,KeyBoardData::REVIEW_GROUP_COMPLAINT,false,false,false,
             $custom_header_content,$custom_tail_content
         );
 
