@@ -195,6 +195,7 @@ class ComplaintService
             'channel_id'=>$channel->id,
             'message_id'=>$message->forwardFromMessageId
         ])->first();
+        Log::info('query data',['bot_id'=>$botInfo->id,'channel_id'=>$channel->id,'message_id'=>$message->forwardFromMessageId]);
         if (!empty($manuscript)) {
             return $this->sendTelegramMessage($telegram, 'sendMessage', [
                 'chat_id' => $chatId,
