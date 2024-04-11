@@ -226,7 +226,7 @@ class ComplaintService
      */
     public function end(Api $telegram, $chatId, $botInfo)
     {
-        $objectType = Cache::tags(CacheKey::Submission . '.' . $chatId)->get('objectType');
+        $objectType = Cache::tags(CacheKey::Complaint . '.' . $chatId)->get('objectType');
         $messageId = '';
         $messageCache = [];
         $isEmpty=false;
