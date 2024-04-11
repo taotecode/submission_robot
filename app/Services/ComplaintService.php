@@ -209,6 +209,7 @@ class ComplaintService
             'channel_data'=>$channel,
             'manuscript_data'=>$manuscript,
         ], now()->addDay());
+        Log::info('forward_origin'.json_encode(Cache::tags(CacheKey::Complaint . '.' . $chatId)->get('forward_origin')));
         return $this->sendTelegramMessage($telegram, 'sendMessage', [
             'chat_id' => $chatId,
             'text' => get_config('complaint.start_forward_origin'),
