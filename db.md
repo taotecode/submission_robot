@@ -7,4 +7,4 @@ php artisan db:seed --class=ConfigSeeder
 php artisan db:seed --class="Dcat\Admin\Models\AdminTablesSeeder"
 php artisan db:seed --class=AdminMenuAddSeeder
 
-php artisan migrate:generate --tables="bot_users"
+php artisan migrate:generate --tables="bot_users" --with-has-table

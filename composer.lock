@@ -6705,16 +6705,16 @@
         },
         {
             "name": "kitloong/laravel-migrations-generator",
-            "version": "v6.11.0",
+            "version": "v6.11.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/kitloong/laravel-migrations-generator.git",
-                "reference": "220b5f17fcb16610a3e9757d68c197319c0f7444"
+                "reference": "0f007e86dce6e0cfd71dc0b757da18851c376c3b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/kitloong/laravel-migrations-generator/zipball/220b5f17fcb16610a3e9757d68c197319c0f7444",
-                "reference": "220b5f17fcb16610a3e9757d68c197319c0f7444",
+                "url": "https://api.github.com/repos/kitloong/laravel-migrations-generator/zipball/0f007e86dce6e0cfd71dc0b757da18851c376c3b",
+                "reference": "0f007e86dce6e0cfd71dc0b757da18851c376c3b",
                 "shasum": ""
             },
             "require": {
@@ -6727,8 +6727,8 @@
             "require-dev": {
                 "barryvdh/laravel-ide-helper": "^2.5",
                 "friendsofphp/php-cs-fixer": "^2.19.0|^3.1",
+                "larastan/larastan": "^0.4|^0.5|^0.6|^0.7|^1.0|^2.0",
                 "mockery/mockery": "^1.0",
-                "nunomaduro/larastan": "^0.4|^0.5|^0.6|^0.7|^1.0|^2.0",
                 "orchestra/testbench": "^3.6|^4.0|^5.0|^6.0|^7.0|^8.0",
                 "phpmd/phpmd": "^2.10",
                 "slevomat/coding-standard": "^6.0|^7.0|^8.5",
@@ -6768,7 +6768,7 @@
             ],
             "support": {
                 "issues": "https://github.com/kitloong/laravel-migrations-generator/issues",
-                "source": "https://github.com/kitloong/laravel-migrations-generator/tree/v6.11.0"
+                "source": "https://github.com/kitloong/laravel-migrations-generator/tree/v6.11.1"
             },
             "funding": [
                 {
@@ -6776,7 +6776,7 @@
                     "type": "custom"
                 }
             ],
-            "time": "2023-10-10T13:55:26+00:00"
+            "time": "2024-02-06T14:42:33+00:00"
         },
         {
             "name": "laravel/pint",
