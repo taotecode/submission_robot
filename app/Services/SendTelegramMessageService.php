@@ -381,8 +381,6 @@ trait SendTelegramMessageService
             $params['caption'] = $text;
         }
 
-        Log::info('text: ' . $text);
-
         if ($objectType === 'media_group_audio') {
             $this->sendTelegramMessage($telegram, 'sendMessage', [
                 'chat_id' => $chatId,

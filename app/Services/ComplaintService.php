@@ -328,9 +328,6 @@ class ComplaintService
         //替换$custom_tail_content中的{url}变量
         $custom_tail_content=str_replace('{url}',$url,$custom_tail_content);
 
-        Log::info('custom_header_content:'.$custom_header_content);
-        Log::info('custom_tail_content:'.$custom_tail_content);
-
         //发送预览消息
         $this->sendPreviewMessage(
             $telegram, $botInfo, $chatId, $messageCache, $objectType,
@@ -428,14 +425,11 @@ class ComplaintService
 
         $complaint=$complaintModel->create($sqlData);
 
-        $custom_header_content = get_config('complaint.custom_header_content');
-        $custom_tail_content = get_config('complaint.custom_tail_content');
-        $url='https://t.me/'.$channel_data->name.'/'.$manuscript_data->message_id;
+        $custom_header_content = get_config('complaint.custom_header_content')."\n\n";
+        $custom_tail_content = "\n\n".get_config('complaint.custom_tail_content');
+        $url='https://t.me/'.$channel_data->name.'/'.$manuscript_data->message_id??'';
         //替换$custom_tail_content中的{url}变量
         $custom_tail_content=str_replace('{url}',$url,$custom_tail_content);
-
-        Log::info('custom_header_content', $custom_header_content);
-        Log::info('custom_tail_content', $custom_tail_content);
 
         // 发送消息到审核群组
         $this->sendGroupMessage(
