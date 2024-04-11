@@ -28,15 +28,20 @@ class SetChannel extends Form implements LazyRenderable
     }
 
     // 构建表单
-    public function form()
+    public function form(): void
     {
         // 获取外部传递参数
         $id = $this->payload['id'] ?? null;
         $channel_ids = $this->payload['channel_ids'];
-        $channel_ids = json_decode($channel_ids, true);
-        if (count($channel_ids) == 0) {
+        if (!empty($channel_ids)) {
+            $channel_ids = json_decode($channel_ids, true);
+            if (count($channel_ids) == 0) {
+                $channel_ids = null;
+            }
+        }else{
             $channel_ids = null;
         }
+
 
         $this->checkbox('channel_ids', '发布频道')
             ->options(\App\Models\Channel::all()->pluck('appellation', 'id'))
