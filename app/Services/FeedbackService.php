@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Enums\CacheKey;
 use App\Enums\KeyBoardData;
+use App\Enums\KeyBoardName;
 use App\Enums\SubmissionUserType;
 use App\Models\SubmissionUser;
 use Illuminate\Support\Collection;
@@ -18,34 +19,32 @@ class FeedbackService
 
     public function index($botInfo, Update $updateData, Api $telegram)
     {
+        $chat = $updateData->getChat();
+        $chatId = $chat->id;
+        $message = $updateData->getMessage();
+        $messageId = $message->messageId;
+        $objectType = $message->objectType();
+        $forwardFrom = $message->forwardFrom ?? '';
+        $forwardSignature = $message->forwardSignature ?? '';
 
+        switch ($objectType) {
+            case 'text':
+                return match ($message->text) {
+                    KeyBoardName::SubmitComplaint => $this->start_complaint($telegram, $chatId, $chat),
+//                    default => $this->updateByText($telegram, $chatId, $messageId, $message),
+                };
+            case 'photo':
+            case 'video':
+            case 'audio':
+//                $this->media($telegram, $chatId, $messageId, $message, $objectType);
+                break;
+        }
     }
 
-    public function feedback(Api $telegram,$botInfo,string $chatId, Collection $chat)
+    public function feedback(Api $telegram, string $chatId)
     {
-        Cache::tags(CacheKey::Submission.'.'.$chatId)->flush();
-
-        $submissionUser = (new SubmissionUser)->firstOrCreate([
-            'bot_id' => $botInfo->id,
-            'user_id' => $chatId,
-        ], [
-            'type' => SubmissionUserType::NORMAL,
-            'bot_id'=>$botInfo->id,
-            'user_id' => $chatId,
-            'user_data' => $chat->toArray(),
-            'name' => get_posted_by($chat->toArray()),
-        ]);
-
-        if ($submissionUser->type == SubmissionUserType::BLACK) {
-            Cache::tags(CacheKey::Submission.'.'.$chatId)->flush();
-
-            return $this->sendTelegramMessage($telegram, 'sendMessage', [
-                'chat_id' => $chatId,
-                'text' => get_config('submission.black_list'),
-                'parse_mode' => 'HTML',
-                'reply_markup' => json_encode(KeyBoardData::BLACKLIST_USER_DELETE),
-            ]);
-        }
+        Cache::tags(CacheKey::Submission . '.' . $chatId)->flush();
+        Cache::tags(CacheKey::Complaint . '.' . $chatId)->flush();
 
         return $this->sendTelegramMessage($telegram, 'sendMessage', [
             'chat_id' => $chatId,
@@ -55,14 +54,21 @@ class FeedbackService
         ]);
     }
 
-    public function start_complaint(Api $telegram,$botInfo,string $chatId, Collection $chat)
+    /**
+     * 进入投诉状态
+     * @param Api $telegram
+     * @param string $chatId
+     * @param Collection $chat
+     * @return mixed
+     */
+    public function start_complaint(Api $telegram, string $chatId, Collection $chat): mixed
     {
-        Cache::tags(CacheKey::Complaint.'.'.$chatId)->put($chatId, $chat->toArray(), now()->addDay());
+        Cache::tags(CacheKey::Complaint . '.' . $chatId)->put($chatId, $chat->toArray(), now()->addDay());
         return $this->sendTelegramMessage($telegram, 'sendMessage', [
             'chat_id' => $chatId,
-            'text' => get_config('feedback.start'),
+            'text' => get_config('feedback.start_complaint'),
             'parse_mode' => 'HTML',
-            'reply_markup' => json_encode(KeyBoardData::START),
+            'reply_markup' => json_encode(KeyBoardData::Cancel),
         ]);
     }
 }

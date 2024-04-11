@@ -197,4 +197,14 @@ class KeyBoardData
         'resize_keyboard' => true, // 让键盘大小适应屏幕
         'one_time_keyboard' => false, // 是否只显示一次
     ];
+
+    const Cancel = [
+        'keyboard' => [
+            [
+                KeyBoardName::Cancel,
+            ],
+        ],
+        'resize_keyboard' => true, // 让键盘大小适应屏幕
+        'one_time_keyboard' => false, // 是否只显示一次
+    ];
 }

@@ -41,7 +41,7 @@ class StartService
         return match ($objectType) {
             'text' => match ($message->text) {
                 KeyBoardName::StartSubmission => $submissionService->start($telegram, $botInfo, $chatId, $chat, get_config('submission.start')),
-                KeyBoardName::Feedback => $feedbackService->feedback($telegram, $botInfo, $chatId, $chat),
+                KeyBoardName::Feedback => $feedbackService->feedback($telegram, $chatId),
                 KeyBoardName::HelpCenter => $this->help($telegram, $chatId),
                 default => $this->error_for_text($telegram, $chatId, $messageId),
             },

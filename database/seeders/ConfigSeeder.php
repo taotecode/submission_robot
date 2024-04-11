@@ -187,6 +187,15 @@ class ConfigSeeder extends Seeder
                 'created_at' => '2023-09-17 08:48:16',
                 'updated_at' => '2023-09-17 08:48:41',
             ],
+            [
+                'id' => 20,
+                'group' => 'feedback',
+                'name' => 'start_complaint',
+                'value' => "请向这里转发您想要投诉的频道消息\r\n请注意，您必须转发您要投诉的频道消息过来，其他方式无效。",
+                'description' => '开始投诉提示语',
+                'created_at' => '2023-09-17 08:48:16',
+                'updated_at' => '2023-09-17 08:48:41',
+            ],
         ];
         //        DB::table('config')->insert($data);
         foreach ($data as $item) {
