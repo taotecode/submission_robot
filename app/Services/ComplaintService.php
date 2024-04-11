@@ -27,7 +27,7 @@ class ComplaintService
         $objectType = $message->objectType();
         $forwardFrom = $message->forwardFrom ?? '';
         $forwardSignature = $message->forwardSignature ?? '';
-        Log::info('message', $message['forward_origin']);
+//        Log::info('message', $message['forward_origin']);
 
         switch ($objectType) {
             case 'text':
@@ -63,7 +63,8 @@ class ComplaintService
 
     private function updateByText(Api $telegram, mixed $chatId, mixed $messageId, Collection $message)
     {
-        if (empty(Cache::tags(CacheKey::Submission . '.' . $chatId)->get('forward_origin'))) {
+        if (!Cache::tags(CacheKey::Submission . '.' . $chatId)->has('forward_origin')) {
+
         }
         return 'ok';
         /*if (empty(Cache::tags(CacheKey::Submission . '.' . $chatId)->get('forward_origin'))) {
@@ -99,10 +100,7 @@ class ComplaintService
 
     public function record(Api $telegram, mixed $chatId,Message $message)
     {
-        Cache::tags(CacheKey::Submission . '.' . $chatId)->put('forward_origin',[
-            'message_id'=>$message->forwardFromMessageId,
-            'chat'=>$message->forwardFromChat,
-            'from'=>$message->forwardFrom,
-        ], now()->addDay());
+//        Cache::tags(CacheKey::Submission . '.' . $chatId)->put('forward_origin',$message['forward_origin'], now()->addDay());
+        //检查消息是否含有来源
     }
 }
