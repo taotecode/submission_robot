@@ -27,7 +27,7 @@ class ComplaintService
         $objectType = $message->objectType();
         $forwardFrom = $message->forwardFrom ?? '';
         $forwardSignature = $message->forwardSignature ?? '';
-        Log::info('message', $message->toArray());
+        Log::info('message', $message['forward_origin']);
 
         switch ($objectType) {
             case 'text':
