@@ -26,19 +26,19 @@ class BotMessageController extends AdminController
             $grid->column('id')->sortable();
             $grid->column('bot.appellation');
             $grid->column('user_name')->display(function () {
-                return get_posted_by($this->userData);
+                return get_posted_by($this->user_data);
             })->expand(function ($model) {
-                if (empty($this->userData)) {
+                if (empty($this->user_data)) {
                     return '暂无信息';
                 }
-                if ($this->userData['type'] != 'private'){
-                    return "<div style='padding:10px 10px'><p>title: {$this->userData['title']}</p></div>";
+                if ($this->user_data['type'] != 'private'){
+                    return "<div style='padding:10px 10px'><p>title: {$this->user_data['title']}</p></div>";
                 }
                 // 返回显示的详情
-                $uid = $this->userData['id'] ?? '';
-                $first_name = $this->userData['first_name'] ?? '';
-                $last_name = $this->userData['last_name'] ?? '';
-                $username = $this->userData['username'] ?? '';
+                $uid = $this->user_data['id'] ?? '';
+                $first_name = $this->user_data['first_name'] ?? '';
+                $last_name = $this->user_data['last_name'] ?? '';
+                $username = $this->user_data['username'] ?? '';
                 return "<div style='padding:10px 10px'><p>UID: $uid</p><p>first name: $first_name</p><p>last name: $last_name</p><p>用户名: $username</p></div>";
             });
 
@@ -84,7 +84,7 @@ class BotMessageController extends AdminController
                 $filter->equal('bot_id')->select(function () {
                     return \App\Models\Bot::all()->pluck('appellation', 'id');
                 });
-                $filter->equal('userId');
+                $filter->equal('user_id');
                 $filter->like('user_data','用户名称');
                 $filter->between('created_at')->datetime();
             });
@@ -103,8 +103,8 @@ class BotMessageController extends AdminController
         return Show::make($id, new BotMessage(), function (Show $show) {
             $show->field('id');
             $show->field('bot_id');
-            $show->field('userId');
-            $show->field('userData');
+            $show->field('user_id');
+            $show->field('user_data');
             $show->field('data');
             $show->field('created_at');
             $show->field('updated_at');
@@ -121,8 +121,8 @@ class BotMessageController extends AdminController
         return Form::make(new BotMessage(), function (Form $form) {
             $form->display('id');
             $form->text('bot_id');
-            $form->text('userId');
-            $form->text('userData');
+            $form->text('user_id');
+            $form->text('user_data');
             $form->text('data');
 
             $form->display('created_at');

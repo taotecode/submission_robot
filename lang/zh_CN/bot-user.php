@@ -10,7 +10,7 @@ return [
             'appellation' => '所属机器人',
         ],
         'type' => '类型',
-        'userId' => '用户ID',
+        'user_id' => '用户ID',
         'user_data' => '用户信息',
         'user_name'=> '用户名称',
     ],

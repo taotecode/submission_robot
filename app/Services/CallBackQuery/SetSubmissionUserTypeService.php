@@ -66,7 +66,7 @@ class SetSubmissionUserTypeService
             }
         }
 
-        $submissionUser=(new SubmissionUser())->where(['userId'=>$commandArray[3],'bot_id'=>$botInfo->id])->first();
+        $submissionUser=(new SubmissionUser())->where(['user_id'=>$commandArray[3],'bot_id'=>$botInfo->id])->first();
         $submissionUser->type=$commandArray[2];
         $submissionUser->save();
 

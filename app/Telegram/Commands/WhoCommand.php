@@ -107,12 +107,12 @@ class WhoCommand extends Command
 
         $submissionUserInfo = (new SubmissionUser)->firstOrCreate([
             'bot_id' => $botInfo->id,
-            'userId' => $submissionUser['id'],
+            'user_id' => $submissionUser['id'],
         ], [
             'type' => SubmissionUserType::NORMAL,
             'bot_id'=>$botInfo->id,
-            'userId' => $submissionUser['id'],
-            'userData' => $submissionUser,
+            'user_id' => $submissionUser['id'],
+            'user_data' => $submissionUser,
             'name' => "未知",
         ]);
 

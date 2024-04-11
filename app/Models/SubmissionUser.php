@@ -14,8 +14,8 @@ class SubmissionUser extends Model
     protected $fillable = [
         'bot_id',
         'type',
-        'userId',
-        'userData',
+        'user_id',
+        'user_data',
         'name',
     ];
 

@@ -106,11 +106,12 @@ class SubmissionService
 
         $submissionUser = (new SubmissionUser)->firstOrCreate([
             'bot_id' => $botInfo->id,
-            'userId' => $chatId,
+            'user_id' => $chatId,
         ], [
             'type' => SubmissionUserType::NORMAL,
             'bot_id'=>$botInfo->id,
-            'userId' => $chatId,
+            'user_id' => $chatId,
+            'user_data' => $chat->toArray(),
             'name' => get_posted_by($chat->toArray()),
         ]);
 
@@ -399,11 +400,11 @@ class SubmissionService
 
         //检查投稿人是否已在数据库中
         $submissionUser = (new SubmissionUser)->firstOrCreate([
-            'userId' => $chat->id,
+            'user_id' => $chat->id,
         ], [
             'type' => 0,
-            'userId' => $chat->id,
-            'userData' => $chat->toArray(),
+            'user_id' => $chat->id,
+            'user_data' => $chat->toArray(),
             'name' => get_posted_by($chat->toArray()),
         ]);
 

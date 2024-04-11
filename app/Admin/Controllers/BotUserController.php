@@ -29,7 +29,7 @@ class BotUserController extends AdminController
             $grid->column('type')->display(function () {
                 return admin_trans('bot-user.type')[$this->user_data['type']];
             })->label();
-            $grid->column('userId');
+            $grid->column('user_id');
             $grid->column('user_name')->display(function () {
                 if ($this->user_data['type'] != 'private'){
                     return $this->user_data['title'];
@@ -60,7 +60,7 @@ class BotUserController extends AdminController
                 $filter->equal('bot_id')->select(function () {
                     return \App\Models\Bot::all()->pluck('appellation', 'id');
                 });
-                $filter->equal('userId');
+                $filter->equal('user_id');
                 $filter->like('user_data','用户名称');
                 $filter->between('created_at')->datetime();
             });
@@ -79,7 +79,7 @@ class BotUserController extends AdminController
         return Show::make($id, new BotUser('bot'), function (Show $show) {
             $show->field('id');
             $show->field('bot.appellation');
-            $show->field('userId');
+            $show->field('user_id');
             $show->field('user_name')->as(function () {
                 return get_posted_by($this->user_data);
             });
@@ -98,7 +98,7 @@ class BotUserController extends AdminController
         return Form::make(new BotUser(), function (Form $form) {
             $form->display('id');
             $form->text('bot_id');
-            $form->text('userId');
+            $form->text('user_id');
             $form->text('user_data');
 
             $form->display('created_at');

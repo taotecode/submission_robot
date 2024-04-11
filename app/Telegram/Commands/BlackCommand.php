@@ -75,11 +75,11 @@ class BlackCommand extends Command
 
         $submissionUser = (new SubmissionUser)->firstOrCreate([
             'bot_id' => $botInfo->id,
-            'userId' => $user_id,
+            'user_id' => $user_id,
         ], [
             'type' => SubmissionUserType::BLACK,
             'bot_id'=>$botInfo->id,
-            'userId' => $user_id,
+            'user_id' => $user_id,
             'name' => "未知",
         ]);
 
