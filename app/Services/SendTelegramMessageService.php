@@ -243,13 +243,11 @@ trait SendTelegramMessageService
 
         switch ($objectType) {
             case 'text':
-                $text .= $message['text'] ?? '';
                 $params['text'] = $text;
                 break;
             case 'photo':
                 $file_id = $message['photo'][0]['file_id'];
                 $params['photo'] = $file_id;
-                $params['caption'] = $text;
                 $method = 'sendPhoto';
                 break;
             case 'video':
@@ -262,7 +260,6 @@ trait SendTelegramMessageService
                 $params['duration'] = $duration;
                 $params['width'] = $width;
                 $params['height'] = $height;
-                $params['caption'] = $text;
                 $method = 'sendVideo';
                 break;
             case 'audio':
@@ -273,7 +270,6 @@ trait SendTelegramMessageService
                 $params['audio'] = $file_id;
                 $params['duration'] = $duration;
                 $params['title'] = $title;
-                $params['caption'] = $text;
                 $method = 'sendAudio';
                 break;
             case 'media_group_photo':
