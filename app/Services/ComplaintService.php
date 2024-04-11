@@ -198,7 +198,7 @@ class ComplaintService
         if (!empty($manuscript)) {
             return $this->sendTelegramMessage($telegram, 'sendMessage', [
                 'chat_id' => $chatId,
-                'text' => get_config('complaint.start_exist_forward_origin'),
+                'text' => get_config('complaint.start_empty_forward_origin'),
                 'parse_mode' => 'HTML',
                 'reply_markup' => json_encode(KeyBoardData::Cancel),
             ]);
