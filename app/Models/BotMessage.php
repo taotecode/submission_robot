@@ -14,13 +14,13 @@ class BotMessage extends Model
 
     protected $fillable = [
         'bot_id',
-        'userId',
-        'userData',
+        'user_id',
+        'user_data',
         'data',
     ];
 
     protected $casts = [
-        'userData' => 'json',
+        'user_data' => 'json',
         'data' => 'json',
     ];
 

@@ -20,6 +20,6 @@ class SubmissionUser extends Model
     ];
 
     protected $casts = [
-        'userData' => 'json',
+        'user_data' => 'json',
     ];
 }
