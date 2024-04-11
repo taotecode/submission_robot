@@ -270,7 +270,7 @@ class ConfigSeeder extends Seeder
                 'updated_at' => '2023-09-17 08:48:41',
             ],
             [
-                'id' => 28,
+                'id' => 29,
                 'group' => 'complaint',
                 'name' => 'custom_header_content',
                 'value' => "⚠️‼️用户投诉请求",
@@ -279,7 +279,7 @@ class ConfigSeeder extends Seeder
                 'updated_at' => '2023-09-17 08:48:41',
             ],
             [
-                'id' => 28,
+                'id' => 30,
                 'group' => 'complaint',
                 'name' => 'custom_tail_content',
                 'value' => "\r\n投诉的消息: {url}\r\n若该投诉被批准，则频道内对应的消息将被自动删除。",
@@ -288,7 +288,7 @@ class ConfigSeeder extends Seeder
                 'updated_at' => '2023-09-17 08:48:41',
             ],
             [
-                'id' => 28,
+                'id' => 31,
                 'group' => 'complaint',
                 'name' => 'confirm_end',
                 'value' => "✅ 投诉成功，稍后将通过机器人告知您审核结果，请保持联系畅通\r\n审核可能需要一定时间，如果您长时间未收到结果，可联系群内管理员。",
