@@ -316,6 +316,7 @@ class ComplaintService
         if ($isEmpty) {
             return $this->sendTelegramMessage($telegram, 'sendMessage', [
                 'chat_id' => $chatId,
+                'reply_to_message_id' => $messageId,
                 'text' => get_config('complaint.is_empty'),
                 'parse_mode' => 'HTML',
                 'reply_markup' => json_encode(KeyBoardData::START_COMPLAINT),
@@ -324,7 +325,7 @@ class ComplaintService
 
         $custom_header_content = get_config('complaint.custom_header_content');
         $custom_tail_content = get_config('complaint.custom_tail_content');
-        $url='https://t.me/'.$channel_data->name.'/'.$manuscript_data->message_id;
+        $url='https://t.me/'.$channel_data->name.'/'.$manuscript_data->message_id??'';
         //替换$custom_tail_content中的{url}变量
         $custom_tail_content=str_replace('{url}',$url,$custom_tail_content);
 
@@ -337,6 +338,7 @@ class ComplaintService
 
         return $this->sendTelegramMessage($telegram, 'sendMessage', [
             'chat_id' => $chatId,
+            'reply_to_message_id' => $messageId,
             'text' => get_config('complaint.preview_tips'),
             'parse_mode' => 'HTML',
             'reply_markup' => json_encode(KeyBoardData::END_COMPLAINT),
