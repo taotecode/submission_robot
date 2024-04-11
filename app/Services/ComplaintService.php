@@ -232,7 +232,7 @@ class ComplaintService
         $isEmpty=false;
 
         $forward_origin_data=Cache::tags(CacheKey::Complaint . '.' . $chatId)->get('forward_origin');
-        Log::info('forward_origin_data',json_encode($forward_origin_data));
+        Log::info('forward_origin_data'.json_encode($forward_origin_data));
         $channel_data=$forward_origin_data['channel_data'];
         $manuscript_data=$forward_origin_data['manuscript_data'];
 
