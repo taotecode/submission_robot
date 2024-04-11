@@ -241,21 +241,20 @@ class ComplaintService
                 'reply_markup' => json_encode(KeyBoardData::Cancel),
             ]);
         }
-        Log::info('forward_origin_data'.json_encode($forward_origin_data));
         $channel_data=$forward_origin_data['channel_data'];
         $manuscript_data=$forward_origin_data['manuscript_data'];
 
         //根据不同的类型获取缓存数据,并判断是否为空
         switch ($objectType) {
             case 'text':
-                $messageCache = Cache::tags(CacheKey::Submission . '.' . $chatId)->get('text');
+                $messageCache = Cache::tags(CacheKey::Complaint . '.' . $chatId)->get('text');
                 $messageId = $messageCache['message_id'] ?? '';
                 if (!isset($messageCache['text']) || empty($messageCache['text'])) {
                     $isEmpty=true;
                 }
                 break;
             case 'photo':
-                $messageCache = Cache::tags(CacheKey::Submission . '.' . $chatId)->get('photo');
+                $messageCache = Cache::tags(CacheKey::Complaint . '.' . $chatId)->get('photo');
                 $messageId = $messageCache['message_id'] ?? '';
                 if (
                     !isset($messageCache['photo'][0]['file_id']) || empty($messageCache['photo'][0]['file_id'])
@@ -264,7 +263,7 @@ class ComplaintService
                 }
                 break;
             case 'video':
-                $messageCache = Cache::tags(CacheKey::Submission . '.' . $chatId)->get('video');
+                $messageCache = Cache::tags(CacheKey::Complaint . '.' . $chatId)->get('video');
                 $messageId = $messageCache['message_id'] ?? '';
                 if (
                     !isset($messageCache['video']['file_id']) || empty($messageCache['video']['file_id'])
@@ -274,8 +273,8 @@ class ComplaintService
                 break;
             case 'media_group_photo':
             case 'media_group_video':
-                $media_group_id = Cache::tags(CacheKey::Submission . '.' . $chatId)->get('media_group');
-                $messageCache = Cache::tags(CacheKey::Submission . '.' . $chatId)->get('media_group:' . $media_group_id);
+                $media_group_id = Cache::tags(CacheKey::Complaint . '.' . $chatId)->get('media_group');
+                $messageCache = Cache::tags(CacheKey::Complaint . '.' . $chatId)->get('media_group:' . $media_group_id);
                 $messageId = $messageCache[0]['message_id'] ?? '';
                 if (
                     !isset($messageCache[0]['photo'][0]['file_id']) && !isset($messageCache[0]['video']['file_id'])
@@ -284,7 +283,7 @@ class ComplaintService
                 }
                 break;
             case 'audio':
-                $messageCache = Cache::tags(CacheKey::Submission . '.' . $chatId)->get('audio');
+                $messageCache = Cache::tags(CacheKey::Complaint . '.' . $chatId)->get('audio');
                 $messageId = $messageCache['message_id'] ?? '';
                 if (
                     !isset($messageCache['audio']['file_id']) || empty($messageCache['audio']['file_id'])
@@ -294,18 +293,18 @@ class ComplaintService
                 break;
             case 'media_group_audio':
                 //特殊情况，需要先判断有没有文字，如果有，那就是文字+多音频
-                if (Cache::tags(CacheKey::Submission . '.' . $chatId)->has('text')) {
-                    $messageCache = Cache::tags(CacheKey::Submission . '.' . $chatId)->get('text');
+                if (Cache::tags(CacheKey::Complaint . '.' . $chatId)->has('text')) {
+                    $messageCache = Cache::tags(CacheKey::Complaint . '.' . $chatId)->get('text');
                     $messageId = $messageCache['message_id'] ?? '';
-                    $media_group_id = Cache::tags(CacheKey::Submission . '.' . $chatId)->get('media_group');
-                    $audioMessageCache = Cache::tags(CacheKey::Submission . '.' . $chatId)->get('media_group:' . $media_group_id);
+                    $media_group_id = Cache::tags(CacheKey::Complaint . '.' . $chatId)->get('media_group');
+                    $audioMessageCache = Cache::tags(CacheKey::Complaint . '.' . $chatId)->get('media_group:' . $media_group_id);
                     $messageCache = [
                         'text' => $messageCache,
                         'audio' => $audioMessageCache,
                     ];
                 } else {
-                    $media_group_id = Cache::tags(CacheKey::Submission . '.' . $chatId)->get('media_group');
-                    $messageCache = Cache::tags(CacheKey::Submission . '.' . $chatId)->get('media_group:' . $media_group_id);
+                    $media_group_id = Cache::tags(CacheKey::Complaint . '.' . $chatId)->get('media_group');
+                    $messageCache = Cache::tags(CacheKey::Complaint . '.' . $chatId)->get('media_group:' . $media_group_id);
                     $messageId = $messageCache[0]['message_id'] ?? '';
                 }
                 break;
@@ -348,7 +347,7 @@ class ComplaintService
 
     public function confirm(Api $telegram, $chatId, $chat, $botInfo)
     {
-        $objectType = Cache::tags(CacheKey::Submission . '.' . $chatId)->get('objectType');
+        $objectType = Cache::tags(CacheKey::Complaint . '.' . $chatId)->get('objectType');
         $messageId = '';
         $messageCache = [];
         $messageText = '';
@@ -358,12 +357,12 @@ class ComplaintService
             case 'photo':
             case 'video':
             case 'audio':
-                list($messageCache, $messageId, $messageText) = getCacheMessageData($objectType, $chatId, CacheKey::Submission);
+                list($messageCache, $messageId, $messageText) = getCacheMessageData($objectType, $chatId, CacheKey::Complaint);
                 break;
             case 'media_group_photo':
             case 'media_group_video':
-                $media_group_id = Cache::tags(CacheKey::Submission . '.' . $chatId)->get('media_group');
-                $messageCache = Cache::tags(CacheKey::Submission . '.' . $chatId)->get('media_group:' . $media_group_id);
+                $media_group_id = Cache::tags(CacheKey::Complaint . '.' . $chatId)->get('media_group');
+                $messageCache = Cache::tags(CacheKey::Complaint . '.' . $chatId)->get('media_group:' . $media_group_id);
                 $messageId = $messageCache[0]['message_id'] ?? '';
                 foreach ($messageCache as $key => $value) {
                     $messageText .= $value['caption'] ?? '';
@@ -371,19 +370,19 @@ class ComplaintService
                 break;
             case 'media_group_audio':
                 //特殊情况，需要先判断有没有文字，如果有，那就是文字+多音频
-                if (Cache::tags(CacheKey::Submission . '.' . $chatId)->has('text')) {
-                    $messageCache = Cache::tags(CacheKey::Submission . '.' . $chatId)->get('text');
+                if (Cache::tags(CacheKey::Complaint . '.' . $chatId)->has('text')) {
+                    $messageCache = Cache::tags(CacheKey::Complaint . '.' . $chatId)->get('text');
                     $messageId = $messageCache['message_id'] ?? '';
-                    $media_group_id = Cache::tags(CacheKey::Submission . '.' . $chatId)->get('media_group');
-                    $audioMessageCache = Cache::tags(CacheKey::Submission . '.' . $chatId)->get('media_group:' . $media_group_id);
+                    $media_group_id = Cache::tags(CacheKey::Complaint . '.' . $chatId)->get('media_group');
+                    $audioMessageCache = Cache::tags(CacheKey::Complaint . '.' . $chatId)->get('media_group:' . $media_group_id);
                     $messageCache = [
                         'text' => $messageCache,
                         'audio' => $audioMessageCache,
                     ];
                     $messageText = $messageCache['text']['text'] ?? '';
                 } else {
-                    $media_group_id = Cache::tags(CacheKey::Submission . '.' . $chatId)->get('media_group');
-                    $messageCache = Cache::tags(CacheKey::Submission . '.' . $chatId)->get('media_group:' . $media_group_id);
+                    $media_group_id = Cache::tags(CacheKey::Complaint . '.' . $chatId)->get('media_group');
+                    $messageCache = Cache::tags(CacheKey::Complaint . '.' . $chatId)->get('media_group:' . $media_group_id);
                     $messageId = $messageCache[0]['message_id'] ?? '';
                     foreach ($messageCache as $key => $value) {
                         $messageText .= $value['caption'] ?? '';
