@@ -316,7 +316,6 @@ class ComplaintService
         if ($isEmpty) {
             return $this->sendTelegramMessage($telegram, 'sendMessage', [
                 'chat_id' => $chatId,
-                'reply_to_message_id' => $messageId,
                 'text' => get_config('complaint.is_empty'),
                 'parse_mode' => 'HTML',
                 'reply_markup' => json_encode(KeyBoardData::START_COMPLAINT),
@@ -338,7 +337,6 @@ class ComplaintService
 
         return $this->sendTelegramMessage($telegram, 'sendMessage', [
             'chat_id' => $chatId,
-            'reply_to_message_id' => $messageId,
             'text' => get_config('complaint.preview_tips'),
             'parse_mode' => 'HTML',
             'reply_markup' => json_encode(KeyBoardData::END_COMPLAINT),
