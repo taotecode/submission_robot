@@ -309,6 +309,9 @@ trait SendTelegramMessageService
                         if ($is_addTailContent) {
                             $text .= $this->addTailContent($botInfo->tail_content);
                         }
+                        if (!empty($custom_tail_content)) {
+                            $text .= $custom_tail_content;
+                        }
                         $temp_array['caption'] = $text;
                         $temp_array['parse_mode'] = 'HTML';
                     }
@@ -354,6 +357,9 @@ trait SendTelegramMessageService
                             if ($is_addTailContent) {
                                 $text .= $this->addTailContent($botInfo->tail_content);
                             }
+                            if (!empty($custom_tail_content)) {
+                                $text .= $custom_tail_content;
+                            }
                             $temp_array['caption'] = $text;
                             $temp_array['parse_mode'] = 'HTML';
                         }
@@ -367,11 +373,18 @@ trait SendTelegramMessageService
                 return 'error';
         }
 
-        if (!empty($custom_tail_content)) {
-            $text .= $custom_tail_content;
+        if (!empty($params['text'])) {
+            if (!empty($custom_tail_content)) {
+                $text .= $custom_tail_content;
+            }
+            $params['text'] = $text;
+        }elseif (!empty($params['caption'])) {
+            if (!empty($custom_tail_content)) {
+                $text .= $custom_tail_content;
+            }
+            $params['caption'] = $text;
         }
 
-        Log::info('text: ' . $text);
         if ($objectType === 'media_group_audio') {
             $this->sendTelegramMessage($telegram, 'sendMessage', [
                 'chat_id' => $chatId,
