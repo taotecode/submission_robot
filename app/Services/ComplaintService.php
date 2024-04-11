@@ -209,7 +209,6 @@ class ComplaintService
             'channel_data'=>$channel,
             'manuscript_data'=>$manuscript,
         ], now()->addDay());
-        Log::info('forward_origin'.json_encode(Cache::tags(CacheKey::Complaint . '.' . $chatId)->get('forward_origin')));
         return $this->sendTelegramMessage($telegram, 'sendMessage', [
             'chat_id' => $chatId,
             'text' => get_config('complaint.start_forward_origin'),
@@ -233,7 +232,6 @@ class ComplaintService
         $isEmpty=false;
 
         $forward_origin_data=Cache::tags(CacheKey::Complaint . '.' . $chatId)->get('forward_origin');
-        Log::info('forward_origin_data'.json_encode($forward_origin_data));
         if (empty($forward_origin_data)) {
             return $this->sendTelegramMessage($telegram, 'sendMessage', [
                 'chat_id' => $chatId,
@@ -326,8 +324,7 @@ class ComplaintService
 
         $custom_header_content = get_config('complaint.custom_header_content');
         $custom_tail_content = get_config('complaint.custom_tail_content');
-//        $url='https://t.me/'.$channel_data->name.'/'.$manuscript_data->message_id??'';
-        $url='https://t.me/'.$channel_data->name.'/';
+        $url='https://t.me/'.$channel_data->name.'/'.$manuscript_data->message_id??'';
         //替换$custom_tail_content中的{url}变量
         $custom_tail_content=str_replace('{url}',$url,$custom_tail_content);
 
