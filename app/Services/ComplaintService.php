@@ -195,8 +195,7 @@ class ComplaintService
             'channel_id'=>$channel->id,
             'message_id'=>$message->forwardFromMessageId
         ])->first();
-        Log::info('query data',['bot_id'=>$botInfo->id,'channel_id'=>$channel->id,'message_id'=>$message->forwardFromMessageId]);
-        if (!empty($manuscript)) {
+        if (empty($manuscript)) {
             return $this->sendTelegramMessage($telegram, 'sendMessage', [
                 'chat_id' => $chatId,
                 'text' => get_config('complaint.start_empty_forward_origin'),
