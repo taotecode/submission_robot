@@ -9,24 +9,25 @@ class KeyBoardData
     /**
      * 用户开启机器人初始键盘
      */
-    const START = [
-//        'keyboard' => [
-//            [
-//                KeyBoardName::StartSubmission,
-//            ],
-//            [
-//                KeyBoardName::Feedback,
-//                KeyBoardName::HelpCenter,
-//            ],
-//        ],
-        'inline_keyboard' => [
-            [
-                ['text' =>'或者点我直接快速进行投稿！', 'callback_data' => 'quick_submission'],
+    public static array $START;
+
+    public static function init(): void
+    {
+        self::$START = [
+            'keyboard' => [
+                [
+                    get_keyboard_name_config('StartSubmission', KeyBoardName::StartSubmission),
+                ],
+                [
+                    KeyBoardName::Feedback,
+                    KeyBoardName::HelpCenter,
+                ]
             ],
-        ],
-//        'resize_keyboard' => true, // 让键盘大小适应屏幕
-//        'one_time_keyboard' => false, // 是否只显示一次
-    ];
+            'resize_keyboard' => true, // 让键盘大小适应屏幕
+            'one_time_keyboard' => false, // 是否只显示一次
+        ];
+
+    }
 
     /**
      * 用户开始投稿键盘
@@ -64,46 +65,13 @@ class KeyBoardData
     ];
 
     /**
-     * 审核群组键盘
-     */
-    const REVIEW_GROUP = [
-        'inline_keyboard' => [
-            [
-                ['text' => KeyBoardName::Approved, 'callback_data' => 'approved_submission'],
-                ['text' => KeyBoardName::Rejected, 'callback_data' => 'reject_submission'],
-                ['text' => KeyBoardName::PrivateChat, 'callback_data' => 'private_message'],
-            ],
-            [
-                ['text' => KeyBoardName::QuickApproved, 'callback_data' => 'approved_submission_quick'],
-                ['text' => KeyBoardName::QuickRejected, 'callback_data' => 'reject_submission_quick'],
-            ],
-        ],
-    ];
-    /**
-     * 审核群组键盘
-     */
-    const REVIEW_GROUP_COMPLAINT = [
-        'inline_keyboard' => [
-            [
-                ['text' => KeyBoardName::Approved, 'callback_data' => 'approved_complaint'],
-                ['text' => KeyBoardName::Rejected, 'callback_data' => 'reject_complaint'],
-                ['text' => KeyBoardName::PrivateChat, 'callback_data' => 'private_message'],
-            ],
-            [
-                ['text' => KeyBoardName::QuickApproved, 'callback_data' => 'approved_complaint_quick'],
-                ['text' => KeyBoardName::QuickRejected, 'callback_data' => 'reject_complaint_quick'],
-            ],
-        ],
-    ];
-
-    /**
      * 审核群组稿件通过键盘
      */
     const REVIEW_GROUP_APPROVED = [
         'inline_keyboard' => [
             [
                 ['text' => KeyBoardName::ApprovedEnd, 'callback_data' => 'approved_submission_button'],
-                ['text'=>KeyBoardName::ViewMessage,'url'=>'https://t.me/'],
+                ['text' => KeyBoardName::ViewMessage, 'url' => 'https://t.me/'],
             ],
             [
                 ['text' => KeyBoardName::DeleteMessage, 'callback_data' => 'delete_submission_message'],
@@ -146,7 +114,7 @@ class KeyBoardData
     const WHITE_LIST_USER_SUBMISSION = [
         'inline_keyboard' => [
             [
-                ['text'=>KeyBoardName::ViewMessage,'url'=>'https://t.me/'],
+                ['text' => KeyBoardName::ViewMessage, 'url' => 'https://t.me/'],
                 ['text' => KeyBoardName::DeleteWhiteListUser, 'callback_data' => 'delete_white_list_user_submission_message'],
             ],
         ],
@@ -260,3 +228,5 @@ class KeyBoardData
         'one_time_keyboard' => false, // 是否只显示一次
     ];
 }
+
+KeyBoardData::init();

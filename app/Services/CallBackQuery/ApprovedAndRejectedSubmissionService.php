@@ -3,6 +3,7 @@
 namespace App\Services\CallBackQuery;
 
 use App\Enums\AuditorRole;
+use App\Enums\InlineKeyBoardData;
 use App\Enums\KeyBoardData;
 use App\Enums\ManuscriptStatus;
 use App\Models\Bot;
@@ -136,7 +137,7 @@ class ApprovedAndRejectedSubmissionService
             }
         }
 
-        $inline_keyboard = KeyBoardData::REVIEW_GROUP;
+        $inline_keyboard = InlineKeyBoardData::REVIEW_GROUP;
 
         $inline_keyboard['inline_keyboard'][0][0]['text'] .= "($approvedNum/$review_approved_num)";
         $inline_keyboard['inline_keyboard'][0][0]['callback_data'] .= ":$manuscriptId";
@@ -269,7 +270,7 @@ class ApprovedAndRejectedSubmissionService
             }
         }
 
-        $inline_keyboard = KeyBoardData::REVIEW_GROUP;
+        $inline_keyboard = InlineKeyBoardData::REVIEW_GROUP;
 
         $inline_keyboard['inline_keyboard'][0][0]['text'] .= "($approvedNum/$review_approved_num)";
         $inline_keyboard['inline_keyboard'][0][0]['callback_data'] .= ":$manuscriptId";

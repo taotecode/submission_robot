@@ -28,6 +28,7 @@ Route::group([
 
     //配置表
     $router->resource('config', 'ConfigController');
+    $router->resource('keyboard_name_config', 'KeyboardNameConfigController');
 
     //稿件列表
     $router->resource('manuscript', 'ManuscriptController');

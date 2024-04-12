@@ -7,6 +7,7 @@ use App\Enums\KeyBoardData;
 use App\Enums\KeyBoardName;
 use App\Models\Bot;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 use Telegram\Bot\Api;
 use Telegram\Bot\Objects\Update;
 
@@ -60,7 +61,7 @@ class StartService
             'chat_id' => $chatId,
             'text' => get_config('submission.error_for_text'),
             'parse_mode' => 'HTML',
-            'reply_markup' => json_encode(KeyBoardData::START),
+            'reply_markup' => json_encode(KeyBoardData::$START),
         ]);
     }
 
@@ -76,7 +77,7 @@ class StartService
             'chat_id' => $chatId,
             'text' => get_config('help.start'),
             'parse_mode' => 'HTML',
-            'reply_markup' => json_encode(KeyBoardData::START),
+            'reply_markup' => json_encode(KeyBoardData::$START),
         ]);
     }
 
@@ -95,7 +96,7 @@ class StartService
             'reply_to_message_id' => $messageId,
             'text' => get_config('submission.error_for_text'),
             'parse_mode' => 'HTML',
-            'reply_markup' => json_encode(KeyBoardData::START),
+            'reply_markup' => json_encode(KeyBoardData::$START),
         ]);
     }
 }

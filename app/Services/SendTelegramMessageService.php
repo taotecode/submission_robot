@@ -3,13 +3,16 @@
 namespace App\Services;
 
 use App\Enums\CacheKey;
+use App\Enums\InlineKeyBoardData;
 use App\Enums\KeyBoardData;
 use App\Models\Bot;
 use App\Models\Channel;
 use App\Models\Manuscript;
+use Exception;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use lucadevelop\TelegramEntitiesDecoder\EntityDecoder;
 use Telegram\Bot\Api;
 use Telegram\Bot\Exceptions\TelegramSDKException;
 
@@ -56,7 +59,7 @@ trait SendTelegramMessageService
 
         if ($inline_keyboard === null) {
             if (empty($inline_keyboard_enums)) {
-                $inline_keyboard = KeyBoardData::REVIEW_GROUP;
+                $inline_keyboard = InlineKeyBoardData::REVIEW_GROUP;
             } else {
                 $inline_keyboard = $inline_keyboard_enums;
             }
@@ -432,8 +435,15 @@ trait SendTelegramMessageService
         $messageCacheData = $message->toArray();
 
         if (!empty($messageCacheData['text'])) {
+            $entity_decoder = new EntityDecoder('HTML');
             //消息文字预处理
-            $messageCacheData['text'] = htmlspecialchars($messageCacheData['text'], ENT_QUOTES, 'UTF-8');
+//            $messageCacheData['text'] = htmlspecialchars($messageCacheData['text'], ENT_QUOTES, 'UTF-8');
+            try {
+                $messageCacheData['text'] = $entity_decoder->decode($messageCacheData);
+            } catch (Exception $e) {
+                Log::error('消息文字预处理失败：' . $e->getMessage());
+                return 'error';
+            }
         }
 
         Cache::tags($cacheKey)->put('text', $messageCacheData, now()->addDay());
@@ -468,6 +478,9 @@ trait SendTelegramMessageService
         $cacheKeyGroup = 'media_group';
         $cacheKeyGroupId = 'media_group' . ':' . $media_group_id;
         $objectType = $type;
+
+        $entity_decoder = new EntityDecoder('HTML');
+
         if (!empty($media_group_id)) {
             $objectType = 'media_group_' . $type;
 
@@ -475,7 +488,13 @@ trait SendTelegramMessageService
 
             if (!empty($messageCacheData['caption'])) {
                 //消息文字预处理
-                $messageCacheData['caption'] = htmlspecialchars($messageCacheData['caption'], ENT_QUOTES, 'UTF-8');
+//                $messageCacheData['caption'] = htmlspecialchars($messageCacheData['caption'], ENT_QUOTES, 'UTF-8');
+                try {
+                    $messageCacheData['caption'] = $entity_decoder->decode($messageCacheData);
+                } catch (Exception $e) {
+                    Log::error('消息文字预处理失败：' . $e->getMessage());
+                    return 'error';
+                }
             }
 
             //存入缓存，等待所有图片接收完毕
@@ -496,7 +515,13 @@ trait SendTelegramMessageService
 
             if (!empty($messageCacheData['caption'])) {
                 //消息文字预处理
-                $messageCacheData['caption'] = htmlspecialchars($messageCacheData['caption'], ENT_QUOTES, 'UTF-8');
+//                $messageCacheData['caption'] = htmlspecialchars($messageCacheData['caption'], ENT_QUOTES, 'UTF-8');
+                try {
+                    $messageCacheData['caption'] = $entity_decoder->decode($messageCacheData);
+                } catch (Exception $e) {
+                    Log::error('消息文字预处理失败：' . $e->getMessage());
+                    return 'error';
+                }
             }
 
             if (Cache::tags($cacheKey)->has($cacheKeyByType)) {

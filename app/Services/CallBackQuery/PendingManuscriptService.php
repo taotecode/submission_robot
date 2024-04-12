@@ -2,6 +2,7 @@
 
 namespace App\Services\CallBackQuery;
 
+use App\Enums\InlineKeyBoardData;
 use App\Enums\KeyBoardData;
 use App\Enums\ManuscriptStatus;
 use App\Models\Manuscript;
@@ -99,7 +100,7 @@ class PendingManuscriptService
                 $inline_keyboard['inline_keyboard'][0][0]['callback_data'] .= ":".$manuscript->id;
             }
         }else{
-            $inline_keyboard = KeyBoardData::REVIEW_GROUP;
+            $inline_keyboard = InlineKeyBoardData::REVIEW_GROUP;
 
             $inline_keyboard['inline_keyboard'][0][0]['text'] .= "($approvedNum/$review_num)";
             $inline_keyboard['inline_keyboard'][0][0]['callback_data'] .= ":$manuscriptId";

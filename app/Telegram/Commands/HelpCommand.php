@@ -24,9 +24,10 @@ class HelpCommand extends Command
     public function handle(): void
     {
         $message = $this->getUpdate()->getMessage();
+        dump(KeyBoardData::$START);
         $this->replyWithMessage([
             'text' => '您可以使用底部的操作键盘快速交互，或者发送 /help 命令查看详细的功能介绍',
-            'reply_markup' => json_encode(KeyBoardData::START),
+            'reply_markup' => json_encode(KeyBoardData::$START),
             'reply_to_message_id' => $message->id,
         ]);
     }

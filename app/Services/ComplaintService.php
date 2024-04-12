@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Enums\CacheKey;
+use App\Enums\InlineKeyBoardData;
 use App\Enums\KeyBoardData;
 use App\Enums\KeyBoardName;
 use App\Models\Bot;
@@ -434,7 +435,7 @@ class ComplaintService
         // 发送消息到审核群组
         $this->sendGroupMessage(
             $telegram, $botInfo, $messageCache, $objectType, $complaint->id,
-            null,KeyBoardData::REVIEW_GROUP_COMPLAINT,false,false,false,
+            null,InlineKeyBoardData::REVIEW_GROUP_COMPLAINT,false,false,false,
             $custom_header_content,$custom_tail_content
         );
 

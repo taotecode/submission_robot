@@ -18,6 +18,7 @@ return new class extends Migration
                 $table->collation = 'utf8mb4_unicode_ci';
                 $table->charset = 'utf8mb4';
 
+                $table->comment('配置表');
                 $table->increments('id');
                 $table->string('group', 100)->index('group')->comment('组');
                 $table->string('name', 100)->index('name')->comment('名称');
