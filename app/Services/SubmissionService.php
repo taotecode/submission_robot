@@ -393,7 +393,7 @@ class SubmissionService
      * @param Collection $message 要更新的消息。
      * @return string 更新的状态。
      */
-    private function startUpdateByText(
+    public function startUpdateByText(
         Api        $telegram,
         string     $chatId,
         string     $messageId,
@@ -407,7 +407,7 @@ class SubmissionService
         );
     }
 
-    private function startUpdateByMedia(Api $telegram, $chatId, $messageId, Collection $message, $type): string
+    public function startUpdateByMedia(Api $telegram, $chatId, $messageId, Collection $message, $type): string
     {
         return $this->updateByMedia(
             $telegram, $chatId, $messageId, $message, $type,

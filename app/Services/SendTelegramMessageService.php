@@ -439,7 +439,12 @@ trait SendTelegramMessageService
             //消息文字预处理
 //            $messageCacheData['text'] = htmlspecialchars($messageCacheData['text'], ENT_QUOTES, 'UTF-8');
             try {
-                $messageCacheData['text'] = $entity_decoder->decode($messageCacheData);
+                if (!is_object($message)){
+                    $messageCacheDataTmp=collect($message);
+                }else{
+                    $messageCacheDataTmp=$message;
+                }
+                $messageCacheData['text'] = $entity_decoder->decode($messageCacheDataTmp);
             } catch (Exception $e) {
                 Log::error('消息文字预处理失败：' . $e->getMessage());
                 return 'error';
@@ -490,7 +495,12 @@ trait SendTelegramMessageService
                 //消息文字预处理
 //                $messageCacheData['caption'] = htmlspecialchars($messageCacheData['caption'], ENT_QUOTES, 'UTF-8');
                 try {
-                    $messageCacheData['caption'] = $entity_decoder->decode($messageCacheData);
+                    if (!is_object($message)){
+                        $messageCacheDataTmp=collect($message);
+                    }else{
+                        $messageCacheDataTmp=$message;
+                    }
+                    $messageCacheData['caption'] = $entity_decoder->decode($messageCacheDataTmp);
                 } catch (Exception $e) {
                     Log::error('消息文字预处理失败：' . $e->getMessage());
                     return 'error';
@@ -517,7 +527,12 @@ trait SendTelegramMessageService
                 //消息文字预处理
 //                $messageCacheData['caption'] = htmlspecialchars($messageCacheData['caption'], ENT_QUOTES, 'UTF-8');
                 try {
-                    $messageCacheData['caption'] = $entity_decoder->decode($messageCacheData);
+                    if (!is_object($message)){
+                        $messageCacheDataTmp=collect($message);
+                    }else{
+                        $messageCacheDataTmp=$message;
+                    }
+                    $messageCacheData['caption'] = $entity_decoder->decode($messageCacheDataTmp);
                 } catch (Exception $e) {
                     Log::error('消息文字预处理失败：' . $e->getMessage());
                     return 'error';

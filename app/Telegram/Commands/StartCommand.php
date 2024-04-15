@@ -22,7 +22,7 @@ class StartCommand extends Command
     {
         $message = $this->getUpdate()->getMessage();
         $this->replyWithMessage([
-            'text' => config('command.start'),
+            'text' => get_config('command.start'),
             'reply_markup' => json_encode(KeyBoardData::$START),
             'reply_to_message_id' => $message->id,
         ]);

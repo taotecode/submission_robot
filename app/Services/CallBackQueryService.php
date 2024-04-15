@@ -2,9 +2,13 @@
 
 namespace App\Services;
 
+use App\Enums\CacheKey;
+use App\Enums\KeyBoardData;
+use App\Enums\SubmissionUserType;
 use App\Models\Bot;
 use App\Models\Complaint;
 use App\Models\Manuscript;
+use App\Models\SubmissionUser;
 use App\Services\CallBackQuery\ApprovedAndRejectedSubmissionService;
 use App\Services\CallBackQuery\DeleteSubmissionMessageService;
 use App\Services\CallBackQuery\ManuscriptSearchService;
@@ -13,10 +17,12 @@ use App\Services\CallBackQuery\PrivateMessageService;
 use App\Services\CallBackQuery\QuickSubmissionStatusService;
 use App\Services\CallBackQuery\SelectChannelService;
 use App\Services\CallBackQuery\SetSubmissionUserTypeService;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Telegram\Bot\Api;
 use Telegram\Bot\Exceptions\TelegramSDKException;
 use Telegram\Bot\Objects\CallbackQuery;
+use Telegram\Bot\Objects\Message;
 use Telegram\Bot\Objects\Update;
 use Telegram\Bot\Objects\User;
 
@@ -110,8 +116,7 @@ class CallBackQueryService
 //                $this->approved_and_reject_complaint($telegram, $botInfo, $manuscriptId, $chatId, $from, $messageId, true, $callbackQuery);
                 break;
             case 'quick_submission':
-                dump($updateData);
-                Log::info('quick_submission',$updateData->toArray());
+                $this->quick_submission($telegram, $botInfo,$updateData->getMessage()->replyToMessage);
                 break;
         }
     }
@@ -222,5 +227,47 @@ class CallBackQueryService
     public function approved_and_reject_complaint(Api $telegram, Bot $botInfo, Manuscript $manuscript, $chatId, User $from, $messageId, bool $isApproved, CallbackQuery $callbackQuery)
     {
 
+    }
+
+    public function quick_submission(Api $telegram, Bot $botInfo,Message $message)
+    {
+        $objectType = $message->objectType();
+        $chatId = $message->chat->id;
+
+        Cache::tags(CacheKey::Submission . '.' . $chatId)->flush();
+        //开启投稿服务标识
+        Cache::tags(CacheKey::Submission . '.' . $chatId)->put($chatId, $message->chat->toArray(), now()->addDay());
+
+        $submissionUser = (new SubmissionUser)->firstOrCreate([
+            'bot_id' => $botInfo->id,
+            'user_id' => $chatId,
+        ], [
+            'type' => SubmissionUserType::NORMAL,
+            'bot_id' => $botInfo->id,
+            'user_id' => $chatId,
+            'user_data' => $message->chat->toArray(),
+            'name' => get_posted_by($message->chat->toArray()),
+        ]);
+
+        //判断是否是黑名单用户
+        if ($submissionUser->type == SubmissionUserType::BLACK) {
+            Cache::tags(CacheKey::Submission . '.' . $chatId)->flush();
+            return $this->sendTelegramMessage($telegram, 'sendMessage', [
+                'chat_id' => $chatId,
+                'text' => get_config('submission.black_list'),
+                'parse_mode' => 'HTML',
+                'reply_markup' => json_encode(KeyBoardData::BLACKLIST_USER_DELETE),
+            ]);
+        }
+
+        switch ($objectType) {
+            case 'text':
+                return (new SubmissionService())->startUpdateByText($telegram, $chatId, $message->messageId, $message);
+            case 'photo':
+            case 'video':
+            case 'audio':
+                return (new SubmissionService())->startUpdateByMedia($telegram, $chatId, $message->messageId, $message, $objectType);
+                break;
+        }
     }
 }

@@ -29,11 +29,22 @@ class GetUpdateController extends Controller
             dd($e->getMessage());
         }
 
-        foreach ($response as $update) {
-            if ($update->objectType() === 'callback_query') {
-                $callBackQueryService->index($botInfo, $update, $telegram);
-            }else{
-                $startService->index($botInfo,$update,$telegram);
+        foreach ($response as $updateData) {
+            if ($updateData->objectType() === 'callback_query') {
+                $callBackQueryService->index($botInfo, $updateData, $telegram);
+            }
+            if (
+                $updateData->objectType() === 'message' &&
+                ! $updateData->getMessage()->hasCommand() &&
+                ! $updateData->getChat()->has('group') &&
+                ! $updateData->getChat()->has('supergroup') &&
+                ! $updateData->getChat()->has('getChat') &&
+                ! in_array($updateData->getChat()->type, ['group', 'supergroup'])
+            ) {
+                if ($updateData->getChat()->type != 'private') {
+                    return 'ok';
+                }
+                $startService->index($botInfo,$updateData,$telegram);
             }
         }
 

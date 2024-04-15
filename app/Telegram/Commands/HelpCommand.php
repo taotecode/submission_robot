@@ -25,7 +25,7 @@ class HelpCommand extends Command
     {
         $message = $this->getUpdate()->getMessage();
         $this->replyWithMessage([
-            'text' => config('command.help'),
+            'text' => get_config('command.help'),
             'reply_markup' => json_encode(KeyBoardData::$START),
             'reply_to_message_id' => $message->id,
         ]);
