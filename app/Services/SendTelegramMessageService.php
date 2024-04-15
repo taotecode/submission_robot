@@ -99,7 +99,7 @@ trait SendTelegramMessageService
             $chatId = $botInfo->review_group->group_id;
         }
 
-        $inline_keyboard = KeyBoardData::WHITE_LIST_USER_SUBMISSION;
+        $inline_keyboard = InlineKeyBoardData::$WHITE_LIST_USER_SUBMISSION;
         $inline_keyboard['inline_keyboard'][0][0]['url'] .= $botInfo->channel->name . "/" . $manuscript->message_id;
         $inline_keyboard['inline_keyboard'][0][1]['callback_data'] .= ":$manuscript->id";
 

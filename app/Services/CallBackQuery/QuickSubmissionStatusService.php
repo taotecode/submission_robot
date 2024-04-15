@@ -3,6 +3,7 @@
 namespace App\Services\CallBackQuery;
 
 use App\Enums\AuditorRole;
+use App\Enums\InlineKeyBoardData;
 use App\Enums\KeyBoardData;
 use App\Enums\ManuscriptStatus;
 use App\Services\SendPostedByMessageService;
@@ -10,7 +11,7 @@ use Illuminate\Support\Facades\Log;
 use Telegram\Bot\Exceptions\TelegramSDKException;
 use Telegram\Bot\Objects\User;
 
-class QuickSubmissionService
+class QuickSubmissionStatusService
 {
     use AuditorRoleCheckService;
     use UpdateReviewGroupMessageButtonService;
@@ -33,12 +34,12 @@ class QuickSubmissionService
         //拒绝人员数量
         $rejectNum = count($reject);
 
-        $inline_keyboard_approved=KeyBoardData::REVIEW_GROUP_APPROVED;
+        $inline_keyboard_approved=InlineKeyBoardData::$REVIEW_GROUP_APPROVED;
         $inline_keyboard_approved['inline_keyboard'][0][0]['callback_data'] .= ":".$manuscript->id;
         $inline_keyboard_approved['inline_keyboard'][0][1]['url'] .= $manuscript->channel->name."/".$manuscript->message_id;
         $inline_keyboard_approved['inline_keyboard'][1][0]['callback_data'] .= ':'.$manuscript->id;
 
-        $inline_keyboard_reject=KeyBoardData::REVIEW_GROUP_REJECT;
+        $inline_keyboard_reject=InlineKeyBoardData::$REVIEW_GROUP_REJECT;
         $inline_keyboard_reject['inline_keyboard'][0][0]['callback_data'] .= ":".$manuscript->id;
 
         if ($this->baseCheck($telegram, $callbackQuery->id, $from->id, $reviewGroup->id) !== true) {

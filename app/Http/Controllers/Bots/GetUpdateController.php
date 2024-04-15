@@ -10,6 +10,7 @@ class GetUpdateController extends Controller
     public function index()
     {
         $startService= new \App\Services\StartService();
+        $callBackQueryService = new \App\Services\CallBackQueryService();
         $botInfo = (new \App\Models\Bot())->with('review_group')->find(1);
         try {
             $telegram = new Api(env('TELEGRAM_BOT_TOKEN'));
@@ -29,7 +30,11 @@ class GetUpdateController extends Controller
         }
 
         foreach ($response as $update) {
-            $startService->index($botInfo,$update,$telegram);
+            if ($update->objectType() === 'callback_query') {
+                $callBackQueryService->index($botInfo, $update, $telegram);
+            }else{
+                $startService->index($botInfo,$update,$telegram);
+            }
         }
 
         dd($response);

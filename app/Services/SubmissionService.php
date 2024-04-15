@@ -95,7 +95,7 @@ class SubmissionService
             'chat_id' => $chatId,
             'text' => $text,
             'parse_mode' => 'HTML',
-            'reply_markup' => json_encode(KeyBoardData::START_SUBMISSION),
+            'reply_markup' => json_encode(KeyBoardData::$START_SUBMISSION),
         ]);
     }
 
@@ -114,7 +114,7 @@ class SubmissionService
             'chat_id' => $chatId,
             'text' => get_config('submission.cancel'),
             'parse_mode' => 'HTML',
-            'reply_markup' => json_encode(KeyBoardData::START),
+            'reply_markup' => json_encode(KeyBoardData::$START),
         ]);
     }
 
@@ -200,7 +200,7 @@ class SubmissionService
                 'reply_to_message_id' => $messageId,
                 'text' => get_config('submission.submission_is_empty'),
                 'parse_mode' => 'HTML',
-                'reply_markup' => json_encode(KeyBoardData::START_SUBMISSION),
+                'reply_markup' => json_encode(KeyBoardData::$START_SUBMISSION),
             ]);
         }
 
@@ -214,7 +214,7 @@ class SubmissionService
                 'reply_to_message_id' => $messageId,
                 'text' => get_config('submission.preview_tips_channel'),
                 'parse_mode' => 'HTML',
-                'reply_markup' => json_encode(KeyBoardData::SELECT_CHANNEL),
+                'reply_markup' => json_encode(KeyBoardData::$SELECT_CHANNEL),
             ]);
         }
 
@@ -223,7 +223,7 @@ class SubmissionService
             'reply_to_message_id' => $messageId,
             'text' => get_config('submission.preview_tips'),
             'parse_mode' => 'HTML',
-            'reply_markup' => json_encode(KeyBoardData::END_SUBMISSION),
+            'reply_markup' => json_encode(KeyBoardData::$END_SUBMISSION),
         ]);
     }
 
@@ -358,7 +358,7 @@ class SubmissionService
                 'reply_to_message_id' => $messageId,
                 'text' => $chatText,
                 'parse_mode' => 'HTML',
-                'reply_markup' => json_encode(KeyBoardData::START),
+                'reply_markup' => json_encode(KeyBoardData::$START),
             ]);
 
             return $this->sendGroupMessageWhiteUser($telegram, $botInfo, $manuscript, $channel);
@@ -380,7 +380,7 @@ class SubmissionService
             'reply_to_message_id' => $messageId,
             'text' => get_config('submission.confirm'),
             'parse_mode' => 'HTML',
-            'reply_markup' => json_encode(KeyBoardData::START),
+            'reply_markup' => json_encode(KeyBoardData::$START),
         ]);
     }
 
@@ -402,7 +402,7 @@ class SubmissionService
     {
         return $this->updateByText(
             $telegram, $chatId, $messageId, $message,
-            CacheKey::Submission . '.' . $chatId, KeyBoardData::START_SUBMISSION,
+            CacheKey::Submission . '.' . $chatId, KeyBoardData::$START_SUBMISSION,
             get_config('submission.start_text_tips'), get_config('submission.start_update_text_tips')
         );
     }
@@ -411,7 +411,7 @@ class SubmissionService
     {
         return $this->updateByMedia(
             $telegram, $chatId, $messageId, $message, $type,
-            CacheKey::Submission . '.' . $chatId, KeyBoardData::START_SUBMISSION,
+            CacheKey::Submission . '.' . $chatId, KeyBoardData::$START_SUBMISSION,
             get_config('submission.start_text_tips'), get_config('submission.start_update_text_tips')
         );
     }

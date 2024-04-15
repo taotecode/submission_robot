@@ -296,6 +296,24 @@ class ConfigSeeder extends Seeder
                 'created_at' => '2023-09-17 08:48:16',
                 'updated_at' => '2023-09-17 08:48:41',
             ],
+            [
+                'id' => 32,
+                'group' => 'command',
+                'name' => 'start',
+                'value' => "您可以使用底部的操作键盘快速交互，或者发送 /help 命令查看详细的功能介绍",
+                'description' => "/start 命令的回复",
+                'created_at' => '2023-09-17 08:48:16',
+                'updated_at' => '2023-09-17 08:48:41',
+            ],
+            [
+                'id' => 33,
+                'group' => 'command',
+                'name' => 'help',
+                'value' => "您可以使用底部的操作键盘快速交互，或者发送 /help 命令查看详细的功能介绍",
+                'description' => "/help 命令的回复",
+                'created_at' => '2023-09-17 08:48:16',
+                'updated_at' => '2023-09-17 08:48:41',
+            ],
         ];
         //        DB::table('config')->insert($data);
         foreach ($data as $item) {

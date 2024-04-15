@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Enums\CacheKey;
+use App\Enums\InlineKeyBoardData;
 use App\Enums\KeyBoardData;
 use App\Enums\KeyBoardName;
 use App\Models\Bot;
@@ -96,7 +97,7 @@ class StartService
             'reply_to_message_id' => $messageId,
             'text' => get_config('submission.error_for_text'),
             'parse_mode' => 'HTML',
-            'reply_markup' => json_encode(KeyBoardData::$START),
+            'reply_markup' => json_encode(InlineKeyBoardData::$ERROR_FOR_MESSAGE),
         ]);
     }
 }

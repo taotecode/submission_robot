@@ -91,12 +91,12 @@ class PendingManuscriptService
 
         if ($approvedNum>=$review_num || $rejectNum>=$review_num){
             if ($approvedNum>=$review_num) {
-                $inline_keyboard=KeyBoardData::REVIEW_GROUP_APPROVED;
+                $inline_keyboard=InlineKeyBoardData::$REVIEW_GROUP_APPROVED;
                 $inline_keyboard['inline_keyboard'][0][0]['callback_data'] .= ":".$manuscript->id;
                 $inline_keyboard['inline_keyboard'][0][1]['url'] .= $botInfo->channel->name."/".$manuscript->message_id;
                 $inline_keyboard['inline_keyboard'][1][0]['callback_data'] .= ':'.$manuscript->id;
             }elseif ($rejectNum>=$review_num){
-                $inline_keyboard=KeyBoardData::REVIEW_GROUP_REJECT;
+                $inline_keyboard=InlineKeyBoardData::$REVIEW_GROUP_REJECT;
                 $inline_keyboard['inline_keyboard'][0][0]['callback_data'] .= ":".$manuscript->id;
             }
         }else{

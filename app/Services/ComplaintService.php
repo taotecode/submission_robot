@@ -86,7 +86,7 @@ class ComplaintService
             'chat_id' => $chatId,
             'text' => get_config('complaint.restart'),
             'parse_mode' => 'HTML',
-            'reply_markup' => json_encode(KeyBoardData::START_COMPLAINT),
+            'reply_markup' => json_encode(KeyBoardData::$START_COMPLAINT),
         ]);
     }
 
@@ -124,7 +124,7 @@ class ComplaintService
 
         return $this->updateByText(
             $telegram, $chatId, $messageId, $message,
-            CacheKey::Complaint . '.' . $chatId,KeyBoardData::START_COMPLAINT,
+            CacheKey::Complaint . '.' . $chatId,KeyBoardData::$START_COMPLAINT,
             get_config('complaint.start_text_tips'),get_config('complaint.start_update_text_tips')
         );
     }
@@ -146,7 +146,7 @@ class ComplaintService
         }
         return $this->updateByMedia(
             $telegram, $chatId, $messageId, $message, $type,
-            CacheKey::Complaint . '.' . $chatId,KeyBoardData::START_COMPLAINT,
+            CacheKey::Complaint . '.' . $chatId,KeyBoardData::$START_COMPLAINT,
             get_config('complaint.start_text_tips'),get_config('complaint.start_update_text_tips')
         );
     }
@@ -214,7 +214,7 @@ class ComplaintService
             'chat_id' => $chatId,
             'text' => get_config('complaint.start_forward_origin'),
             'parse_mode' => 'HTML',
-            'reply_markup' => json_encode(KeyBoardData::START_COMPLAINT),
+            'reply_markup' => json_encode(KeyBoardData::$START_COMPLAINT),
         ]);
     }
 
@@ -319,7 +319,7 @@ class ComplaintService
                 'reply_to_message_id' => $messageId,
                 'text' => get_config('complaint.is_empty'),
                 'parse_mode' => 'HTML',
-                'reply_markup' => json_encode(KeyBoardData::START_COMPLAINT),
+                'reply_markup' => json_encode(KeyBoardData::$START_COMPLAINT),
             ]);
         }
 
@@ -341,7 +341,7 @@ class ComplaintService
             'reply_to_message_id' => $messageId,
             'text' => get_config('complaint.preview_tips'),
             'parse_mode' => 'HTML',
-            'reply_markup' => json_encode(KeyBoardData::END_COMPLAINT),
+            'reply_markup' => json_encode(KeyBoardData::$END_COMPLAINT),
         ]);
     }
 

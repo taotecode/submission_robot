@@ -2,18 +2,15 @@
 
 namespace App\Services;
 
-use App\Enums\KeyBoardData;
-use App\Models\Auditor;
 use App\Models\Bot;
 use App\Models\Complaint;
 use App\Models\Manuscript;
-use App\Models\ReviewGroupAuditor;
 use App\Services\CallBackQuery\ApprovedAndRejectedSubmissionService;
 use App\Services\CallBackQuery\DeleteSubmissionMessageService;
 use App\Services\CallBackQuery\ManuscriptSearchService;
 use App\Services\CallBackQuery\PendingManuscriptService;
 use App\Services\CallBackQuery\PrivateMessageService;
-use App\Services\CallBackQuery\QuickSubmissionService;
+use App\Services\CallBackQuery\QuickSubmissionStatusService;
 use App\Services\CallBackQuery\SelectChannelService;
 use App\Services\CallBackQuery\SetSubmissionUserTypeService;
 use Illuminate\Support\Facades\Log;
@@ -34,10 +31,10 @@ class CallBackQueryService
     public Manuscript $manuscriptModel;
     public Complaint $complaintModel;
 
-    public function __construct(Manuscript $manuscriptModel,Complaint $complaintModel)
+    public function __construct()
     {
-        $this->manuscriptModel = $manuscriptModel;
-        $this->complaintModel = $complaintModel;
+        $this->manuscriptModel = new Manuscript();
+        $this->complaintModel = new Complaint();
     }
 
     public function index($botInfo, Update $updateData, Api $telegram)
@@ -113,22 +110,25 @@ class CallBackQueryService
 //                $this->approved_and_reject_complaint($telegram, $botInfo, $manuscriptId, $chatId, $from, $messageId, true, $callbackQuery);
                 break;
             case 'quick_submission':
+                dump($updateData);
                 Log::info('quick_submission',$updateData->toArray());
                 break;
         }
     }
 
-    public function approved_and_rejected_submission(Api $telegram, Bot $botInfo, int $manuscriptId, $chatId, User $from, $messageId, bool $isApproved, CallbackQuery $callbackQuery): string
+    public function approved_and_rejected_submission(Api $telegram, Bot $botInfo, $manuscript, $chatId, User $from, $messageId, bool $isApproved, CallbackQuery $callbackQuery): string
     {
         $textSubmissionService = new ApprovedAndRejectedSubmissionService();
 
-        $complaint = $this->complaintModel->find($manuscriptId);
+//        $complaint = $this->complaintModel->find($manuscriptId);
 
         //通过
         if ($isApproved) {
-            return $textSubmissionService->approved($telegram, $botInfo, $complaint, $chatId, $from, $messageId, $callbackQuery);
+//            return $textSubmissionService->approved($telegram, $botInfo, $complaint, $chatId, $from, $messageId, $callbackQuery);
+            return $textSubmissionService->approved($telegram, $botInfo, $manuscript, $chatId, $from, $messageId, $callbackQuery);
         } else {
-            return $textSubmissionService->rejected($telegram, $botInfo, $complaint, $chatId, $from, $messageId, $callbackQuery);
+//            return $textSubmissionService->rejected($telegram, $botInfo, $complaint, $chatId, $from, $messageId, $callbackQuery);
+            return $textSubmissionService->rejected($telegram, $botInfo, $manuscript, $chatId, $from, $messageId, $callbackQuery);
         }
     }
 
@@ -142,7 +142,7 @@ class CallBackQueryService
 
     private function submission_quick(Api $telegram, Bot $botInfo, Manuscript $manuscript, $chatId, User $from, $messageId, bool $isApproved, CallbackQuery $callbackQuery): string
     {
-        return (new QuickSubmissionService())->quick_submission($telegram, $callbackQuery, $from, $botInfo, $manuscript, $chatId, $messageId, $isApproved);
+        return (new QuickSubmissionStatusService())->quick_submission($telegram, $callbackQuery, $from, $botInfo, $manuscript, $chatId, $messageId, $isApproved);
     }
 
     private function approvedOrRejectSubmission(Api $telegram, bool $isApproved, CallbackQuery $callbackQuery): string

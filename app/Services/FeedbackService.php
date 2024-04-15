@@ -26,7 +26,7 @@ class FeedbackService
             'chat_id' => $chatId,
             'text' => get_config('feedback.start'),
             'parse_mode' => 'HTML',
-            'reply_markup' => json_encode(KeyBoardData::START_FEEDBACK),
+            'reply_markup' => json_encode(KeyBoardData::$START_FEEDBACK),
         ]);
     }
 }

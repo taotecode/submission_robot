@@ -36,7 +36,7 @@ class SelectChannelService
                 'reply_to_message_id' => $messageId,
                 'text' => get_config('submission.select_channel_end'),
                 'parse_mode' => 'HTML',
-                'reply_markup' => json_encode(KeyBoardData::SELECT_CHANNEL_END),
+                'reply_markup' => json_encode(KeyBoardData::$SELECT_CHANNEL_END),
             ]);
             return 'ok';
         } catch (TelegramSDKException $telegramSDKException) {

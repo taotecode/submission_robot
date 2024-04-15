@@ -3,6 +3,7 @@
 namespace App\Services\CallBackQuery;
 
 use App\Enums\AuditorRole;
+use App\Enums\InlineKeyBoardData;
 use App\Enums\KeyBoardData;
 use App\Enums\ManuscriptStatus;
 use App\Models\Bot;
@@ -66,7 +67,7 @@ class DeleteSubmissionMessageService
             $manuscript->status = ManuscriptStatus::DELETE;
             $manuscript->save();
 
-            $inline_keyboard = KeyBoardData::REVIEW_GROUP_DELETE;
+            $inline_keyboard = InlineKeyBoardData::$REVIEW_GROUP_DELETE;
             $inline_keyboard['inline_keyboard'][0][0]['callback_data'] .= ":".$manuscript->id;
 
             $telegram->editMessageReplyMarkup([
