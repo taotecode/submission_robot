@@ -30,7 +30,7 @@ trait SendPostedByMessageService
                         'chat_id' => $manuscript->posted_by['id'],
                         'text' => $text,
                         'parse_mode' => 'HTML',
-                        'reply_markup' => json_encode(KeyBoardData::START),
+                        'reply_markup' => json_encode(KeyBoardData::$START),
                     ]);
 
                     return 'ok';
@@ -46,7 +46,7 @@ trait SendPostedByMessageService
                         'chat_id' => $manuscript->posted_by['id'],
                         'text' => get_config('submission.review_rejected_submission'),
                         'parse_mode' => 'HTML',
-                        'reply_markup' => json_encode(KeyBoardData::START),
+                        'reply_markup' => json_encode(KeyBoardData::$START),
                     ]);
 
                     return 'ok';
@@ -62,7 +62,7 @@ trait SendPostedByMessageService
                         'chat_id' => $manuscript->posted_by['id'],
                         'text' => get_config('submission.review_delete_submission'),
                         'parse_mode' => 'HTML',
-                        'reply_markup' => json_encode(KeyBoardData::START),
+                        'reply_markup' => json_encode(KeyBoardData::$START),
                     ]);
 
                     return 'ok';
