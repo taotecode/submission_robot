@@ -86,8 +86,8 @@ class KeyBoardData
                     get_keyboard_name_config('submission_end.ConfirmSubmissionAnonymous', KeyBoardName::ConfirmSubmissionAnonymous),
                 ],
                 [
-                    get_keyboard_name_config('submission_end.Restart', KeyBoardName::Restart),
-                    get_keyboard_name_config('submission_end.CancelSubmission', KeyBoardName::CancelSubmission),
+                    get_keyboard_name_config('submission.Restart', KeyBoardName::Restart),
+                    get_keyboard_name_config('submission.CancelSubmission', KeyBoardName::CancelSubmission),
                 ],
             ],
             'resize_keyboard' => true, // 让键盘大小适应屏幕
@@ -100,8 +100,8 @@ class KeyBoardData
                     get_keyboard_name_config('select_channel.SelectChannel', KeyBoardName::SelectChannel),
                 ],
                 [
-                    get_keyboard_name_config('select_channel.Restart', KeyBoardName::Restart),
-                    get_keyboard_name_config('select_channel.CancelSubmission', KeyBoardName::CancelSubmission),
+                    get_keyboard_name_config('submission.Restart', KeyBoardName::Restart),
+                    get_keyboard_name_config('submission.CancelSubmission', KeyBoardName::CancelSubmission),
                 ],
             ],
             'resize_keyboard' => true, // 让键盘大小适应屏幕
@@ -111,12 +111,12 @@ class KeyBoardData
         self::$SELECT_CHANNEL_END=[
             'keyboard' => [
                 [
-                    get_keyboard_name_config('select_channel_end.ConfirmSubmissionOpen', KeyBoardName::ConfirmSubmissionOpen),
-                    get_keyboard_name_config('select_channel_end.ConfirmSubmissionAnonymous', KeyBoardName::ConfirmSubmissionAnonymous),
+                    get_keyboard_name_config('submission_end.ConfirmSubmissionOpen', KeyBoardName::ConfirmSubmissionOpen),
+                    get_keyboard_name_config('submission_end.ConfirmSubmissionAnonymous', KeyBoardName::ConfirmSubmissionAnonymous),
                 ],
                 [
-                    get_keyboard_name_config('select_channel_end.Restart', KeyBoardName::Restart),
-                    get_keyboard_name_config('select_channel_end.CancelSubmission', KeyBoardName::CancelSubmission),
+                    get_keyboard_name_config('submission.Restart', KeyBoardName::Restart),
+                    get_keyboard_name_config('submission.CancelSubmission', KeyBoardName::CancelSubmission),
                     get_keyboard_name_config('select_channel_end.SelectChannelAgain', KeyBoardName::SelectChannelAgain),
                 ],
             ],
@@ -131,7 +131,7 @@ class KeyBoardData
                     get_keyboard_name_config('feedback.SubmitSuggestion', KeyBoardName::SubmitSuggestion),
                 ],
                 [
-                    get_keyboard_name_config('feedback.Cancel', KeyBoardName::Cancel),
+                    get_keyboard_name_config('common.Cancel', KeyBoardName::Cancel),
                 ],
             ],
             'resize_keyboard' => true, // 让键盘大小适应屏幕
@@ -145,7 +145,7 @@ class KeyBoardData
                 ],
                 [
                     get_keyboard_name_config('complaint.Restart', KeyBoardName::Restart),
-                    get_keyboard_name_config('complaint.Cancel', KeyBoardName::Cancel),
+                    get_keyboard_name_config('common.Cancel', KeyBoardName::Cancel),
                 ],
             ],
             'resize_keyboard' => true, // 让键盘大小适应屏幕
@@ -158,8 +158,8 @@ class KeyBoardData
                     get_keyboard_name_config('complaint_end.ConfirmComplaint', KeyBoardName::ConfirmComplaint),
                 ],
                 [
-                    get_keyboard_name_config('complaint_end.Restart', KeyBoardName::Restart),
-                    get_keyboard_name_config('complaint_end.Cancel', KeyBoardName::Cancel),
+                    get_keyboard_name_config('complaint.Restart', KeyBoardName::Restart),
+                    get_keyboard_name_config('common.Cancel', KeyBoardName::Cancel),
                 ],
             ],
             'resize_keyboard' => true, // 让键盘大小适应屏幕

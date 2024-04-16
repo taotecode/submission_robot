@@ -32,13 +32,19 @@ class SubmissionService
         switch ($objectType) {
             case 'text':
                 return match ($message->text) {
-                    KeyBoardName::CancelSubmission => $this->cancel($telegram, $chatId),
-                    KeyBoardName::Restart => $this->start($telegram, $botInfo, $chatId, $chat, get_config('submission.restart')),
-                    KeyBoardName::EndSending => $this->end($telegram, $chatId, $botInfo),
-                    KeyBoardName::SelectChannel, KeyBoardName::SelectChannelAgain => $this->selectChannel($telegram, $chatId, $botInfo),
-                    KeyBoardName::ConfirmSubmissionOpen => $this->confirm($telegram, $chatId, $chat, $botInfo, 0),
-                    KeyBoardName::ConfirmSubmissionAnonymous => $this->confirm($telegram, $chatId, $chat, $botInfo, 1),
-                    KeyBoardName::Cancel => $this->cancel($telegram, $chatId, $chat, $botInfo, '已取消'),
+                    get_keyboard_name_config('submission.CancelSubmission', KeyBoardName::CancelSubmission)
+                    => $this->cancel($telegram, $chatId),
+                    get_keyboard_name_config('submission.Restart', KeyBoardName::Restart)
+                    => $this->start($telegram, $botInfo, $chatId, $chat, get_config('submission.restart')),
+                    get_keyboard_name_config('submission.EndSending', KeyBoardName::EndSending) => $this->end($telegram, $chatId, $botInfo),
+                    get_keyboard_name_config('select_channel.SelectChannel', KeyBoardName::SelectChannel),
+                    get_keyboard_name_config('select_channel_end.SelectChannelAgain', KeyBoardName::SelectChannelAgain)
+                    => $this->selectChannel($telegram, $chatId, $botInfo),
+                    get_keyboard_name_config('submission_end.ConfirmSubmissionOpen', KeyBoardName::ConfirmSubmissionOpen)
+                    => $this->confirm($telegram, $chatId, $chat, $botInfo, 0),
+                    get_keyboard_name_config('submission_end.ConfirmSubmissionAnonymous', KeyBoardName::ConfirmSubmissionAnonymous),
+                    => $this->confirm($telegram, $chatId, $chat, $botInfo, 1),
+                    get_keyboard_name_config('common.Cancel', KeyBoardName::Cancel) => $this->cancel($telegram, $chatId, $chat, $botInfo, '已取消'),
                     default => $this->startUpdateByText($telegram, $chatId, $messageId, $message),
                 };
             case 'photo':
@@ -123,7 +129,7 @@ class SubmissionService
         $objectType = Cache::tags(CacheKey::Submission . '.' . $chatId)->get('objectType');
         $messageId = '';
         $messageCache = [];
-        $isEmpty=false;
+        $isEmpty = false;
 
         //根据不同的类型获取缓存数据,并判断是否为空
         switch ($objectType) {
@@ -131,7 +137,7 @@ class SubmissionService
                 $messageCache = Cache::tags(CacheKey::Submission . '.' . $chatId)->get('text');
                 $messageId = $messageCache['message_id'] ?? '';
                 if (!isset($messageCache['text']) || empty($messageCache['text'])) {
-                    $isEmpty=true;
+                    $isEmpty = true;
                 }
                 break;
             case 'photo':
@@ -140,7 +146,7 @@ class SubmissionService
                 if (
                     !isset($messageCache['photo'][0]['file_id']) || empty($messageCache['photo'][0]['file_id'])
                 ) {
-                    $isEmpty=true;
+                    $isEmpty = true;
                 }
                 break;
             case 'video':
@@ -149,7 +155,7 @@ class SubmissionService
                 if (
                     !isset($messageCache['video']['file_id']) || empty($messageCache['video']['file_id'])
                 ) {
-                    $isEmpty=true;
+                    $isEmpty = true;
                 }
                 break;
             case 'media_group_photo':
@@ -160,7 +166,7 @@ class SubmissionService
                 if (
                     !isset($messageCache[0]['photo'][0]['file_id']) && !isset($messageCache[0]['video']['file_id'])
                 ) {
-                    $isEmpty=true;
+                    $isEmpty = true;
                 }
                 break;
             case 'audio':
@@ -169,7 +175,7 @@ class SubmissionService
                 if (
                     !isset($messageCache['audio']['file_id']) || empty($messageCache['audio']['file_id'])
                 ) {
-                    $isEmpty=true;
+                    $isEmpty = true;
                 }
                 break;
             case 'media_group_audio':
@@ -190,7 +196,7 @@ class SubmissionService
                 }
                 break;
             default:
-                $isEmpty=true;
+                $isEmpty = true;
                 break;
         }
 
@@ -364,12 +370,12 @@ class SubmissionService
             return $this->sendGroupMessageWhiteUser($telegram, $botInfo, $manuscript, $channel);
         }
 
-        $custom_tail_content = "\r\n\r\n 用户投稿至频道：<a href='https://t.me/". $channel->name ."'>" . $channel->appellation. "</a>";
+        $custom_tail_content = "\r\n\r\n 用户投稿至频道：<a href='https://t.me/" . $channel->name . "'>" . $channel->appellation . "</a>";
 
         // 发送消息到审核群组
         $this->sendGroupMessage(
             $telegram, $botInfo, $messageCache, $objectType, $manuscript->id,
-            null,null,true,true,true,null,$custom_tail_content
+            null, null, true, true, true, null, $custom_tail_content
         );
         //            $text=$this->sendGroupMessage($telegram,$botInfo,$messageCache,$objectType,1);
 

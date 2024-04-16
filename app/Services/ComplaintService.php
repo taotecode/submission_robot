@@ -38,11 +38,11 @@ class ComplaintService
         switch ($objectType) {
             case 'text':
                 return match ($message->text) {
-                    KeyBoardName::SubmitComplaint => $this->start($telegram, $chatId, $chat),
-                    KeyBoardName::Restart => $this->restart($telegram, $chatId),
-                    KeyBoardName::Cancel => $this->cancel($telegram, $chatId),
-                    KeyBoardName::EndSending => $this->end($telegram,$botInfo, $chatId),
-                    KeyBoardName::ConfirmComplaint => $this->confirm($telegram,$botInfo, $chatId, $chat),
+                    get_keyboard_name_config('feedback.SubmitComplaint', KeyBoardName::SubmitComplaint) => $this->start($telegram, $chatId, $chat),
+                    get_keyboard_name_config('complaint.Restart', KeyBoardName::Restart)=> $this->restart($telegram, $chatId),
+                    get_keyboard_name_config('complaint.Cancel', KeyBoardName::Cancel) => $this->cancel($telegram, $chatId),
+                    get_keyboard_name_config('complaint.EndSending', KeyBoardName::EndSending) => $this->end($telegram,$botInfo, $chatId),
+                    get_keyboard_name_config('complaint_end.ConfirmComplaint', KeyBoardName::ConfirmComplaint) => $this->confirm($telegram,$botInfo, $chatId, $chat),
                     default => $this->startUpdateByText($telegram,$botInfo, $chatId, $messageId, $message),
                 };
             case 'photo':
