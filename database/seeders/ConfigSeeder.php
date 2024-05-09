@@ -47,7 +47,7 @@ class ConfigSeeder extends Seeder
                 'id' => 4,
                 'group' => 'submission',
                 'name' => 'error_for_text',
-                'value' => '请点击下方的键盘按钮，或者发送对应的关键词。',
+                'value' => "请点击下方的键盘按钮，或者发送对应的关键词。\r\n您也可以通过 /start 重新初始化所有操作。",
                 'description' => '向Telegram聊天发送文本的错误消息。',
                 'created_at' => '2023-09-17 08:40:58',
                 'updated_at' => '2023-09-17 08:44:07',
