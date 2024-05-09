@@ -14,6 +14,7 @@ return [
         'review_reject_num' => '审核拒绝数量',
         'status' => '状态',
         'is_auto_keyword' => '自动关键词',
+        'is_message_text_preprocessing' => '消息文本预处理',
         'keyword' => '关键词',
         'lexicon' => '词库',
     ],
