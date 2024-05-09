@@ -323,6 +323,15 @@ class ConfigSeeder extends Seeder
                 'created_at' => '2023-09-17 08:48:16',
                 'updated_at' => '2023-09-17 08:48:41',
             ],
+            [
+                'id' => 35,
+                'group' => 'complaint',
+                'name' => 'not_open',
+                'value' => '投诉服务已关闭，如需开启请联系管理员。',
+                'description' => '投诉服务被停止的提示语',
+                'created_at' => '2023-09-17 08:48:16',
+                'updated_at' => '2023-09-17 08:48:41',
+            ],
         ];
         //        DB::table('config')->insert($data);
         foreach ($data as $item) {

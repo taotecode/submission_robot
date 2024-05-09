@@ -43,7 +43,7 @@ class StartService
             'text' => match ($message->text) {
                 get_keyboard_name_config('start.StartSubmission', KeyBoardName::StartSubmission) => $submissionService->start($telegram, $botInfo, $chatId, $chat, get_config('submission.start')),
                 get_keyboard_name_config('start.Feedback', KeyBoardName::Feedback) => $feedbackService->feedback($telegram, $chatId),
-                get_keyboard_name_config('feedback.SubmitComplaint', KeyBoardName::SubmitComplaint) => $complaintService->start($telegram, $botInfo, $botInfo, $chatId, $chat),
+                get_keyboard_name_config('feedback.SubmitComplaint', KeyBoardName::SubmitComplaint) => $complaintService->start($telegram, $botInfo, $chatId, $chat),
                 get_keyboard_name_config('start.HelpCenter', KeyBoardName::HelpCenter) => $this->help($telegram, $botInfo, $chatId),
                 default => $this->error_for_text($telegram, $chatId, $messageId),
             },

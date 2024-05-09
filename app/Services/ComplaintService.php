@@ -35,9 +35,9 @@ class ComplaintService
         switch ($objectType) {
             case 'text':
                 return match ($message->text) {
-                    get_keyboard_name_config('feedback.SubmitComplaint', KeyBoardName::SubmitComplaint) => $this->start($telegram,$botInfo, $chatId, $chat),
+                    get_keyboard_name_config('feedback.SubmitComplaint', KeyBoardName::SubmitComplaint) => $this->start($telegram, $botInfo, $chatId, $chat),
                     get_keyboard_name_config('complaint.Restart', KeyBoardName::Restart) => $this->restart($telegram, $chatId),
-                    get_keyboard_name_config('complaint.Cancel', KeyBoardName::Cancel) => $this->cancel($telegram, $chatId),
+                    get_keyboard_name_config('complaint.Cancel', KeyBoardName::Cancel) => $this->cancel($telegram,$botInfo, $chatId),
                     get_keyboard_name_config('complaint.EndSending', KeyBoardName::EndSending) => $this->end($telegram, $botInfo, $chatId),
                     get_keyboard_name_config('complaint_end.ConfirmComplaint', KeyBoardName::ConfirmComplaint) => $this->confirm($telegram, $botInfo, $chatId, $chat),
                     default => $this->startUpdateByText($telegram, $botInfo, $chatId, $messageId, $message),
@@ -97,7 +97,7 @@ class ComplaintService
     /**
      * 取消投诉
      */
-    public function cancel(Api $telegram, mixed $chatId): mixed
+    public function cancel(Api $telegram,$botInfo, mixed $chatId): mixed
     {
         Cache::tags(CacheKey::Complaint.'.'.$chatId)->flush();
 
@@ -105,7 +105,7 @@ class ComplaintService
             'chat_id' => $chatId,
             'text' => get_config('complaint.cancel'),
             'parse_mode' => 'HTML',
-            'reply_markup' => json_encode(KeyBoardData::START),
+            'reply_markup' => json_encode(service_isOpen_check_return_keyboard($botInfo)),
         ]);
     }
 
@@ -148,11 +148,9 @@ class ComplaintService
     {
         //检查消息是否含有来源
         if (empty($message['forward_origin']) || empty($message->forwardFromChat->username)) {
-            dd(1);
-
             return $this->sendTelegramMessage($telegram, 'sendMessage', [
                 'chat_id' => $chatId,
-                'text' => get_config('complaint.start_empty_forward_origin'),
+                'text' => get_config('complaint.start_empty_forward_origin')."\r\n没有消息来源",
                 'parse_mode' => 'HTML',
                 'reply_markup' => json_encode(KeyBoardData::Cancel),
             ]);
@@ -160,22 +158,18 @@ class ComplaintService
         //检查来源是否是机器人绑定的频道
         $channel = (new Channel())->where('name', $message->forwardFromChat->username)->first();
         if (empty($channel)) {
-            dd(2);
-
             return $this->sendTelegramMessage($telegram, 'sendMessage', [
                 'chat_id' => $chatId,
-                'text' => get_config('complaint.start_empty_forward_origin'),
+                'text' => get_config('complaint.start_empty_forward_origin')."\r\n没有绑定的频道",
                 'parse_mode' => 'HTML',
                 'reply_markup' => json_encode(KeyBoardData::Cancel),
             ]);
         }
         //检查是否为机器人绑定的频道
         if (! in_array($channel->id, $botInfo->channel_ids)) {
-            dd(3);
-
             return $this->sendTelegramMessage($telegram, 'sendMessage', [
                 'chat_id' => $chatId,
-                'text' => get_config('complaint.start_empty_forward_origin'),
+                'text' => get_config('complaint.start_empty_forward_origin')."\r\n频道绑定错误",
                 'parse_mode' => 'HTML',
                 'reply_markup' => json_encode(KeyBoardData::Cancel),
             ]);
@@ -188,11 +182,9 @@ class ComplaintService
             'message_id' => $message->forwardFromMessageId,
         ])->first();
         if (empty($manuscript)) {
-            dd(123);
-
             return $this->sendTelegramMessage($telegram, 'sendMessage', [
                 'chat_id' => $chatId,
-                'text' => get_config('complaint.start_empty_forward_origin'),
+                'text' => get_config('complaint.start_empty_forward_origin')."\r\n找不到对应稿件",
                 'parse_mode' => 'HTML',
                 'reply_markup' => json_encode(KeyBoardData::Cancel),
             ]);
@@ -215,11 +207,12 @@ class ComplaintService
     /**
      * 结束发送投诉内容
      *
-     * @param  mixed  $chatId
-     * @param  Bot  $botInfo
+     * @param Api $telegram
+     * @param Bot $botInfo
+     * @param mixed $chatId
      * @return mixed
      */
-    public function end(Api $telegram, $botInfo, $chatId)
+    public function end(Api $telegram, $botInfo, $chatId): mixed
     {
         $objectType = Cache::tags(CacheKey::Complaint.'.'.$chatId)->get('objectType');
         $messageId = '';
