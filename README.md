@@ -50,5 +50,5 @@
 - [laravel](https://laravel.com/)
 
 - [dcat-admin](https://github.com/jqhph/dcat-admin)
-- 
+
 - [kitloong/laravel-migrations-generator](https://github.com/kitloong/laravel-migrations-generator)

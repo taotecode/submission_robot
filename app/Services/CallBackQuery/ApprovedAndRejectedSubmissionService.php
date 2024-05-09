@@ -162,6 +162,12 @@ class ApprovedAndRejectedSubmissionService
                 'reply_markup' => json_encode($inline_keyboard),
             ]);
 
+            $telegram->answerCallbackQuery([
+                'callback_query_id' => $callbackQuery->id,
+                'text' => '操作成功',
+                'show_alert' => false,
+            ]);
+
             return 'ok';
         } catch (TelegramSDKException $telegramSDKException) {
             Log::error($telegramSDKException);

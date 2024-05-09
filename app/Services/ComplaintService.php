@@ -433,7 +433,7 @@ class ComplaintService
             'reply_to_message_id' => $messageId,
             'text' => get_config('complaint.confirm_end'),
             'parse_mode' => 'HTML',
-            'reply_markup' => json_encode(KeyBoardData::START),
+            'reply_markup' => json_encode(service_isOpen_check_return_keyboard($botInfo)),
         ]);
     }
 }
