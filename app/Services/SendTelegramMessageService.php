@@ -39,6 +39,12 @@ trait SendTelegramMessageService
      * @param $objectType
      * @param $manuscriptId
      * @param null $inline_keyboard
+     * @param null $inline_keyboard_enums
+     * @param bool $is_addKeyWord
+     * @param bool $is_addAnonymous
+     * @param bool $is_addTailContent
+     * @param string|null $custom_header_content
+     * @param string|null $custom_tail_content
      * @return mixed
      */
     public function sendGroupMessage(
@@ -100,7 +106,7 @@ trait SendTelegramMessageService
         }
 
         $inline_keyboard = InlineKeyBoardData::$WHITE_LIST_USER_SUBMISSION;
-        $inline_keyboard['inline_keyboard'][0][0]['url'] .= $botInfo->channel->name . "/" . $manuscript->message_id;
+        $inline_keyboard['inline_keyboard'][0][0]['url'] .= $manuscript->channel->name . "/" . $manuscript->message_id;
         $inline_keyboard['inline_keyboard'][0][1]['callback_data'] .= ":$manuscript->id";
 
         $username = get_posted_by($manuscript->posted_by);
