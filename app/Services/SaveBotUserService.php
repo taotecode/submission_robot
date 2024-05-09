@@ -10,7 +10,7 @@ use Telegram\Bot\Objects\Message;
 
 trait SaveBotUserService
 {
-    public function save_bot_user($botInfo,?Chat $user,?Message $message)
+    public function save_bot_user($botInfo,Chat|null $user,Message|null $message)
     {
         BotUser::updateOrCreate(
             ['bot_id' => $botInfo->id, 'user_id' => $user->id],
