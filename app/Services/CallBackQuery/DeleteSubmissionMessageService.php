@@ -54,11 +54,11 @@ class DeleteSubmissionMessageService
             return 'ok';
         }
 
-        //获取机器人对应的频道ID
-        $channelId = '@' . $manuscript->channel->name;
-
         //删除消息
         try {
+            //获取机器人对应的频道ID
+            $channelId = '@' . $manuscript->channel->name;
+
             $telegram->deleteMessage([
                 'chat_id' => $channelId,
                 'message_id' => $manuscript->message_id,
