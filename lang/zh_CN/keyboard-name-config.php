@@ -1,4 +1,5 @@
 <?php
+
 return [
     'labels' => [
         'KeyboardNameConfig' => '键盘名称表',

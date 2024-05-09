@@ -17,7 +17,7 @@ class GetGroupIdCommand extends Command
         $message = $this->getUpdate()->getMessage();
         if (! in_array($this->getUpdate()->getChat()->type, ['group', 'supergroup'])) {
             $this->replyWithMessage([
-                'text' => "<b>请在群组中使用！</b>",
+                'text' => '<b>请在群组中使用！</b>',
                 'parse_mode' => 'HTML',
             ]);
 

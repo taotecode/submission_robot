@@ -4,11 +4,8 @@ namespace App\Enums;
 
 class InlineKeyBoardData
 {
-
-
     /**
      * 审核群组稿件通过显示的键盘
-     * @var array
      */
     public static array $REVIEW_GROUP_APPROVED;
 
@@ -19,13 +16,11 @@ class InlineKeyBoardData
 
     /**
      * 审核群组稿件删除显示的键盘
-     * @var array
      */
     public static array $REVIEW_GROUP_DELETE;
 
     /**
      * 白名单用户投稿完成发送到审核群组键盘
-     * @var array
      */
     public static array $WHITE_LIST_USER_SUBMISSION;
 
@@ -37,18 +32,18 @@ class InlineKeyBoardData
             'inline_keyboard' => [
                 [
                     [
-                        'text' => get_keyboard_name_config('review_group_approved.ApprovedEnd',KeyBoardName::ApprovedEnd),
-                        'callback_data' => 'approved_submission_button'
+                        'text' => get_keyboard_name_config('review_group_approved.ApprovedEnd', KeyBoardName::ApprovedEnd),
+                        'callback_data' => 'approved_submission_button',
                     ],
                     [
-                        'text' => get_keyboard_name_config('review_group_approved.ViewMessage',KeyBoardName::ViewMessage),
-                        'url' => 'https://t.me/'
+                        'text' => get_keyboard_name_config('review_group_approved.ViewMessage', KeyBoardName::ViewMessage),
+                        'url' => 'https://t.me/',
                     ],
                 ],
                 [
                     [
-                        'text' => get_keyboard_name_config('review_group_approved.DeleteMessage',KeyBoardName::DeleteMessage),
-                        'callback_data' => 'delete_submission_message'
+                        'text' => get_keyboard_name_config('review_group_approved.DeleteMessage', KeyBoardName::DeleteMessage),
+                        'callback_data' => 'delete_submission_message',
                     ],
                 ],
             ],
@@ -58,8 +53,8 @@ class InlineKeyBoardData
             'inline_keyboard' => [
                 [
                     [
-                        'text' => get_keyboard_name_config('review_group_rejected.RejectedEnd',KeyBoardName::RejectedEnd),
-                        'callback_data' => 'reject_submission_button'
+                        'text' => get_keyboard_name_config('review_group_rejected.RejectedEnd', KeyBoardName::RejectedEnd),
+                        'callback_data' => 'reject_submission_button',
                     ],
                 ],
             ],
@@ -69,23 +64,23 @@ class InlineKeyBoardData
             'inline_keyboard' => [
                 [
                     [
-                        'text' => get_keyboard_name_config('review_group_deleted.MessageDeleted',KeyBoardName::MessageDeleted),
-                        'callback_data' => 'delete_submission_message_success'
+                        'text' => get_keyboard_name_config('review_group_deleted.MessageDeleted', KeyBoardName::MessageDeleted),
+                        'callback_data' => 'delete_submission_message_success',
                     ],
                 ],
             ],
         ];
 
-        self::$WHITE_LIST_USER_SUBMISSION=[
+        self::$WHITE_LIST_USER_SUBMISSION = [
             'inline_keyboard' => [
                 [
                     [
-                        'text' => get_keyboard_name_config('white_list_user_submission.ViewMessage',KeyBoardName::ViewMessage),
-                        'url' => 'https://t.me/'
+                        'text' => get_keyboard_name_config('white_list_user_submission.ViewMessage', KeyBoardName::ViewMessage),
+                        'url' => 'https://t.me/',
                     ],
                     [
-                        'text' => get_keyboard_name_config('white_list_user_submission.DeleteWhiteListUser',KeyBoardName::DeleteWhiteListUser),
-                        'callback_data' => 'delete_white_list_user_submission_message'
+                        'text' => get_keyboard_name_config('white_list_user_submission.DeleteWhiteListUser', KeyBoardName::DeleteWhiteListUser),
+                        'callback_data' => 'delete_white_list_user_submission_message',
                     ],
                 ],
             ],
@@ -95,8 +90,8 @@ class InlineKeyBoardData
             'inline_keyboard' => [
                 [
                     [
-                        'text' => get_keyboard_name_config('start.error_and_submission',KeyBoardName::StartSubmission),
-                        'callback_data' => 'quick_submission'
+                        'text' => get_keyboard_name_config('start.error_and_submission', KeyBoardName::StartSubmission),
+                        'callback_data' => 'quick_submission',
                     ],
                 ],
             ],
@@ -143,6 +138,7 @@ class InlineKeyBoardData
             ],
         ],
     ];
+
     /**
      * 审核群组的投诉审核键盘
      */

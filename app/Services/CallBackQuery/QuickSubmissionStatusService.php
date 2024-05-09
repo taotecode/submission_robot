@@ -4,7 +4,6 @@ namespace App\Services\CallBackQuery;
 
 use App\Enums\AuditorRole;
 use App\Enums\InlineKeyBoardData;
-use App\Enums\KeyBoardData;
 use App\Enums\ManuscriptStatus;
 use App\Services\SendPostedByMessageService;
 use Illuminate\Support\Facades\Log;
@@ -14,10 +13,10 @@ use Telegram\Bot\Objects\User;
 class QuickSubmissionStatusService
 {
     use AuditorRoleCheckService;
-    use UpdateReviewGroupMessageButtonService;
     use SendPostedByMessageService;
+    use UpdateReviewGroupMessageButtonService;
 
-    public function quick_submission($telegram,$callbackQuery, User $from,$botInfo,$manuscript,$chatId,$messageId,bool $isApproved): string
+    public function quick_submission($telegram, $callbackQuery, User $from, $botInfo, $manuscript, $chatId, $messageId, bool $isApproved): string
     {
         //获取审核群组信息
         $reviewGroup = $botInfo->review_group;
@@ -34,26 +33,26 @@ class QuickSubmissionStatusService
         //拒绝人员数量
         $rejectNum = count($reject);
 
-        $inline_keyboard_approved=InlineKeyBoardData::$REVIEW_GROUP_APPROVED;
-        $inline_keyboard_approved['inline_keyboard'][0][0]['callback_data'] .= ":".$manuscript->id;
-        $inline_keyboard_approved['inline_keyboard'][0][1]['url'] .= $manuscript->channel->name."/".$manuscript->message_id;
+        $inline_keyboard_approved = InlineKeyBoardData::$REVIEW_GROUP_APPROVED;
+        $inline_keyboard_approved['inline_keyboard'][0][0]['callback_data'] .= ':'.$manuscript->id;
+        $inline_keyboard_approved['inline_keyboard'][0][1]['url'] .= $manuscript->channel->name.'/'.$manuscript->message_id;
         $inline_keyboard_approved['inline_keyboard'][1][0]['callback_data'] .= ':'.$manuscript->id;
 
-        $inline_keyboard_reject=InlineKeyBoardData::$REVIEW_GROUP_REJECT;
-        $inline_keyboard_reject['inline_keyboard'][0][0]['callback_data'] .= ":".$manuscript->id;
+        $inline_keyboard_reject = InlineKeyBoardData::$REVIEW_GROUP_REJECT;
+        $inline_keyboard_reject['inline_keyboard'][0][0]['callback_data'] .= ':'.$manuscript->id;
 
         if ($this->baseCheck($telegram, $callbackQuery->id, $from->id, $reviewGroup->id) !== true) {
             return 'ok';
         }
 
         if ($this->roleCheck($telegram, $callbackQuery->id, $from->id, [
-                AuditorRole::QUICK_APPROVAL,
-                AuditorRole::QUICK_REJECTION,
-            ]) !== true) {
+            AuditorRole::QUICK_APPROVAL,
+            AuditorRole::QUICK_REJECTION,
+        ]) !== true) {
             return 'ok';
         }
 
-        if ($this->update_review_group_message_button($telegram, $botInfo, $chatId, $messageId, $manuscript, $review_approved_num,$review_reject_num, $approvedNum, $rejectNum) === true) {
+        if ($this->update_review_group_message_button($telegram, $botInfo, $chatId, $messageId, $manuscript, $review_approved_num, $review_reject_num, $approvedNum, $rejectNum) === true) {
             return 'ok';
         }
 
@@ -62,8 +61,7 @@ class QuickSubmissionStatusService
                 $manuscript->one_approved = $from->toArray();
                 $manuscript->status = ManuscriptStatus::APPROVED;
                 $channelMessageId = $this->sendChannelMessage($telegram, $botInfo, $manuscript);
-                $this->sendPostedByMessage($telegram, $manuscript,$botInfo, ManuscriptStatus::APPROVED);
-
+                $this->sendPostedByMessage($telegram, $manuscript, $botInfo, ManuscriptStatus::APPROVED);
 
                 $telegram->editMessageReplyMarkup([
                     'chat_id' => $chatId,
@@ -76,7 +74,7 @@ class QuickSubmissionStatusService
                 $manuscript->one_reject = $from->toArray();
                 $manuscript->status = ManuscriptStatus::REJECTED;
                 $manuscript->save();
-                $this->sendPostedByMessage($telegram, $manuscript,$botInfo,ManuscriptStatus::REJECTED);
+                $this->sendPostedByMessage($telegram, $manuscript, $botInfo, ManuscriptStatus::REJECTED);
                 $telegram->editMessageReplyMarkup([
                     'chat_id' => $chatId,
                     'message_id' => $messageId,

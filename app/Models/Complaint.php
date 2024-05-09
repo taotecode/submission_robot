@@ -3,12 +3,12 @@
 namespace App\Models;
 
 use Dcat\Admin\Traits\HasDateTimeFormatter;
-
 use Illuminate\Database\Eloquent\Model;
 
 class Complaint extends Model
 {
-	use HasDateTimeFormatter;
+    use HasDateTimeFormatter;
+
     protected $table = 'complaint';
 
     /**
@@ -44,11 +44,11 @@ class Complaint extends Model
 
     public function bot(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
-        return $this->belongsTo(Bot::class,'bot_id', 'id');
+        return $this->belongsTo(Bot::class, 'bot_id', 'id');
     }
 
     public function channel(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
-        return $this->belongsTo(Channel::class,'channel_id', 'id');
+        return $this->belongsTo(Channel::class, 'channel_id', 'id');
     }
 }

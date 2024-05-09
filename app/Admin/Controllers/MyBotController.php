@@ -100,6 +100,10 @@ class MyBotController extends AdminController
 
             $form->switch('is_message_text_preprocessing')->default(1)->help('是否开启消息文本预处理？<br>开启后，将会对消息文本格式进行保留，如：空格、换行、链接、加粗等。');
 
+            $form->switch('is_submission')->default(1)->help('是否开启投稿服务？');
+            $form->switch('is_complaint')->default(1)->help('是否开启投诉服务？');
+            $form->switch('is_suggestion')->default(1)->help('是否开启建议服务？');
+
             $form->switch('status')->default(1);
             $form->display('created_at');
             $form->display('updated_at');

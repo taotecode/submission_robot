@@ -5,8 +5,8 @@ namespace App\Admin\Controllers;
 use App\Admin\Repositories\KeyboardNameConfig;
 use Dcat\Admin\Form;
 use Dcat\Admin\Grid;
-use Dcat\Admin\Show;
 use Dcat\Admin\Http\Controllers\AdminController;
+use Dcat\Admin\Show;
 
 class KeyboardNameConfigController extends AdminController
 {
@@ -43,8 +43,7 @@ class KeyboardNameConfigController extends AdminController
     /**
      * Make a show builder.
      *
-     * @param mixed $id
-     *
+     * @param  mixed  $id
      * @return Show
      */
     protected function detail($id)

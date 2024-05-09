@@ -25,5 +25,5 @@ Route::prefix('bots')->group(function () {
     Route::any('test/sendC', "App\Http\Controllers\Bots\TestController@sendC");
     Route::any('test/webapp', "App\Http\Controllers\Bots\TestController@webapp");
     Route::any('test/webapp_hook', "App\Http\Controllers\Bots\TestController@webapp_hook");
-    Route::any('get_update', "App\Http\Controllers\Bots\GetUpdateController@index");
+    Route::any('get_update/{id}', "App\Http\Controllers\Bots\GetUpdateController@index");
 });

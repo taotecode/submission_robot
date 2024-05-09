@@ -13,7 +13,7 @@ return new class extends Migration
      */
     public function up()
     {
-        if (!Schema::hasTable('review_group_auditors')) {
+        if (! Schema::hasTable('review_group_auditors')) {
             Schema::create('review_group_auditors', function (Blueprint $table) {
                 $table->collation = 'utf8mb4_unicode_ci';
                 $table->charset = 'utf8mb4';

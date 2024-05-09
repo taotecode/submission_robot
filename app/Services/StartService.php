@@ -4,17 +4,14 @@ namespace App\Services;
 
 use App\Enums\CacheKey;
 use App\Enums\InlineKeyBoardData;
-use App\Enums\KeyBoardData;
 use App\Enums\KeyBoardName;
 use App\Models\Bot;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Log;
 use Telegram\Bot\Api;
 use Telegram\Bot\Objects\Update;
 
 class StartService
 {
-
     use SendTelegramMessageService;
 
     public function index(Bot $botInfo, Update $updateData, Api $telegram)
@@ -46,39 +43,37 @@ class StartService
             'text' => match ($message->text) {
                 get_keyboard_name_config('start.StartSubmission', KeyBoardName::StartSubmission) => $submissionService->start($telegram, $botInfo, $chatId, $chat, get_config('submission.start')),
                 get_keyboard_name_config('start.Feedback', KeyBoardName::Feedback) => $feedbackService->feedback($telegram, $chatId),
-                get_keyboard_name_config('feedback.SubmitComplaint', KeyBoardName::SubmitComplaint) => $complaintService->start($telegram, $chatId, $chat),
-                get_keyboard_name_config('start.HelpCenter', KeyBoardName::HelpCenter) => $this->help($telegram, $chatId),
+                get_keyboard_name_config('feedback.SubmitComplaint', KeyBoardName::SubmitComplaint) => $complaintService->start($telegram, $botInfo, $botInfo, $chatId, $chat),
+                get_keyboard_name_config('start.HelpCenter', KeyBoardName::HelpCenter) => $this->help($telegram, $botInfo, $chatId),
                 default => $this->error_for_text($telegram, $chatId, $messageId),
             },
             default => $this->error_for_text($telegram, $chatId, $messageId),
         };
     }
 
-    public function start(Api $telegram, string $chatId)
+    public function start(Api $telegram, $botInfo, string $chatId)
     {
         Cache::tags(CacheKey::Submission.'.'.$chatId)->flush();
         Cache::tags(CacheKey::Complaint.'.'.$chatId)->flush();
+
         return $this->sendTelegramMessage($telegram, 'sendMessage', [
             'chat_id' => $chatId,
             'text' => get_config('submission.error_for_text'),
             'parse_mode' => 'HTML',
-            'reply_markup' => json_encode(KeyBoardData::$START),
+            'reply_markup' => json_encode(service_isOpen_check_return_keyboard($botInfo)),
         ]);
     }
 
     /**
      * 发送帮助中心消息。
-     * @param Api $telegram
-     * @param string $chatId
-     * @return mixed
      */
-    public function help(Api $telegram,string $chatId): mixed
+    public function help(Api $telegram, $botInfo, string $chatId): mixed
     {
         return $this->sendTelegramMessage($telegram, 'sendMessage', [
             'chat_id' => $chatId,
             'text' => get_config('help.start'),
             'parse_mode' => 'HTML',
-            'reply_markup' => json_encode(KeyBoardData::$START),
+            'reply_markup' => json_encode(service_isOpen_check_return_keyboard($botInfo)),
         ]);
     }
 

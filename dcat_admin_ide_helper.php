@@ -7,6 +7,7 @@
  *
  * @author jqh <841324345@qq.com>
  */
+
 namespace Dcat\Admin {
     use Illuminate\Support\Collection;
 
@@ -157,9 +158,13 @@ namespace Dcat\Admin {
      * @method Grid\Column|Collection email(string $label = null)
      * @method Grid\Column|Collection email_verified_at(string $label = null)
      */
-    class Grid {}
+    class Grid
+    {
+    }
 
-    class MiniGrid extends Grid {}
+    class MiniGrid extends Grid
+    {
+    }
 
     /**
      * @property Show\Field|Collection id
@@ -308,30 +313,30 @@ namespace Dcat\Admin {
      * @method Show\Field|Collection email(string $label = null)
      * @method Show\Field|Collection email_verified_at(string $label = null)
      */
-    class Show {}
+    class Show
+    {
+    }
 
-    /**
-     
-     */
-    class Form {}
+    class Form
+    {
+    }
 
 }
 
 namespace Dcat\Admin\Grid {
-    /**
-     
-     */
-    class Column {}
 
-    /**
-     
-     */
-    class Filter {}
+    class Column
+    {
+    }
+
+    class Filter
+    {
+    }
 }
 
 namespace Dcat\Admin\Show {
-    /**
-     
-     */
-    class Field {}
+
+    class Field
+    {
+    }
 }

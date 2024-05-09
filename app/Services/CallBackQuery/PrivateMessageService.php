@@ -4,7 +4,6 @@ namespace App\Services\CallBackQuery;
 
 use App\Enums\AuditorRole;
 use App\Enums\InlineKeyBoardData;
-use App\Enums\KeyBoardData;
 use Illuminate\Support\Facades\Log;
 use Telegram\Bot\Exceptions\TelegramSDKException;
 
@@ -12,21 +11,21 @@ class PrivateMessageService
 {
     use AuditorRoleCheckService;
 
-    public function private_message($telegram,$callbackQuery,$from,$reviewGroup,$manuscript,$chatId): string
+    public function private_message($telegram, $callbackQuery, $from, $reviewGroup, $manuscript, $chatId): string
     {
         if ($this->baseCheck($telegram, $callbackQuery->id, $from->id, $reviewGroup->id) !== true) {
             return 'ok';
         }
 
         if ($this->roleCheck($telegram, $callbackQuery->id, $from->id, [
-                AuditorRole::PRIVATE_CHAT_SUBMISSION,
-            ]) !== true) {
+            AuditorRole::PRIVATE_CHAT_SUBMISSION,
+        ]) !== true) {
             return 'ok';
         }
 
         $posted_by = $manuscript->posted_by;
 
-        $inline_keyboard=InlineKeyBoardData::PRIVATE_MESSAGE;
+        $inline_keyboard = InlineKeyBoardData::PRIVATE_MESSAGE;
 
         $inline_keyboard['inline_keyboard'][0][0]['url'] = 'https://t.me/'.$posted_by['username'];
         $inline_keyboard['inline_keyboard'][0][1]['url'] = 'tg://openmessage?user_id='.$posted_by['id'];

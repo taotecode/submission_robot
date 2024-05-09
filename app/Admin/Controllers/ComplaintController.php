@@ -5,8 +5,8 @@ namespace App\Admin\Controllers;
 use App\Admin\Repositories\Complaint;
 use Dcat\Admin\Form;
 use Dcat\Admin\Grid;
-use Dcat\Admin\Show;
 use Dcat\Admin\Http\Controllers\AdminController;
+use Dcat\Admin\Show;
 
 class ComplaintController extends AdminController
 {
@@ -34,10 +34,10 @@ class ComplaintController extends AdminController
             $grid->column('status');
             $grid->column('created_at');
             $grid->column('updated_at')->sortable();
-        
+
             $grid->filter(function (Grid\Filter $filter) {
                 $filter->equal('id');
-        
+
             });
         });
     }
@@ -45,8 +45,7 @@ class ComplaintController extends AdminController
     /**
      * Make a show builder.
      *
-     * @param mixed $id
-     *
+     * @param  mixed  $id
      * @return Show
      */
     protected function detail($id)
@@ -93,7 +92,7 @@ class ComplaintController extends AdminController
             $form->text('one_approved');
             $form->text('one_reject');
             $form->text('status');
-        
+
             $form->display('created_at');
             $form->display('updated_at');
         });

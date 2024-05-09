@@ -13,7 +13,7 @@ return new class extends Migration
      */
     public function up()
     {
-        if (!Schema::hasTable('bot_messages')) {
+        if (! Schema::hasTable('bot_messages')) {
             Schema::create('bot_messages', function (Blueprint $table) {
                 $table->collation = 'utf8_general_ci';
                 $table->charset = 'utf8';

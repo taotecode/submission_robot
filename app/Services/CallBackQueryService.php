@@ -35,6 +35,7 @@ class CallBackQueryService
     use SendTelegramMessageService;
 
     public Manuscript $manuscriptModel;
+
     public Complaint $complaintModel;
 
     public function __construct()
@@ -89,16 +90,16 @@ class CallBackQueryService
                 break;
             case 'delete_submission_message':
             case 'delete_white_list_user_submission_message':
-                $this->deleteSubmissionMessage($telegram,$botInfo,$manuscript,$callbackQuery,$chatId,$messageId,$from);
+                $this->deleteSubmissionMessage($telegram, $botInfo, $manuscript, $callbackQuery, $chatId, $messageId, $from);
                 break;
             case 'delete_submission_message_success':
-                $this->deleteSubmissionMessageSuccess($telegram,$callbackQuery);
+                $this->deleteSubmissionMessageSuccess($telegram, $callbackQuery);
                 break;
             case 'set_submission_user_type':
-                $this->setSubmissionUserType($telegram, $botInfo, $from, $callbackQuery,$commandArray,$manuscriptId,$manuscript,$chatId,$messageId);
+                $this->setSubmissionUserType($telegram, $botInfo, $from, $callbackQuery, $commandArray, $manuscriptId, $manuscript, $chatId, $messageId);
                 break;
             case 'refresh_pending_manuscript_list':
-                $this->refreshPendingManuscriptList($telegram, $botInfo, $chatId, $messageId,$message,$callbackQueryId);
+                $this->refreshPendingManuscriptList($telegram, $botInfo, $chatId, $messageId, $message, $callbackQueryId);
                 break;
             case 'show_pending_manuscript':
                 $this->showPendingManuscript($telegram, $botInfo, $manuscript);
@@ -107,16 +108,16 @@ class CallBackQueryService
                 $this->manuscriptSearchShowLink($telegram, $botInfo, $manuscript, $chatId);
                 break;
             case 'manuscript_search_page':
-                $this->manuscriptSearchPage($telegram, $botInfo, $manuscript, $chatId,$messageId,$callbackQueryId, $commandArray);
+                $this->manuscriptSearchPage($telegram, $botInfo, $manuscript, $chatId, $messageId, $callbackQueryId, $commandArray);
                 break;
             case 'select_channel':
-                $this->selectChannel($telegram, $botInfo, $chatId, $messageId, $callbackQueryId,$commandArray);
+                $this->selectChannel($telegram, $botInfo, $chatId, $messageId, $callbackQueryId, $commandArray);
                 break;
             case 'approved_complaint':
-//                $this->approved_and_reject_complaint($telegram, $botInfo, $manuscriptId, $chatId, $from, $messageId, true, $callbackQuery);
+                //                $this->approved_and_reject_complaint($telegram, $botInfo, $manuscriptId, $chatId, $from, $messageId, true, $callbackQuery);
                 break;
             case 'quick_submission':
-                $this->quick_submission($telegram, $botInfo,$updateData->getMessage()->replyToMessage);
+                $this->quick_submission($telegram, $botInfo, $updateData->getMessage()->replyToMessage);
                 break;
         }
     }
@@ -125,14 +126,14 @@ class CallBackQueryService
     {
         $textSubmissionService = new ApprovedAndRejectedSubmissionService();
 
-//        $complaint = $this->complaintModel->find($manuscriptId);
+        //        $complaint = $this->complaintModel->find($manuscriptId);
 
         //通过
         if ($isApproved) {
-//            return $textSubmissionService->approved($telegram, $botInfo, $complaint, $chatId, $from, $messageId, $callbackQuery);
+            //            return $textSubmissionService->approved($telegram, $botInfo, $complaint, $chatId, $from, $messageId, $callbackQuery);
             return $textSubmissionService->approved($telegram, $botInfo, $manuscript, $chatId, $from, $messageId, $callbackQuery);
         } else {
-//            return $textSubmissionService->rejected($telegram, $botInfo, $complaint, $chatId, $from, $messageId, $callbackQuery);
+            //            return $textSubmissionService->rejected($telegram, $botInfo, $complaint, $chatId, $from, $messageId, $callbackQuery);
             return $textSubmissionService->rejected($telegram, $botInfo, $manuscript, $chatId, $from, $messageId, $callbackQuery);
         }
     }
@@ -172,7 +173,7 @@ class CallBackQueryService
         }
     }
 
-    private function deleteSubmissionMessage(Api $telegram,$botInfo,?Manuscript $manuscript, ?CallbackQuery $callbackQuery,$chatId,$messageId,User $from): string
+    private function deleteSubmissionMessage(Api $telegram, $botInfo, ?Manuscript $manuscript, ?CallbackQuery $callbackQuery, $chatId, $messageId, User $from): string
     {
         return (new DeleteSubmissionMessageService())->delete_submission_message($telegram, $botInfo, $manuscript, $callbackQuery, $chatId, $messageId, $from);
     }
@@ -194,14 +195,14 @@ class CallBackQueryService
         }
     }
 
-    private function setSubmissionUserType(Api $telegram, $botInfo, User $from, ?CallbackQuery $callbackQuery,array $commandArray,$manuscriptId,$manuscript,$chatId,$messageId)
+    private function setSubmissionUserType(Api $telegram, $botInfo, User $from, ?CallbackQuery $callbackQuery, array $commandArray, $manuscriptId, $manuscript, $chatId, $messageId)
     {
-        return (new SetSubmissionUserTypeService())->setSubmissionUserType($telegram, $botInfo, $from, $callbackQuery, $commandArray,$manuscriptId,$manuscript,$chatId,$messageId);
+        return (new SetSubmissionUserTypeService())->setSubmissionUserType($telegram, $botInfo, $from, $callbackQuery, $commandArray, $manuscriptId, $manuscript, $chatId, $messageId);
     }
 
-    private function refreshPendingManuscriptList(Api $telegram, $botInfo, mixed $chatId, mixed $messageId,$message,$callbackQueryId)
+    private function refreshPendingManuscriptList(Api $telegram, $botInfo, mixed $chatId, mixed $messageId, $message, $callbackQueryId)
     {
-        return (new PendingManuscriptService())->refresh($telegram, $botInfo, $chatId, $messageId,$message,$callbackQueryId);
+        return (new PendingManuscriptService())->refresh($telegram, $botInfo, $chatId, $messageId, $message, $callbackQueryId);
     }
 
     private function showPendingManuscript(Api $telegram, $botInfo, ?Manuscript $manuscript)
@@ -214,9 +215,9 @@ class CallBackQueryService
         return (new ManuscriptSearchService())->link($telegram, $botInfo, $manuscript, $chatId);
     }
 
-    private function manuscriptSearchPage(Api $telegram, $botInfo, ?Manuscript $manuscript, mixed $chatId,$messageId,$callbackQueryId, array $commandArray)
+    private function manuscriptSearchPage(Api $telegram, $botInfo, ?Manuscript $manuscript, mixed $chatId, $messageId, $callbackQueryId, array $commandArray)
     {
-        return (new ManuscriptSearchService())->page($telegram, $botInfo, $manuscript, $chatId,$messageId,$callbackQueryId, $commandArray);
+        return (new ManuscriptSearchService())->page($telegram, $botInfo, $manuscript, $chatId, $messageId, $callbackQueryId, $commandArray);
     }
 
     private function selectChannel(Api $telegram, $botInfo, mixed $chatId, mixed $messageId, $callbackQueryId, array $commandArray)
@@ -229,14 +230,14 @@ class CallBackQueryService
 
     }
 
-    public function quick_submission(Api $telegram, Bot $botInfo,Message $message)
+    public function quick_submission(Api $telegram, Bot $botInfo, Message $message)
     {
         $objectType = $message->objectType();
         $chatId = $message->chat->id;
 
-        Cache::tags(CacheKey::Submission . '.' . $chatId)->flush();
+        Cache::tags(CacheKey::Submission.'.'.$chatId)->flush();
         //开启投稿服务标识
-        Cache::tags(CacheKey::Submission . '.' . $chatId)->put($chatId, $message->chat->toArray(), now()->addDay());
+        Cache::tags(CacheKey::Submission.'.'.$chatId)->put($chatId, $message->chat->toArray(), now()->addDay());
 
         $submissionUser = (new SubmissionUser)->firstOrCreate([
             'bot_id' => $botInfo->id,
@@ -251,7 +252,8 @@ class CallBackQueryService
 
         //判断是否是黑名单用户
         if ($submissionUser->type == SubmissionUserType::BLACK) {
-            Cache::tags(CacheKey::Submission . '.' . $chatId)->flush();
+            Cache::tags(CacheKey::Submission.'.'.$chatId)->flush();
+
             return $this->sendTelegramMessage($telegram, 'sendMessage', [
                 'chat_id' => $chatId,
                 'text' => get_config('submission.black_list'),
@@ -262,11 +264,11 @@ class CallBackQueryService
 
         switch ($objectType) {
             case 'text':
-                return (new SubmissionService())->startUpdateByText($telegram,$botInfo, $chatId, $message->messageId, $message);
+                return (new SubmissionService())->startUpdateByText($telegram, $botInfo, $chatId, $message->messageId, $message);
             case 'photo':
             case 'video':
             case 'audio':
-                return (new SubmissionService())->startUpdateByMedia($telegram,$botInfo, $chatId, $message->messageId, $message, $objectType);
+                return (new SubmissionService())->startUpdateByMedia($telegram, $botInfo, $chatId, $message->messageId, $message, $objectType);
                 break;
         }
     }

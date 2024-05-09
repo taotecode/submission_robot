@@ -43,9 +43,9 @@ class AuditorController extends AdminController
                 $filter->like('name');
                 $filter->equal('userId');
                 //需要将权限转换为字符串，数据库的权限是json格式，并且支持多选，还要支持模糊查询
-//                $filter->where('role', function ($query, $value) {
-//                    $query->whereJsonContains('role', $value);
-//                }, '权限')->multipleSelect(AuditorRole::ROLE_NAME);
+                //                $filter->where('role', function ($query, $value) {
+                //                    $query->whereJsonContains('role', $value);
+                //                }, '权限')->multipleSelect(AuditorRole::ROLE_NAME);
             });
         });
     }

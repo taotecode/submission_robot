@@ -13,7 +13,7 @@ return new class extends Migration
      */
     public function up()
     {
-        if (!Schema::hasTable('bots')) {
+        if (! Schema::hasTable('bots')) {
             Schema::create('bots', function (Blueprint $table) {
                 $table->collation = 'utf8mb4_unicode_ci';
                 $table->charset = 'utf8mb4';
@@ -30,6 +30,9 @@ return new class extends Migration
                 $table->unsignedTinyInteger('webhook_status')->default(0)->comment('Web hook 状态');
                 $table->unsignedTinyInteger('is_auto_keyword')->nullable()->default(0)->comment('是否开启自动关键词？');
                 $table->unsignedTinyInteger('is_message_text_preprocessing')->nullable()->default(1)->comment('是否开启消息文字预处理？');
+                $table->unsignedTinyInteger('is_submission')->nullable()->default(1)->comment('是否开启投稿服务？');
+                $table->unsignedTinyInteger('is_complaint')->nullable()->default(1)->comment('是否开启投诉服务？');
+                $table->unsignedTinyInteger('is_suggestion')->nullable()->default(1)->comment('是否开启建议服务？');
                 $table->text('keyword')->nullable()->comment('关键词列表');
                 $table->text('lexicon')->nullable()->comment('词库');
                 $table->unsignedInteger('submission_timeout')->default(0)->comment('审核超时时间（小时）');

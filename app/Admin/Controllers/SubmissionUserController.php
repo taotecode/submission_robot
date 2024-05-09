@@ -33,7 +33,7 @@ class SubmissionUserController extends AdminController
                 if (empty($this->user_data)) {
                     return '暂无信息';
                 }
-                if ($this->user_data['type'] != 'private'){
+                if ($this->user_data['type'] != 'private') {
                     return "<div style='padding:10px 10px'><p>title: {$this->user_data['title']}</p></div>";
                 }
                 // 返回显示的详情
@@ -41,6 +41,7 @@ class SubmissionUserController extends AdminController
                 $first_name = $this->user_data['first_name'] ?? '';
                 $last_name = $this->user_data['last_name'] ?? '';
                 $username = $this->user_data['username'] ?? '';
+
                 return "<div style='padding:10px 10px'><p>UID: $uid</p><p>first name: $first_name</p><p>last name: $last_name</p><p>用户名: $username</p></div>";
             });
             $grid->column('created_at');

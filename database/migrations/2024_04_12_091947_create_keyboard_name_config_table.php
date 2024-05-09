@@ -13,7 +13,7 @@ return new class extends Migration
      */
     public function up()
     {
-        if (!Schema::hasTable('keyboard_name_config')) {
+        if (! Schema::hasTable('keyboard_name_config')) {
             Schema::create('keyboard_name_config', function (Blueprint $table) {
                 $table->collation = 'utf8_general_ci';
                 $table->charset = 'utf8';

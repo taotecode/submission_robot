@@ -2,8 +2,6 @@
 
 namespace App\Enums;
 
-use http\Env;
-
 class KeyBoardData
 {
     /**
@@ -23,13 +21,11 @@ class KeyBoardData
 
     /**
      * 用户选择频道投稿键盘
-     * @var array
      */
     public static array $SELECT_CHANNEL;
 
     /**
      * 用户选择频道后结束投稿键盘
-     * @var array
      */
     public static array $SELECT_CHANNEL_END;
 
@@ -40,7 +36,6 @@ class KeyBoardData
 
     /**
      * 用户开始投诉键盘
-     * @var array
      */
     public static array $START_COMPLAINT;
 
@@ -59,13 +54,13 @@ class KeyBoardData
                 [
                     get_keyboard_name_config('start.Feedback', KeyBoardName::Feedback),
                     get_keyboard_name_config('start.HelpCenter', KeyBoardName::HelpCenter),
-                ]
+                ],
             ],
             'resize_keyboard' => true, // 让键盘大小适应屏幕
             'one_time_keyboard' => false, // 是否只显示一次
         ];
 
-        self::$START_SUBMISSION=[
+        self::$START_SUBMISSION = [
             'keyboard' => [
                 [
                     get_keyboard_name_config('submission.EndSending', KeyBoardName::EndSending),
@@ -79,7 +74,7 @@ class KeyBoardData
             'one_time_keyboard' => false, // 是否只显示一次
         ];
 
-        self::$END_SUBMISSION=[
+        self::$END_SUBMISSION = [
             'keyboard' => [
                 [
                     get_keyboard_name_config('submission_end.ConfirmSubmissionOpen', KeyBoardName::ConfirmSubmissionOpen),
@@ -94,7 +89,7 @@ class KeyBoardData
             'one_time_keyboard' => false, // 是否只显示一次
         ];
 
-        self::$SELECT_CHANNEL=[
+        self::$SELECT_CHANNEL = [
             'keyboard' => [
                 [
                     get_keyboard_name_config('select_channel.SelectChannel', KeyBoardName::SelectChannel),
@@ -108,7 +103,7 @@ class KeyBoardData
             'one_time_keyboard' => false, // 是否只显示一次
         ];
 
-        self::$SELECT_CHANNEL_END=[
+        self::$SELECT_CHANNEL_END = [
             'keyboard' => [
                 [
                     get_keyboard_name_config('submission_end.ConfirmSubmissionOpen', KeyBoardName::ConfirmSubmissionOpen),

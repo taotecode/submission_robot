@@ -35,9 +35,9 @@ class ApprovedAndRejectedComplaintService
         }
 
         if ($this->roleCheck($telegram, $callbackQuery->id, $from->id, [
-                AuditorRole::APPROVAL,
-                AuditorRole::REJECTION,
-            ]) !== true) {
+            AuditorRole::APPROVAL,
+            AuditorRole::REJECTION,
+        ]) !== true) {
             return 'ok';
         }
     }

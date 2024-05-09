@@ -5,7 +5,9 @@ namespace App\Enums;
 class SubmissionUserType
 {
     const NORMAL = 0;
+
     const WHITE = 1;
+
     const BLACK = 2;
 
     const MAP = [

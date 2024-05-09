@@ -4,7 +4,6 @@ namespace App\Services\CallBackQuery;
 
 use App\Enums\CacheKey;
 use App\Enums\KeyBoardData;
-use App\Services\SubmissionService;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Telegram\Bot\Api;
@@ -22,9 +21,11 @@ class SelectChannelService
                     'text' => '频道ID不能为空！',
                     'show_alert' => true,
                 ]);
+
                 return 'ok';
             } catch (TelegramSDKException $telegramSDKException) {
                 Log::error($telegramSDKException);
+
                 return 'error';
             }
         }
@@ -38,9 +39,11 @@ class SelectChannelService
                 'parse_mode' => 'HTML',
                 'reply_markup' => json_encode(KeyBoardData::$SELECT_CHANNEL_END),
             ]);
+
             return 'ok';
         } catch (TelegramSDKException $telegramSDKException) {
             Log::error($telegramSDKException);
+
             return 'error';
         }
     }

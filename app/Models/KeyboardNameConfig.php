@@ -3,12 +3,12 @@
 namespace App\Models;
 
 use Dcat\Admin\Traits\HasDateTimeFormatter;
-
 use Illuminate\Database\Eloquent\Model;
 
 class KeyboardNameConfig extends Model
 {
-	use HasDateTimeFormatter;
+    use HasDateTimeFormatter;
+
     protected $table = 'keyboard_name_config';
 
     protected static function boot(): void

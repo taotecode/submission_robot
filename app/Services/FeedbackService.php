@@ -4,23 +4,17 @@ namespace App\Services;
 
 use App\Enums\CacheKey;
 use App\Enums\KeyBoardData;
-use App\Enums\KeyBoardName;
-use App\Enums\SubmissionUserType;
-use App\Models\SubmissionUser;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 use Telegram\Bot\Api;
-use Telegram\Bot\Objects\Update;
 
 class FeedbackService
 {
-
     use SendTelegramMessageService;
 
     public function feedback(Api $telegram, string $chatId)
     {
-        Cache::tags(CacheKey::Submission . '.' . $chatId)->flush();
-        Cache::tags(CacheKey::Complaint . '.' . $chatId)->flush();
+        Cache::tags(CacheKey::Submission.'.'.$chatId)->flush();
+        Cache::tags(CacheKey::Complaint.'.'.$chatId)->flush();
 
         return $this->sendTelegramMessage($telegram, 'sendMessage', [
             'chat_id' => $chatId,

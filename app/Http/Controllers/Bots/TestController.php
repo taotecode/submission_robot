@@ -2,11 +2,9 @@
 
 namespace App\Http\Controllers\Bots;
 
-use App\Enums\ManuscriptStatus;
 use App\Http\Controllers\Controller;
 use App\Models\Bot;
 use App\Services\BaseService;
-use App\Telegram\Commands\StartCommand;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use lucadevelop\TelegramEntitiesDecoder\EntityDecoder;
@@ -14,7 +12,6 @@ use Telegram\Bot\Api;
 use Telegram\Bot\Helpers\Entities;
 use Telegram\Bot\Keyboard\Button;
 use Telegram\Bot\Keyboard\Keyboard;
-use function PHPUnit\Framework\isEmpty;
 
 class TestController extends Controller
 {
@@ -37,14 +34,13 @@ class TestController extends Controller
             'reply_markup'=>$reply_markup,
         ]));*/
 
-//        dd($telegram->deleteWebhook());
+        //        dd($telegram->deleteWebhook());
 
-
-//        $text=new Entities("zhelsa <b>zhelsa</b>");
-//        dump($text->toMarkdown());
+        //        $text=new Entities("zhelsa <b>zhelsa</b>");
+        //        dump($text->toMarkdown());
         $entity_decoder = new EntityDecoder('HTML');
         $response = $telegram->getUpdates([
-//            'offset'=>1,
+            //            'offset'=>1,
         ]);
         dump($response);
         foreach ($response as $item) {
@@ -52,9 +48,8 @@ class TestController extends Controller
             $decoded_text = $entity_decoder->decode($item->getMessage());
             dump($decoded_text);
         }
-//        dd($response);
+        //        dd($response);
     }
-
 
     public function setCommands()
     {
@@ -79,7 +74,7 @@ class TestController extends Controller
             ],
         ]);
         $telegram->setMyCommands([
-            'commands'=>json_encode([
+            'commands' => json_encode([
                 [
                     'command' => 'get_group_id',
                     'description' => '获取群组ID',
@@ -90,7 +85,7 @@ class TestController extends Controller
             ]),
         ]);
         $telegram->setMyCommands([
-            'commands'=>json_encode([
+            'commands' => json_encode([
                 [
                     'command' => 'start',
                     'description' => '开始投稿',
@@ -102,7 +97,7 @@ class TestController extends Controller
                 [
                     'command' => 'get_me_id',
                     'description' => '获取我的ID',
-                ]
+                ],
             ]),
             'scope' => json_encode([
                 'type' => 'all_private_chats',
@@ -124,14 +119,13 @@ class TestController extends Controller
         $response = $telegram->getMe();
         dd($response);*/
 
-        $bot=Bot::find(1);
-//        Cache::put('test', [
-//            'bot'=>$bot,
-//            'asd'=>[
-//                123
-//            ]
-//        ], 60*60*24*7);
-
+        $bot = Bot::find(1);
+        //        Cache::put('test', [
+        //            'bot'=>$bot,
+        //            'asd'=>[
+        //                123
+        //            ]
+        //        ], 60*60*24*7);
 
         dd(Cache::get('test'));
     }
@@ -140,7 +134,7 @@ class TestController extends Controller
     {
         $telegram = new Api(env('TELEGRAM_BOT_TOKEN'));
         $updates = $telegram->commandsHandler(true);
-        Log::info('',$updates->toArray());
+        Log::info('', $updates->toArray());
 
         $telegram->setMyCommands([
             'chat_id' => $updates->getChat()->id,
@@ -149,9 +143,9 @@ class TestController extends Controller
                 'inline_keyboard' => [
                     [
                         ['text' => '你的网页名称', 'url' => 'https://www.baidu.com'],
-                    ]
-                ]
-            ])
+                    ],
+                ],
+            ]),
         ]);
     }
 }

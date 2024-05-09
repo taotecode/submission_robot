@@ -3,7 +3,7 @@
 namespace App\Telegram\Commands;
 
 use App\Enums\CacheKey;
-use App\Enums\KeyBoardData;
+use App\Models\Bot;
 use Illuminate\Support\Facades\Cache;
 use Telegram\Bot\Commands\Command;
 
@@ -22,15 +22,20 @@ class StartCommand extends Command
 
     public function handle(): void
     {
+
+        $botId = request()->route('id');
+        $botInfo = (new Bot())->find($botId);
+
         $message = $this->getUpdate()->getMessage();
         $chatId = $this->getUpdate()->getChat()->id;
         Cache::tags(CacheKey::Submission.'.'.$chatId)->flush();
         Cache::tags(CacheKey::Complaint.'.'.$chatId)->flush();
         Cache::tags(CacheKey::Suggestion.'.'.$chatId)->flush();
+
         //回复消息
         $this->replyWithMessage([
             'text' => get_config('command.start'),
-            'reply_markup' => json_encode(KeyBoardData::$START),
+            'reply_markup' => json_encode(service_isOpen_check_return_keyboard($botInfo)),
             'reply_to_message_id' => $message->id,
         ]);
     }

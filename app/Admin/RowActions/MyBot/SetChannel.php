@@ -18,8 +18,8 @@ class SetChannel extends RowAction
     public function render()
     {
         if (empty($this->row->channel_ids)) {
-            $channel_ids = "";
-        }else{
+            $channel_ids = '';
+        } else {
             $channel_ids = json_encode($this->row->channel_ids);
         }
         $form = SetChannelForm::make()

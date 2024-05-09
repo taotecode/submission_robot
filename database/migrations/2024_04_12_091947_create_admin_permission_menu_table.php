@@ -13,7 +13,7 @@ return new class extends Migration
      */
     public function up()
     {
-        if (!Schema::hasTable('admin_permission_menu')) {
+        if (! Schema::hasTable('admin_permission_menu')) {
             Schema::create('admin_permission_menu', function (Blueprint $table) {
                 $table->collation = 'utf8mb4_unicode_ci';
                 $table->charset = 'utf8mb4';

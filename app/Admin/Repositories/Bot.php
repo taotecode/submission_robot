@@ -18,6 +18,4 @@ class Bot extends EloquentRepository
     {
         return $this->model()::query()->pluck('name', 'id');
     }
-
-
 }

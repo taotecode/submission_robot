@@ -2,7 +2,7 @@
 
 namespace App\Telegram\Commands;
 
-use App\Enums\KeyBoardData;
+use App\Models\Bot;
 use Telegram\Bot\Commands\Command;
 
 class HelpCommand extends Command
@@ -24,9 +24,14 @@ class HelpCommand extends Command
     public function handle(): void
     {
         $message = $this->getUpdate()->getMessage();
+
+        $botId = request()->route('id');
+
+        $botInfo = (new Bot())->find($botId);
+
         $this->replyWithMessage([
             'text' => get_config('command.help'),
-            'reply_markup' => json_encode(KeyBoardData::$START),
+            'reply_markup' => json_encode(service_isOpen_check_return_keyboard($botInfo)),
             'reply_to_message_id' => $message->id,
         ]);
     }

@@ -5,8 +5,8 @@ namespace App\Admin\Controllers;
 use App\Admin\Repositories\BotMessage;
 use Dcat\Admin\Form;
 use Dcat\Admin\Grid;
-use Dcat\Admin\Show;
 use Dcat\Admin\Http\Controllers\AdminController;
+use Dcat\Admin\Show;
 
 class BotMessageController extends AdminController
 {
@@ -31,7 +31,7 @@ class BotMessageController extends AdminController
                 if (empty($this->user_data)) {
                     return '暂无信息';
                 }
-                if ($this->user_data['type'] != 'private'){
+                if ($this->user_data['type'] != 'private') {
                     return "<div style='padding:10px 10px'><p>title: {$this->user_data['title']}</p></div>";
                 }
                 // 返回显示的详情
@@ -39,35 +39,38 @@ class BotMessageController extends AdminController
                 $first_name = $this->user_data['first_name'] ?? '';
                 $last_name = $this->user_data['last_name'] ?? '';
                 $username = $this->user_data['username'] ?? '';
+
                 return "<div style='padding:10px 10px'><p>UID: $uid</p><p>first name: $first_name</p><p>last name: $last_name</p><p>用户名: $username</p></div>";
             });
 
             $grid->column('text')->display(function () {
-                if (!empty($this->data['text'])){
+                if (! empty($this->data['text'])) {
                     return $this->data['text'];
                 }
-                if (!empty($this->data['caption'])){
+                if (! empty($this->data['caption'])) {
                     return $this->data['caption'];
                 }
+
                 return '暂无信息';
             })->expand(function ($model) {
                 $text = '暂无信息';
-                if (!empty($this->data['text'])){
+                if (! empty($this->data['text'])) {
                     $text = $this->data['text'];
                 }
-                if (!empty($this->data['caption'])){
+                if (! empty($this->data['caption'])) {
                     $text = $this->data['caption'];
                 }
-                $html="<div style='padding:10px 10px'><p>内容: {$text}</p></div>";
+                $html = "<div style='padding:10px 10px'><p>内容: {$text}</p></div>";
+
                 //如果有图片
-//                if (!empty($this->data['photo'])){
-//                    $html.="<div style='padding:10px 10px'><p>图片: </p>";
-//                    $imagesNum = count($this->data['photo'])-1;
-//                    $imageFileId = $this->data['photo'][$imagesNum]['file_id'];
-//                    $photo = get_file_url($imageFileId);
-//                    $html.="<img src='{$photo}' style='max-width: 100%;height: auto;'>";
-//                    $html.="</div>";
-//                }
+                //                if (!empty($this->data['photo'])){
+                //                    $html.="<div style='padding:10px 10px'><p>图片: </p>";
+                //                    $imagesNum = count($this->data['photo'])-1;
+                //                    $imageFileId = $this->data['photo'][$imagesNum]['file_id'];
+                //                    $photo = get_file_url($imageFileId);
+                //                    $html.="<img src='{$photo}' style='max-width: 100%;height: auto;'>";
+                //                    $html.="</div>";
+                //                }
                 return $html;
             });
 
@@ -85,7 +88,7 @@ class BotMessageController extends AdminController
                     return \App\Models\Bot::all()->pluck('appellation', 'id');
                 });
                 $filter->equal('user_id');
-                $filter->like('user_data','用户名称');
+                $filter->like('user_data', '用户名称');
                 $filter->between('created_at')->datetime();
             });
         });
@@ -94,8 +97,7 @@ class BotMessageController extends AdminController
     /**
      * Make a show builder.
      *
-     * @param mixed $id
-     *
+     * @param  mixed  $id
      * @return Show
      */
     protected function detail($id)

@@ -7,9 +7,9 @@ use Telegram\Bot\Api;
 
 class GetUpdateController extends Controller
 {
-    public function index()
+    public function index($id)
     {
-        $startService= new \App\Services\StartService();
+        $startService = new \App\Services\StartService();
         $callBackQueryService = new \App\Services\CallBackQueryService();
         $botInfo = (new \App\Models\Bot())->with('review_group')->find(2);
         try {
@@ -44,7 +44,7 @@ class GetUpdateController extends Controller
                 if ($updateData->getChat()->type != 'private') {
                     return 'ok';
                 }
-                $startService->index($botInfo,$updateData,$telegram);
+                $startService->index($botInfo, $updateData, $telegram);
             }
         }
 

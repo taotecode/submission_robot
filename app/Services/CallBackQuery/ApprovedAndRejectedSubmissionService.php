@@ -4,7 +4,6 @@ namespace App\Services\CallBackQuery;
 
 use App\Enums\AuditorRole;
 use App\Enums\InlineKeyBoardData;
-use App\Enums\KeyBoardData;
 use App\Enums\ManuscriptStatus;
 use App\Models\Bot;
 use App\Models\Manuscript;
@@ -19,10 +18,9 @@ use Telegram\Bot\Objects\User;
 
 class ApprovedAndRejectedSubmissionService
 {
-
+    use AuditorRoleCheckService;
     use SendPostedByMessageService;
     use SendTelegramMessageService;
-    use AuditorRoleCheckService;
     use UpdateReviewGroupMessageButtonService;
 
     public function approved(Api $telegram, Bot $botInfo, Manuscript $manuscript, $chatId, User $from, $messageId, CallbackQuery $callbackQuery): string
@@ -44,9 +42,9 @@ class ApprovedAndRejectedSubmissionService
         //拒绝人员数量
         $rejectNum = count($reject);
 
-        $inline_keyboard_approved=InlineKeyBoardData::$REVIEW_GROUP_APPROVED;
-        $inline_keyboard_approved['inline_keyboard'][0][0]['callback_data'] .= ":".$manuscript->id;
-        $inline_keyboard_approved['inline_keyboard'][0][1]['url'] .= $manuscript->channel->name."/".$manuscript->message_id;
+        $inline_keyboard_approved = InlineKeyBoardData::$REVIEW_GROUP_APPROVED;
+        $inline_keyboard_approved['inline_keyboard'][0][0]['callback_data'] .= ':'.$manuscript->id;
+        $inline_keyboard_approved['inline_keyboard'][0][1]['url'] .= $manuscript->channel->name.'/'.$manuscript->message_id;
         $inline_keyboard_approved['inline_keyboard'][1][0]['callback_data'] .= ':'.$manuscript->id;
 
         if ($this->baseCheck($telegram, $callbackQuery->id, $from->id, $reviewGroup->id) !== true) {
@@ -54,13 +52,13 @@ class ApprovedAndRejectedSubmissionService
         }
 
         if ($this->roleCheck($telegram, $callbackQuery->id, $from->id, [
-                AuditorRole::APPROVAL,
-                AuditorRole::REJECTION,
-            ]) !== true) {
+            AuditorRole::APPROVAL,
+            AuditorRole::REJECTION,
+        ]) !== true) {
             return 'ok';
         }
 
-        if ($this->update_review_group_message_button($telegram, $botInfo, $chatId, $messageId, $manuscript, $review_approved_num,$review_reject_num, $approvedNum, $rejectNum) === true) {
+        if ($this->update_review_group_message_button($telegram, $botInfo, $chatId, $messageId, $manuscript, $review_approved_num, $review_reject_num, $approvedNum, $rejectNum) === true) {
             return 'ok';
         }
 
@@ -83,7 +81,7 @@ class ApprovedAndRejectedSubmissionService
             $rejectNum--;
         }
 
-        $text=$manuscript->text;
+        $text = $manuscript->text;
 
         $lexiconPath = null;
         if ($botInfo->is_auto_keyword == 1) {
@@ -100,7 +98,7 @@ class ApprovedAndRejectedSubmissionService
         //加入自定义尾部内容
         $text .= $this->addTailContent($botInfo->tail_content);
 
-        $text .= $this->addReviewEndText($approved,$manuscript->one_approved,$reject, $manuscript->one_reject);
+        $text .= $this->addReviewEndText($approved, $manuscript->one_approved, $reject, $manuscript->one_reject);
 
         // 如果通过人员数量大于等于审核数，则不再审核
         if ($approvedNum >= $review_approved_num) {
@@ -116,16 +114,16 @@ class ApprovedAndRejectedSubmissionService
                     'parse_mode' => 'HTML',
                 ];
 
-                if ($manuscript->type!=Manuscript::TYPE_TEXT){
-                    $params['caption']=$text;
+                if ($manuscript->type != Manuscript::TYPE_TEXT) {
+                    $params['caption'] = $text;
                     $telegram->editMessageCaption($params);
-                }else{
-                    $params['text']=$text;
+                } else {
+                    $params['text'] = $text;
                     $telegram->editMessageText($params);
                 }
 
                 $channelMessageId = $this->sendChannelMessage($telegram, $botInfo, $manuscript);
-                $this->sendPostedByMessage($telegram, $manuscript,$botInfo, ManuscriptStatus::APPROVED);
+                $this->sendPostedByMessage($telegram, $manuscript, $botInfo, ManuscriptStatus::APPROVED);
 
                 $manuscript->message_id = $channelMessageId['message_id'];
                 $manuscript->save();
@@ -133,6 +131,7 @@ class ApprovedAndRejectedSubmissionService
                 return 'ok';
             } catch (TelegramSDKException $telegramSDKException) {
                 Log::error($telegramSDKException);
+
                 return 'error';
             }
         }
@@ -190,21 +189,21 @@ class ApprovedAndRejectedSubmissionService
         //拒绝人员数量
         $rejectNum = count($reject);
 
-        $inline_keyboard_reject=InlineKeyBoardData::$REVIEW_GROUP_REJECT;
-        $inline_keyboard_reject['inline_keyboard'][0][0]['callback_data'] .= ":".$manuscript->id;
+        $inline_keyboard_reject = InlineKeyBoardData::$REVIEW_GROUP_REJECT;
+        $inline_keyboard_reject['inline_keyboard'][0][0]['callback_data'] .= ':'.$manuscript->id;
 
         if ($this->baseCheck($telegram, $callbackQuery->id, $from->id, $reviewGroup->id) !== true) {
             return 'ok';
         }
 
         if ($this->roleCheck($telegram, $callbackQuery->id, $from->id, [
-                AuditorRole::APPROVAL,
-                AuditorRole::REJECTION,
-            ]) !== true) {
+            AuditorRole::APPROVAL,
+            AuditorRole::REJECTION,
+        ]) !== true) {
             return 'ok';
         }
 
-        if ($this->update_review_group_message_button($telegram, $botInfo, $chatId, $messageId, $manuscript, $review_approved_num,$review_reject_num, $approvedNum, $rejectNum) === true) {
+        if ($this->update_review_group_message_button($telegram, $botInfo, $chatId, $messageId, $manuscript, $review_approved_num, $review_reject_num, $approvedNum, $rejectNum) === true) {
             return 'ok';
         }
 
@@ -227,7 +226,7 @@ class ApprovedAndRejectedSubmissionService
             $approvedNum--;
         }
 
-        $text=$manuscript->text;
+        $text = $manuscript->text;
 
         //自动关键词
         $text .= $this->addKeyWord($botInfo->is_auto_keyword, $botInfo->keyword, $botInfo->id, $text);
@@ -236,7 +235,7 @@ class ApprovedAndRejectedSubmissionService
         //加入自定义尾部内容
         $text .= $this->addTailContent($botInfo->tail_content);
 
-        $text .= $this->addReviewEndText($approved,$manuscript->one_approved,$reject, $manuscript->one_reject);
+        $text .= $this->addReviewEndText($approved, $manuscript->one_approved, $reject, $manuscript->one_reject);
 
         // 如果拒绝人员数量大于等于审核数，则不再审核
         if ($rejectNum >= $review_reject_num) {
@@ -246,26 +245,27 @@ class ApprovedAndRejectedSubmissionService
                 $manuscript->status = ManuscriptStatus::REJECTED;
                 $manuscript->save();
 
-                $params=[
+                $params = [
                     'chat_id' => $chatId,
                     'message_id' => $messageId,
                     'reply_markup' => json_encode($inline_keyboard_reject),
                     'parse_mode' => 'HTML',
                 ];
 
-                if ($manuscript->type!=Manuscript::TYPE_TEXT){
-                    $params['caption']=$text;
+                if ($manuscript->type != Manuscript::TYPE_TEXT) {
+                    $params['caption'] = $text;
                     $telegram->editMessageCaption($params);
-                }else{
-                    $params['text']=$text;
+                } else {
+                    $params['text'] = $text;
                     $telegram->editMessageText($params);
                 }
 
-                $this->sendPostedByMessage($telegram, $manuscript,$botInfo, ManuscriptStatus::REJECTED);
+                $this->sendPostedByMessage($telegram, $manuscript, $botInfo, ManuscriptStatus::REJECTED);
 
                 return 'ok';
             } catch (TelegramSDKException $telegramSDKException) {
                 Log::error($telegramSDKException);
+
                 return 'error';
             }
         }

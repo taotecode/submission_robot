@@ -17,7 +17,7 @@ class GetMeIdCommand extends Command
         $message = $this->getUpdate()->getMessage();
         if ($this->getUpdate()->getChat()->type != 'private') {
             $this->replyWithMessage([
-                'text' => "<b>请在私聊中使用！</b>",
+                'text' => '<b>请在私聊中使用！</b>',
                 'parse_mode' => 'HTML',
             ]);
 

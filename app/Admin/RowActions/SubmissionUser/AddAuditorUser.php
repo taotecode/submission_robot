@@ -12,8 +12,6 @@ class AddAuditorUser extends RowAction
 {
     /**
      * 标题
-     *
-     * @return string
      */
     public function title(): string
     {
@@ -33,9 +31,9 @@ class AddAuditorUser extends RowAction
             // 确认弹窗 title
             '快速添加至审核人员',
             // 确认弹窗 content
-            "您可以将该用户快速添加至审核人员，默认权限<b>【通过、拒绝】</b>，是否继续？<br><br>".
+            '您可以将该用户快速添加至审核人员，默认权限<b>【通过、拒绝】</b>，是否继续？<br><br>'.
             "注意：该操作不可逆！如需撤回请到<a href='".admin_url('/auditors')."'>【审核人员】</a>中进行操作！<br><br>".
-            "如添加完毕，请及时通知用户！加入相应群聊！<br><br>".
+            '如添加完毕，请及时通知用户！加入相应群聊！<br><br>'.
             "<b>添加审核人员后，您需要去<a href='".admin_url('/review_groups')."'>【审核群组】</a>中针对某个群组进行【审核人员管理】添加相应人员</b>",
         ];
     }

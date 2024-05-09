@@ -44,7 +44,7 @@ class ManuscriptController extends AdminController
             })->expand(function () {
                 $html = "<div style='padding:10px 10px'>";
                 foreach ($this->approved as $key => $item) {
-                    $id= $item['id'];
+                    $id = $item['id'];
                     $first_name = $item['first_name'] ?? '';
                     $last_name = $item['last_name'] ?? '';
                     $html .= "<p>· {$id} | {$first_name} {$last_name}</p>";
@@ -57,7 +57,7 @@ class ManuscriptController extends AdminController
             })->expand(function () {
                 $html = "<div style='padding:10px 10px'>";
                 foreach ($this->reject as $key => $item) {
-                    $id= $item['id'];
+                    $id = $item['id'];
                     $first_name = $item['first_name'] ?? '';
                     $last_name = $item['last_name'] ?? '';
                     $html .= "<p>· {$id} | {$first_name} {$last_name}</p>";
@@ -69,6 +69,7 @@ class ManuscriptController extends AdminController
                 if (empty($one_approved)) {
                     return '无';
                 }
+
                 return get_posted_by($one_approved);
             })->expand(function () {
                 // 返回显示的详情
