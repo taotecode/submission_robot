@@ -58,7 +58,7 @@ class HookController extends Controller
         ]);
 
         $updateData = $telegram->commandsHandler(true);
-        Log::info('updateData', [$updateData->toArray()]);
+        Log::info('updateData', [$updateData->objectType()]);
 
         //存入使用机器人的用户
         try {
