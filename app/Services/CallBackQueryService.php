@@ -262,11 +262,11 @@ class CallBackQueryService
 
         switch ($objectType) {
             case 'text':
-                return (new SubmissionService())->startUpdateByText($telegram, $chatId, $message->messageId, $message);
+                return (new SubmissionService())->startUpdateByText($telegram,$botInfo, $chatId, $message->messageId, $message);
             case 'photo':
             case 'video':
             case 'audio':
-                return (new SubmissionService())->startUpdateByMedia($telegram, $chatId, $message->messageId, $message, $objectType);
+                return (new SubmissionService())->startUpdateByMedia($telegram,$botInfo, $chatId, $message->messageId, $message, $objectType);
                 break;
         }
     }

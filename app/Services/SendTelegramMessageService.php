@@ -427,7 +427,7 @@ trait SendTelegramMessageService
      * @param string $text_2 后续记录的提示语
      * @return mixed
      */
-    public function updateByText(Api $telegram, mixed $chatId, mixed $messageId, $message, string $cacheKey, array $reply_markup, string $text_1, string $text_2): mixed
+    public function updateByText(Api $telegram,$botInfo, mixed $chatId, mixed $messageId, $message, string $cacheKey, array $reply_markup, string $text_1, string $text_2): mixed
     {
         if (empty(Cache::tags($cacheKey)->get('text'))) {
             $text = $text_1;
@@ -437,7 +437,7 @@ trait SendTelegramMessageService
 
         $messageCacheData = $message->toArray();
 
-        if (!empty($messageCacheData['text'])) {
+        if (!empty($messageCacheData['text'])&&$botInfo->is_message_text_preprocessing==1) {
             $entity_decoder = new EntityDecoder('HTML');
             //消息文字预处理
 //            $messageCacheData['text'] = htmlspecialchars($messageCacheData['text'], ENT_QUOTES, 'UTF-8');
@@ -479,7 +479,7 @@ trait SendTelegramMessageService
      * @param string $text_2 后续记录的提示语
      * @return mixed
      */
-    public function updateByMedia(Api $telegram, mixed $chatId, mixed $messageId, $message, $type, string $cacheKey, array $reply_markup, string $text_1, string $text_2): mixed
+    public function updateByMedia(Api $telegram,$botInfo, mixed $chatId, mixed $messageId, $message, $type, string $cacheKey, array $reply_markup, string $text_1, string $text_2): mixed
     {
         $media_group_id = $message->media_group_id ?? '';
         $cacheKeyByType = $type;
@@ -494,7 +494,7 @@ trait SendTelegramMessageService
 
             $messageCacheData = $message->toArray();
 
-            if (!empty($messageCacheData['caption'])) {
+            if (!empty($messageCacheData['caption'])&&$botInfo->is_message_text_preprocessing==1) {
                 //消息文字预处理
 //                $messageCacheData['caption'] = htmlspecialchars($messageCacheData['caption'], ENT_QUOTES, 'UTF-8');
                 try {
@@ -526,7 +526,7 @@ trait SendTelegramMessageService
 
             $messageCacheData = $message->toArray();
 
-            if (!empty($messageCacheData['caption'])) {
+            if (!empty($messageCacheData['caption'])&&$botInfo->is_message_text_preprocessing==1) {
                 //消息文字预处理
 //                $messageCacheData['caption'] = htmlspecialchars($messageCacheData['caption'], ENT_QUOTES, 'UTF-8');
                 try {

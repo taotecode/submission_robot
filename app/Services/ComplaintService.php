@@ -123,7 +123,7 @@ class ComplaintService
         }
 
         return $this->updateByText(
-            $telegram, $chatId, $messageId, $message,
+            $telegram,$botInfo, $chatId, $messageId, $message,
             CacheKey::Complaint . '.' . $chatId,KeyBoardData::$START_COMPLAINT,
             get_config('complaint.start_text_tips'),get_config('complaint.start_update_text_tips')
         );
@@ -145,7 +145,7 @@ class ComplaintService
             return $this->record($telegram,$botInfo, $chatId, $message);
         }
         return $this->updateByMedia(
-            $telegram, $chatId, $messageId, $message, $type,
+            $telegram,$botInfo, $chatId, $messageId, $message, $type,
             CacheKey::Complaint . '.' . $chatId,KeyBoardData::$START_COMPLAINT,
             get_config('complaint.start_text_tips'),get_config('complaint.start_update_text_tips')
         );

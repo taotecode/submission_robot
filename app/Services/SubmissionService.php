@@ -6,6 +6,7 @@ use App\Enums\CacheKey;
 use App\Enums\KeyBoardData;
 use App\Enums\KeyBoardName;
 use App\Enums\SubmissionUserType;
+use App\Models\Bot;
 use App\Models\Channel;
 use App\Models\Manuscript;
 use App\Models\SubmissionUser;
@@ -45,12 +46,12 @@ class SubmissionService
                     get_keyboard_name_config('submission_end.ConfirmSubmissionAnonymous', KeyBoardName::ConfirmSubmissionAnonymous),
                     => $this->confirm($telegram, $chatId, $chat, $botInfo, 1),
                     get_keyboard_name_config('common.Cancel', KeyBoardName::Cancel) => $this->cancel($telegram, $chatId, $chat, $botInfo, '已取消'),
-                    default => $this->startUpdateByText($telegram, $chatId, $messageId, $message),
+                    default => $this->startUpdateByText($telegram,$botInfo, $chatId, $messageId, $message),
                 };
             case 'photo':
             case 'video':
             case 'audio':
-                $this->startUpdateByMedia($telegram, $chatId, $messageId, $message, $objectType);
+                $this->startUpdateByMedia($telegram,$botInfo, $chatId, $messageId, $message, $objectType);
                 break;
         }
     }
@@ -401,22 +402,23 @@ class SubmissionService
      */
     public function startUpdateByText(
         Api        $telegram,
+        Bot        $botInfo,
         string     $chatId,
         string     $messageId,
         Collection $message
     ): string
     {
         return $this->updateByText(
-            $telegram, $chatId, $messageId, $message,
+            $telegram,$botInfo, $chatId, $messageId, $message,
             CacheKey::Submission . '.' . $chatId, KeyBoardData::$START_SUBMISSION,
             get_config('submission.start_text_tips'), get_config('submission.start_update_text_tips')
         );
     }
 
-    public function startUpdateByMedia(Api $telegram, $chatId, $messageId, Collection $message, $type): string
+    public function startUpdateByMedia(Api $telegram,$botInfo, $chatId, $messageId, Collection $message, $type): string
     {
         return $this->updateByMedia(
-            $telegram, $chatId, $messageId, $message, $type,
+            $telegram,$botInfo, $chatId, $messageId, $message, $type,
             CacheKey::Submission . '.' . $chatId, KeyBoardData::$START_SUBMISSION,
             get_config('submission.start_text_tips'), get_config('submission.start_update_text_tips')
         );
