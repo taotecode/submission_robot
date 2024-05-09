@@ -58,14 +58,10 @@ class HookController extends Controller
         ]);
 
         $updateData = $telegram->commandsHandler(true);
-        Log::info('updateData', [$updateData->objectType()]);
 
         //存入使用机器人的用户
-        try {
+        if ($updateData->objectType()!=='my_chat_member'){
             $this->save_bot_user($botInfo, $updateData->getChat()??null,$updateData->getMessage()??null);
-        } catch (\Exception $exception){
-            Log::error('updateData', [$updateData->toArray()]);
-            Log::error('存入使用机器人的用户失败', [$exception->getMessage()]);
         }
 
         //进入投稿服务
