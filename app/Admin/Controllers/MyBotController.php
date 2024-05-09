@@ -98,6 +98,8 @@ class MyBotController extends AdminController
             $form->number('review_reject_num')->min(1)->max(30)->default(1)->required()
                 ->help('每条投稿消息的审核数量。如：设置1，那么只需要一个人就可以通过或拒绝。设置2，那么就需要两个人就可以通过或拒绝。<br>最小值为：1');
 
+            $form->switch('is_message_text_preprocessing')->default(1)->help('是否开启消息文本预处理？<br>开启后，将会对消息文本格式进行保留，如：空格、换行、链接、加粗等。');
+
             $form->switch('status')->default(1);
             $form->display('created_at');
             $form->display('updated_at');

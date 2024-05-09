@@ -29,6 +29,7 @@ return new class extends Migration
                 $table->unsignedTinyInteger('status')->default(1)->comment('状态');
                 $table->unsignedTinyInteger('webhook_status')->default(0)->comment('Web hook 状态');
                 $table->unsignedTinyInteger('is_auto_keyword')->nullable()->default(0)->comment('是否开启自动关键词？');
+                $table->unsignedTinyInteger('is_message_text_preprocessing')->nullable()->default(1)->comment('是否开启消息文字预处理？');
                 $table->text('keyword')->nullable()->comment('关键词列表');
                 $table->text('lexicon')->nullable()->comment('词库');
                 $table->unsignedInteger('submission_timeout')->default(0)->comment('审核超时时间（小时）');
