@@ -105,21 +105,6 @@ class ManuscriptController extends AdminController
                 $filter->equal('id');
                 $filter->equal('type')->select(ObjectType::data);
                 $filter->like('text');
-                $filter->where(function ($query) {
-                    $query->whereHas('posted_by', function ($query) {
-                        $query->where('id', $this->input);
-                    });
-                }, 'posted_by');
-                $filter->where(function ($query) {
-                    $query->whereHas('one_approved', function ($query) {
-                        $query->where('id', $this->input);
-                    });
-                }, 'one_approved');
-                $filter->where(function ($query) {
-                    $query->whereHas('one_reject', function ($query) {
-                        $query->where('id', $this->input);
-                    });
-                }, 'one_reject');
                 $filter->equal('status')->select(\App\Enums\ManuscriptStatus::ALL_NAME);
                 $filter->between('created_at')->date();
             });
