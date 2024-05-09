@@ -136,7 +136,7 @@ trait SendTelegramMessageService
 
         //频道ID
         if (!empty($manuscript->channel->name)) {
-            $chatId = '@' . $botInfo->channel->name;
+            $chatId = '@' . $manuscript->channel->name;
         } else {
             $this->sendTelegramMessage($telegram, 'sendMessage', [
                 'chat_id' => $manuscript->posted_by,

@@ -16,7 +16,7 @@ class AdminMenuAddSeeder extends Seeder
     {
         //
         $data = [
-            ['id' => 8, 'parent_id' => 0, 'order' => 2, 'title' => '我的机器人', 'icon' => 'fa-robot', 'uri' => '/bots', 'extension' => '', 'show' => 1, 'created_at' => '2023-08-30 06:28:08', 'updated_at' => '2023-08-30 06:28:08'],
+            ['id' => 8, 'parent_id' => 0, 'order' => 2, 'title' => '我的机器人', 'icon' => 'fa-android', 'uri' => '/bots', 'extension' => '', 'show' => 1, 'created_at' => '2023-08-30 06:28:08', 'updated_at' => '2023-08-30 06:28:08'],
             ['id' => 9, 'parent_id' => 0, 'order' => 3, 'title' => '审核人群', 'icon' => 'fa-address-book', 'uri' => null, 'extension' => '', 'show' => 1, 'created_at' => '2023-08-30 06:28:08', 'updated_at' => '2023-08-30 06:28:08'],
             ['id' => 10, 'parent_id' => 9, 'order' => 1, 'title' => '审核人员', 'icon' => 'fa-user', 'uri' => '/auditors', 'extension' => '', 'show' => 1, 'created_at' => '2023-08-30 06:28:08', 'updated_at' => '2023-08-30 06:28:08'],
             ['id' => 11, 'parent_id' => 9, 'order' => 2, 'title' => '审核群组', 'icon' => 'fa-users', 'uri' => '/review_groups', 'extension' => '', 'show' => 1, 'created_at' => '2023-08-30 06:28:08', 'updated_at' => '2023-08-30 06:28:08'],

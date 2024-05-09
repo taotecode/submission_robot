@@ -163,6 +163,7 @@ class ComplaintService
     {
         //检查消息是否含有来源
         if (empty($message['forward_origin'])||empty($message->forwardFromChat->username)) {
+            dd(1);
             return $this->sendTelegramMessage($telegram, 'sendMessage', [
                 'chat_id' => $chatId,
                 'text' => get_config('complaint.start_empty_forward_origin'),
@@ -173,6 +174,7 @@ class ComplaintService
         //检查来源是否是机器人绑定的频道
         $channel = (new Channel())->where('name',$message->forwardFromChat->username)->first();
         if (empty($channel)) {
+            dd(2);
             return $this->sendTelegramMessage($telegram, 'sendMessage', [
                 'chat_id' => $chatId,
                 'text' => get_config('complaint.start_empty_forward_origin'),
@@ -182,6 +184,7 @@ class ComplaintService
         }
         //检查是否为机器人绑定的频道
         if (!in_array($channel->id,$botInfo->channel_ids)) {
+            dd(3);
             return $this->sendTelegramMessage($telegram, 'sendMessage', [
                 'chat_id' => $chatId,
                 'text' => get_config('complaint.start_empty_forward_origin'),
@@ -197,6 +200,7 @@ class ComplaintService
             'message_id'=>$message->forwardFromMessageId
         ])->first();
         if (empty($manuscript)) {
+            dd(123);
             return $this->sendTelegramMessage($telegram, 'sendMessage', [
                 'chat_id' => $chatId,
                 'text' => get_config('complaint.start_empty_forward_origin'),
@@ -210,6 +214,7 @@ class ComplaintService
             'channel_data'=>$channel,
             'manuscript_data'=>$manuscript,
         ], now()->addDay());
+
         return $this->sendTelegramMessage($telegram, 'sendMessage', [
             'chat_id' => $chatId,
             'text' => get_config('complaint.start_forward_origin'),

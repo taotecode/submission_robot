@@ -11,7 +11,7 @@ class GetUpdateController extends Controller
     {
         $startService= new \App\Services\StartService();
         $callBackQueryService = new \App\Services\CallBackQueryService();
-        $botInfo = (new \App\Models\Bot())->with('review_group')->find(1);
+        $botInfo = (new \App\Models\Bot())->with('review_group')->find(2);
         try {
             $telegram = new Api(env('TELEGRAM_BOT_TOKEN'));
             $telegram->addCommands([
