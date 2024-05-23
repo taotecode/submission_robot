@@ -65,4 +65,8 @@ class KeyBoardName
 
     //提交建议
     const SubmitSuggestion = '提交建议';
+
+    const Yes = '是';
+
+    const No = '否';
 }

@@ -44,6 +44,11 @@ class KeyBoardData
      */
     public static array $END_COMPLAINT;
 
+    /**
+     * @var array 用户选择是否显示来源键盘
+     */
+    public static array $FORWARD_ORIGIN_SELECT;
+
     public static function init(): void
     {
         self::$START = [
@@ -113,6 +118,21 @@ class KeyBoardData
                     get_keyboard_name_config('submission.Restart', KeyBoardName::Restart),
                     get_keyboard_name_config('submission.CancelSubmission', KeyBoardName::CancelSubmission),
                     get_keyboard_name_config('select_channel_end.SelectChannelAgain', KeyBoardName::SelectChannelAgain),
+                ],
+            ],
+            'resize_keyboard' => true, // 让键盘大小适应屏幕
+            'one_time_keyboard' => false, // 是否只显示一次
+        ];
+
+        self::$FORWARD_ORIGIN_SELECT = [
+            'keyboard' => [
+                [
+                    get_keyboard_name_config('submission.forward_origin_select_Yes', KeyBoardName::Yes),
+                    get_keyboard_name_config('submission.forward_origin_select_No', KeyBoardName::No),
+                ],
+                [
+                    get_keyboard_name_config('submission.Restart', KeyBoardName::Restart),
+                    get_keyboard_name_config('submission.CancelSubmission', KeyBoardName::CancelSubmission),
                 ],
             ],
             'resize_keyboard' => true, // 让键盘大小适应屏幕

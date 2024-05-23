@@ -7,7 +7,7 @@ use Illuminate\Database\Seeder;
 
 class KeyboardNameConfigSeeder extends Seeder
 {
-    public function run()
+    public function run(): void
     {
         $data = [
             [
@@ -226,10 +226,32 @@ class KeyboardNameConfigSeeder extends Seeder
                 'created_at' => '2023-09-17 08:12:22',
                 'updated_at' => '2023-09-17 08:12:22',
             ],
+            [
+                'id' => 27,
+                'group' => 'submission',
+                'name' => 'forward_origin_select_Yes',
+                'value' => '是',
+                'description' => '底部选择频道键盘-用户选择是否展示消息来源-是',
+                'created_at' => '2023-09-17 08:12:22',
+                'updated_at' => '2023-09-17 08:12:22',
+            ],
+            [
+                'id' => 28,
+                'group' => 'submission',
+                'name' => 'forward_origin_select_No',
+                'value' => '否',
+                'description' => '底部选择频道键盘-用户选择是否展示消息来源-否',
+                'created_at' => '2023-09-17 08:12:22',
+                'updated_at' => '2023-09-17 08:12:22',
+            ],
         ];
         //        DB::table('config')->insert($data);
         foreach ($data as $item) {
-            (new KeyboardNameConfig())->updateOrCreate(['id' => $item['id']], $item);
+            if (config('app.env') === 'local') {
+                (new KeyboardNameConfig())->updateOrCreate(['id' => $item['id']], $item);
+            } else {
+                (new KeyboardNameConfig())->firstOrCreate(['id' => $item['id']], $item);
+            }
         }
     }
 }

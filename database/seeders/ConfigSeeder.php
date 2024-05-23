@@ -353,7 +353,11 @@ class ConfigSeeder extends Seeder
         ];
         //        DB::table('config')->insert($data);
         foreach ($data as $item) {
-            (new Config())->updateOrCreate(['id' => $item['id']], $item);
+            if (config('app.env') === 'local') {
+                (new Config())->updateOrCreate(['id' => $item['id']], $item);
+            } else {
+                (new Config())->firstOrCreate(['id' => $item['id']], $item);
+            }
         }
     }
 }

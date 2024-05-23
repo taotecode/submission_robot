@@ -199,7 +199,14 @@ class SubmissionService
         }
 
         //判断消息是否有来源
-        dd($messageCache);
+        /*if ($botInfo->is_forward_origin === 1 && isset($messageCache['forward_origin'])) {
+            $forward_origin = $messageCache['forward_origin'];
+            if ($botInfo->is_forward_origin_select === 1) {
+                $replyMarkup = KeyBoardData::$FORWARD_ORIGIN_SELECT;
+            } else {
+                Cache::tags(CacheKey::Submission.'.'.$chatId)->put('forward_origin', $messageCache['forward_origin'], now()->addDay());
+            }
+        }*/
 
         //发送预览消息
         $this->sendPreviewMessage($telegram, $botInfo, $chatId, $messageCache, $objectType);

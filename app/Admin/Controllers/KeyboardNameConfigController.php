@@ -77,7 +77,7 @@ class KeyboardNameConfigController extends AdminController
                 'regex' => '必须全部为英文字符',
                 'min' => '不能少于3个字符',
                 'max' => '不能大于10个字符',
-            ])->required();
+            ])->required()->help('尽量不要与其他内容一样，否则会产生逻辑错误！<br>如：不要与通用键盘名同样“取消”等。');
             $form->text('description')->required();
             $form->textarea('value')->required();
 
