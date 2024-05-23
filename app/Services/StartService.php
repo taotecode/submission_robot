@@ -45,6 +45,7 @@ class StartService
                 get_keyboard_name_config('start.Feedback', KeyBoardName::Feedback) => $feedbackService->feedback($telegram, $chatId),
                 get_keyboard_name_config('feedback.SubmitComplaint', KeyBoardName::SubmitComplaint) => $complaintService->start($telegram, $botInfo, $chatId, $chat),
                 get_keyboard_name_config('start.HelpCenter', KeyBoardName::HelpCenter) => $this->help($telegram, $botInfo, $chatId),
+                get_keyboard_name_config('common.Cancel', KeyBoardName::Cancel) => $this->start($telegram, $botInfo, $chatId),
                 default => $this->error_for_text($telegram, $chatId, $messageId),
             },
             default => $this->error_for_text($telegram, $chatId, $messageId),

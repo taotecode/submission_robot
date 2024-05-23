@@ -12,6 +12,11 @@ function getCacheMessageData($objectType, $chatId, $tag): array
     return [$messageCache, $messageId, $messageText];
 }
 
+/**
+ * 判断机器人开启的服务
+ * @param $botInfo
+ * @return array
+ */
 function service_isOpen_check_return_keyboard($botInfo): array
 {
     $keyboard = [];
@@ -145,4 +150,33 @@ function service_isOpen_check_return_keyboard_old($botInfo): array
     }
 
     return KeyBoardData::$START;
+}
+
+/**
+ * 判断是否为空
+ * @param string $objectType
+ * @param array $messageCache
+ * @return bool
+ */
+function isCacheEmpty(string $objectType, array $messageCache): bool
+{
+    $key = match ($objectType) {
+        'text' => 'text',
+        'photo' => 'photo.0.file_id',
+        'video' => 'video.file_id',
+        'audio' => 'audio.file_id',
+        default => null,
+    };
+
+    return empty(data_get($messageCache, $key));
+}
+
+/**
+ * 判断是否为空
+ * @param array $messageCache
+ * @return bool
+ */
+function isMediaGroupEmpty(array $messageCache): bool
+{
+    return empty($messageCache[0]['photo'][0]['file_id']) && empty($messageCache[0]['video']['file_id']);
 }

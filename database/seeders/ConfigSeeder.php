@@ -332,6 +332,24 @@ class ConfigSeeder extends Seeder
                 'created_at' => '2023-09-17 08:48:16',
                 'updated_at' => '2023-09-17 08:48:41',
             ],
+            [
+                'id' => 36,
+                'group' => 'submission',
+                'name' => 'expired',
+                'value' => '您的稿件草稿已过期，您可以重新投稿，点击下方键盘即可',
+                'description' => '稿件草稿过期的提示语',
+                'created_at' => '2023-09-17 08:48:16',
+                'updated_at' => '2023-09-17 08:48:41',
+            ],
+            [
+                'id' => 36,
+                'group' => 'submission',
+                'name' => 'expired_in_one_hour',
+                'value' => '您的稿件草稿将在一小时后过期，如果您不需要继续编辑，请点击下方键盘提交稿件，或者取消稿件。',
+                'description' => '稿件草稿即将一小时后过期的提示语',
+                'created_at' => '2023-09-17 08:48:16',
+                'updated_at' => '2023-09-17 08:48:41',
+            ],
         ];
         //        DB::table('config')->insert($data);
         foreach ($data as $item) {

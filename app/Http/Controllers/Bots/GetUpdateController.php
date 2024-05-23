@@ -38,9 +38,8 @@ class GetUpdateController extends Controller
             ) {
                 $startService->index($botInfo, $updateData, $telegram);
             }
-            dump($updateData->getChat(),$updateData->objectType());
         }
 
-//        dd($response);
+        dd($response);
     }
 }

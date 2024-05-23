@@ -30,7 +30,13 @@ class SubmissionService
         $forwardSignature = $message->forwardSignature ?? '';
 
         switch ($objectType) {
+            case 'photo':
+            case 'video':
+            case 'audio':
+                return $this->startUpdateByMedia($telegram, $botInfo, $chatId, $messageId, $message, $objectType);
+                break;
             case 'text':
+            default:
                 return match ($message->text) {
                     get_keyboard_name_config('submission.CancelSubmission', KeyBoardName::CancelSubmission) => $this->cancel($telegram, $botInfo, $chatId),
                     get_keyboard_name_config('submission.Restart', KeyBoardName::Restart) => $this->start($telegram, $botInfo, $chatId, $chat, get_config('submission.restart')),
@@ -39,14 +45,9 @@ class SubmissionService
                     get_keyboard_name_config('select_channel_end.SelectChannelAgain', KeyBoardName::SelectChannelAgain) => $this->selectChannel($telegram, $chatId, $botInfo),
                     get_keyboard_name_config('submission_end.ConfirmSubmissionOpen', KeyBoardName::ConfirmSubmissionOpen) => $this->confirm($telegram, $chatId, $chat, $botInfo, 0),
                     get_keyboard_name_config('submission_end.ConfirmSubmissionAnonymous', KeyBoardName::ConfirmSubmissionAnonymous), => $this->confirm($telegram, $chatId, $chat, $botInfo, 1),
-                    get_keyboard_name_config('common.Cancel', KeyBoardName::Cancel) => $this->cancel($telegram, $botInfo, $chatId, $chat, $botInfo, '已取消'),
+                    get_keyboard_name_config('common.Cancel', KeyBoardName::Cancel) => $this->cancel($telegram, $botInfo, $chatId),
                     default => $this->startUpdateByText($telegram, $botInfo, $chatId, $messageId, $message),
                 };
-            case 'photo':
-            case 'video':
-            case 'audio':
-                $this->startUpdateByMedia($telegram, $botInfo, $chatId, $messageId, $message, $objectType);
-                break;
         }
     }
 
@@ -77,8 +78,23 @@ class SubmissionService
             ]);
         }
 
+        $chatInfo = $chat->toArray();
+
         //开启投稿服务标识
-        Cache::tags(CacheKey::Submission.'.'.$chatId)->put($chatId, $chat->toArray(), now()->addDay());
+        Cache::tags(CacheKey::Submission.'.'.$chatId)->put($chatId, $chatInfo, now()->addDay());
+
+        //存入投稿用户数据
+        if (Cache::has(CacheKey::SubmissionUserList.':'.$botInfo->id)) {
+            $list = Cache::get(CacheKey::SubmissionUserList.':'.$botInfo->id);
+            $list[] = [
+                $chatId => now()->addDay()->timestamp,
+            ];
+        } else {
+            $list = [
+                $chatId => now()->addDay()->timestamp,
+            ];
+        }
+        Cache::put(CacheKey::SubmissionUserList.':'.$botInfo->id, $list, now()->addWeek());
 
         $submissionUser = (new SubmissionUser)->firstOrCreate([
             'bot_id' => $botInfo->id,
@@ -130,76 +146,42 @@ class SubmissionService
         ]);
     }
 
+    /**
+     * 结束发送投稿
+     */
     private function end(Api $telegram, $chatId, $botInfo): string
     {
-        $objectType = Cache::tags(CacheKey::Submission.'.'.$chatId)->get('objectType');
+        $cacheTag = CacheKey::Submission.'.'.$chatId;
+        $objectType = Cache::tags($cacheTag)->get('objectType');
         $messageId = '';
         $messageCache = [];
         $isEmpty = false;
 
-        //根据不同的类型获取缓存数据,并判断是否为空
+        // 获取缓存数据并判断是否为空
         switch ($objectType) {
             case 'text':
-                $messageCache = Cache::tags(CacheKey::Submission.'.'.$chatId)->get('text');
-                $messageId = $messageCache['message_id'] ?? '';
-                if (! isset($messageCache['text']) || empty($messageCache['text'])) {
-                    $isEmpty = true;
-                }
-                break;
             case 'photo':
-                $messageCache = Cache::tags(CacheKey::Submission.'.'.$chatId)->get('photo');
-                $messageId = $messageCache['message_id'] ?? '';
-                if (
-                    ! isset($messageCache['photo'][0]['file_id']) || empty($messageCache['photo'][0]['file_id'])
-                ) {
-                    $isEmpty = true;
-                }
-                break;
             case 'video':
-                $messageCache = Cache::tags(CacheKey::Submission.'.'.$chatId)->get('video');
+            case 'audio':
+                $messageCache = Cache::tags($cacheTag)->get($objectType);
                 $messageId = $messageCache['message_id'] ?? '';
-                if (
-                    ! isset($messageCache['video']['file_id']) || empty($messageCache['video']['file_id'])
-                ) {
-                    $isEmpty = true;
-                }
+                $isEmpty = isCacheEmpty($objectType, $messageCache);
                 break;
             case 'media_group_photo':
             case 'media_group_video':
-                $media_group_id = Cache::tags(CacheKey::Submission.'.'.$chatId)->get('media_group');
-                $messageCache = Cache::tags(CacheKey::Submission.'.'.$chatId)->get('media_group:'.$media_group_id);
-                $messageId = $messageCache[0]['message_id'] ?? '';
-                if (
-                    ! isset($messageCache[0]['photo'][0]['file_id']) && ! isset($messageCache[0]['video']['file_id'])
-                ) {
-                    $isEmpty = true;
-                }
-                break;
-            case 'audio':
-                $messageCache = Cache::tags(CacheKey::Submission.'.'.$chatId)->get('audio');
-                $messageId = $messageCache['message_id'] ?? '';
-                if (
-                    ! isset($messageCache['audio']['file_id']) || empty($messageCache['audio']['file_id'])
-                ) {
-                    $isEmpty = true;
-                }
-                break;
             case 'media_group_audio':
-                //特殊情况，需要先判断有没有文字，如果有，那就是文字+多音频
-                if (Cache::tags(CacheKey::Submission.'.'.$chatId)->has('text')) {
-                    $messageCache = Cache::tags(CacheKey::Submission.'.'.$chatId)->get('text');
-                    $messageId = $messageCache['message_id'] ?? '';
-                    $media_group_id = Cache::tags(CacheKey::Submission.'.'.$chatId)->get('media_group');
-                    $audioMessageCache = Cache::tags(CacheKey::Submission.'.'.$chatId)->get('media_group:'.$media_group_id);
+                $mediaGroupId = Cache::tags($cacheTag)->get('media_group');
+                $messageCache = Cache::tags($cacheTag)->get('media_group:'.$mediaGroupId);
+                $messageId = $messageCache[0]['message_id'] ?? '';
+                if ($objectType === 'media_group_audio' && Cache::tags($cacheTag)->has('text')) {
+                    $textCache = Cache::tags($cacheTag)->get('text');
+                    $messageId = $textCache['message_id'] ?? '';
                     $messageCache = [
-                        'text' => $messageCache,
-                        'audio' => $audioMessageCache,
+                        'text' => $textCache,
+                        'audio' => $messageCache,
                     ];
-                } else {
-                    $media_group_id = Cache::tags(CacheKey::Submission.'.'.$chatId)->get('media_group');
-                    $messageCache = Cache::tags(CacheKey::Submission.'.'.$chatId)->get('media_group:'.$media_group_id);
-                    $messageId = $messageCache[0]['message_id'] ?? '';
                 }
+                $isEmpty = isMediaGroupEmpty($messageCache);
                 break;
             default:
                 $isEmpty = true;
@@ -216,26 +198,26 @@ class SubmissionService
             ]);
         }
 
+        //判断消息是否有来源
+        dd($messageCache);
+
         //发送预览消息
         $this->sendPreviewMessage($telegram, $botInfo, $chatId, $messageCache, $objectType);
 
-        //new 如果bot绑定了多个频道，那么需要提供选择频道的按钮
-        if (count($botInfo->channel_ids) > 1) {
-            return $this->sendTelegramMessage($telegram, 'sendMessage', [
-                'chat_id' => $chatId,
-                'reply_to_message_id' => $messageId,
-                'text' => get_config('submission.preview_tips_channel'),
-                'parse_mode' => 'HTML',
-                'reply_markup' => json_encode(KeyBoardData::$SELECT_CHANNEL),
-            ]);
-        }
+        // 如果 bot 绑定了多个频道，提供选择频道的按钮
+        $replyMarkup = count($botInfo->channel_ids) > 1
+            ? KeyBoardData::$SELECT_CHANNEL
+            : KeyBoardData::$END_SUBMISSION;
+        $text = count($botInfo->channel_ids) > 1
+            ? get_config('submission.preview_tips_channel')
+            : get_config('submission.preview_tips');
 
         return $this->sendTelegramMessage($telegram, 'sendMessage', [
             'chat_id' => $chatId,
             'reply_to_message_id' => $messageId,
-            'text' => get_config('submission.preview_tips'),
+            'text' => $text,
             'parse_mode' => 'HTML',
-            'reply_markup' => json_encode(KeyBoardData::$END_SUBMISSION),
+            'reply_markup' => json_encode($replyMarkup),
         ]);
     }
 
@@ -260,6 +242,9 @@ class SubmissionService
         ]);
     }
 
+    /**
+     * 确认投稿
+     */
     private function confirm(Api $telegram, $chatId, $chat, $botInfo, $is_anonymous): string
     {
         $objectType = Cache::tags(CacheKey::Submission.'.'.$chatId)->get('objectType');

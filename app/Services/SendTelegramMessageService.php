@@ -4,11 +4,9 @@ namespace App\Services;
 
 use App\Enums\InlineKeyBoardData;
 use App\Models\Manuscript;
-use Exception;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
-use lucadevelop\TelegramEntitiesDecoder\EntityDecoder;
 use Telegram\Bot\Api;
 use Telegram\Bot\Exceptions\TelegramSDKException;
 
@@ -399,30 +397,12 @@ trait SendTelegramMessageService
      */
     public function updateByText(Api $telegram, $botInfo, mixed $chatId, mixed $messageId, $message, string $cacheKey, array $reply_markup, string $text_1, string $text_2): mixed
     {
-        if (empty(Cache::tags($cacheKey)->get('text'))) {
-            $text = $text_1;
-        } else {
-            $text = $text_2;
-        }
+        $cacheTag = Cache::tags($cacheKey);
+        $text = $cacheTag->get('text') ? $text_2 : $text_1;
+        $messageCacheData = preprocessMessageText($message, $botInfo);
 
-        $messageCacheData = $message->toArray();
-
-        if (! empty($messageCacheData['text']) && $botInfo->is_message_text_preprocessing == 1) {
-            $entity_decoder = new EntityDecoder('HTML');
-            //消息文字预处理
-            //            $messageCacheData['text'] = htmlspecialchars($messageCacheData['text'], ENT_QUOTES, 'UTF-8');
-            try {
-                if (! is_object($message)) {
-                    $messageCacheDataTmp = collect($message);
-                } else {
-                    $messageCacheDataTmp = $message;
-                }
-                $messageCacheData['text'] = $entity_decoder->decode($messageCacheDataTmp);
-            } catch (Exception $e) {
-                Log::error('消息文字预处理失败：'.$e->getMessage());
-
-                return 'error';
-            }
+        if ($messageCacheData === 'error') {
+            return 'error';
         }
 
         Cache::tags($cacheKey)->put('text', $messageCacheData, now()->addDay());
@@ -447,75 +427,28 @@ trait SendTelegramMessageService
      */
     public function updateByMedia(Api $telegram, $botInfo, mixed $chatId, mixed $messageId, $message, $type, string $cacheKey, array $reply_markup, string $text_1, string $text_2): mixed
     {
+        $cacheTag = Cache::tags($cacheKey);
         $media_group_id = $message->media_group_id ?? '';
-        $cacheKeyByType = $type;
-        $cacheKeyGroup = 'media_group';
-        $cacheKeyGroupId = 'media_group'.':'.$media_group_id;
-        $objectType = $type;
+        $objectType = $media_group_id ? 'media_group_'.$type : $type;
 
-        $entity_decoder = new EntityDecoder('HTML');
+        $messageCacheData = preprocessMessageCaption($message, $botInfo);
+        if ($messageCacheData === 'error') {
+            return 'error';
+        }
+        if ($media_group_id) {
+            $cacheKeyGroup = 'media_group';
+            $cacheKeyGroupId = 'media_group:'.$media_group_id;
 
-        if (! empty($media_group_id)) {
-            $objectType = 'media_group_'.$type;
+            $messageCache = $cacheTag->get($cacheKeyGroupId, []);
+            $messageCache[] = $messageCacheData;
+            $text = count($messageCache) > 1 ? $text_2 : $text_1;
 
-            $messageCacheData = $message->toArray();
-
-            if (! empty($messageCacheData['caption']) && $botInfo->is_message_text_preprocessing == 1) {
-                //消息文字预处理
-                //                $messageCacheData['caption'] = htmlspecialchars($messageCacheData['caption'], ENT_QUOTES, 'UTF-8');
-                try {
-                    if (! is_object($message)) {
-                        $messageCacheDataTmp = collect($message);
-                    } else {
-                        $messageCacheDataTmp = $message;
-                    }
-                    $messageCacheData['caption'] = $entity_decoder->decode($messageCacheDataTmp);
-                } catch (Exception $e) {
-                    Log::error('消息文字预处理失败：'.$e->getMessage());
-
-                    return 'error';
-                }
-            }
-
-            //存入缓存，等待所有图片接收完毕
-            if (Cache::tags($cacheKey)->has($cacheKeyGroupId)) {
-                //如果存在缓存，则将消息合并
-                $messageCache = Cache::tags($cacheKey)->get($cacheKeyGroupId);
-                $messageCache[] = $messageCacheData;
-                $text = $text_2;
-            } else {
-                $messageCache = [$messageCacheData];
-                $text = $text_1;
-            }
-            Cache::tags($cacheKey)->put($cacheKeyGroup, $media_group_id, now()->addDay());
-            Cache::tags($cacheKey)->put($cacheKeyGroupId, $messageCache, now()->addDay());
+            $cacheTag->put($cacheKeyGroup, $media_group_id, now()->addDay());
+            $cacheTag->put($cacheKeyGroupId, $messageCache, now()->addDay());
         } else {
-
-            $messageCacheData = $message->toArray();
-
-            if (! empty($messageCacheData['caption']) && $botInfo->is_message_text_preprocessing == 1) {
-                //消息文字预处理
-                //                $messageCacheData['caption'] = htmlspecialchars($messageCacheData['caption'], ENT_QUOTES, 'UTF-8');
-                try {
-                    if (! is_object($message)) {
-                        $messageCacheDataTmp = collect($message);
-                    } else {
-                        $messageCacheDataTmp = $message;
-                    }
-                    $messageCacheData['caption'] = $entity_decoder->decode($messageCacheDataTmp);
-                } catch (Exception $e) {
-                    Log::error('消息文字预处理失败：'.$e->getMessage());
-
-                    return 'error';
-                }
-            }
-
-            if (Cache::tags($cacheKey)->has($cacheKeyByType)) {
-                $text = $text_2;
-            } else {
-                $text = $text_1;
-            }
-            Cache::tags($cacheKey)->put($cacheKeyByType, $messageCacheData, now()->addDay());
+            $cacheKeyByType = $type;
+            $text = $cacheTag->has($cacheKeyByType) ? $text_2 : $text_1;
+            $cacheTag->put($cacheKeyByType, $messageCacheData, now()->addDay());
         }
         Cache::tags($cacheKey)->put('objectType', $objectType, now()->addDay());
 
