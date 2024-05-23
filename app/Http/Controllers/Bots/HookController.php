@@ -3,41 +3,45 @@
 namespace App\Http\Controllers\Bots;
 
 use App\Http\Controllers\Controller;
-use App\Models\Bot;
+use App\Admin\Repositories\Bot;
 use App\Services\CallBackQueryService;
 use App\Services\SaveBotUserService;
-use App\Services\SubmissionService;
+use App\Services\StartService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Telegram\Bot\Api;
+use Telegram\Bot\Exceptions\TelegramSDKException;
 
 class HookController extends Controller
 {
     use SaveBotUserService;
 
-    public Bot $botModel;
+    public Bot $botRepository;
 
-    public SubmissionService $submissionService;
+    public StartService $startService;
 
     public CallBackQueryService $callBackQueryService;
 
     public function __construct(
-        Bot $botModel,
-        SubmissionService $submissionService,
+        Bot $botRepository,
+        StartService $startService,
         CallBackQueryService $callBackQueryService
     ) {
-        $this->botModel = $botModel;
-        $this->submissionService = $submissionService;
+        $this->botRepository = $botRepository;
+        $this->startService = $startService;
         $this->callBackQueryService = $callBackQueryService;
     }
 
+    /**
+     * @throws TelegramSDKException
+     */
     public function index($id, Request $request)
     {
         if (config('app.env') === 'local') {
             Log::info('机器人请求', $request->all());
         }
         //查询机器人信息
-        $botInfo = $this->botModel->with('review_group')->find($id);
+        $botInfo = $this->botRepository->findInfo($id);
         if (! $botInfo) {
             Log::error('机器人数据不存在！', [$id]);
 
@@ -60,21 +64,16 @@ class HookController extends Controller
         $updateData = $telegram->commandsHandler(true);
 
         //存入使用机器人的用户
-        $this->save_bot_user($botInfo, $updateData->getChat(),$updateData->getMessage());
+        if ($updateData->objectType() !== 'my_chat_member') {
+            $this->save_bot_user($botInfo, $updateData->getChat() ?? null, $updateData->getMessage() ?? null);
+        }
 
         //进入投稿服务
         if (
-            $updateData->objectType() === 'message' &&
-            ! $updateData->getMessage()->hasCommand() &&
-            ! $updateData->getChat()->has('group') &&
-            ! $updateData->getChat()->has('supergroup') &&
-            ! $updateData->getChat()->has('getChat') &&
-            ! in_array($updateData->getChat()->type, ['group', 'supergroup'])
+            $updateData->getChat()->type === 'private'
+
         ) {
-            if ($updateData->getChat()->type != 'private') {
-                return 'ok';
-            }
-            $this->submissionService->index($botInfo, $updateData, $telegram);
+            $this->startService->index($botInfo, $updateData, $telegram);
         }
 
         //按键相应

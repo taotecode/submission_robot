@@ -3,7 +3,7 @@
 namespace App\Services\CallBackQuery;
 
 use App\Enums\AuditorRole;
-use App\Enums\KeyBoardData;
+use App\Enums\InlineKeyBoardData;
 use App\Enums\ManuscriptStatus;
 use App\Models\Bot;
 use App\Models\Manuscript;
@@ -17,18 +17,19 @@ use Telegram\Bot\Objects\User;
 
 class DeleteSubmissionMessageService
 {
-    use SendTelegramMessageService;
     use AuditorRoleCheckService;
-    use UpdateReviewGroupMessageButtonService;
     use SendPostedByMessageService;
+    use SendTelegramMessageService;
+    use UpdateReviewGroupMessageButtonService;
 
-    public function delete_submission_message(Api $telegram,Bot $botInfo,?Manuscript $manuscript, ?CallbackQuery $callbackQuery,$chatId,$messageId,User $from): string
+    public function delete_submission_message(Api $telegram, Bot $botInfo, ?Manuscript $manuscript, ?CallbackQuery $callbackQuery, $chatId, $messageId, User $from): string
     {
         //获取审核群组信息
         $reviewGroup = $botInfo->review_group;
 
         //机器人的审核数
-        $review_num = $botInfo->review_num;
+        $review_approved_num = $botInfo->review_approved_num;
+        $review_reject_num = $botInfo->review_reject_num;
         //通过人员名单
         $approved = $manuscript->approved;
         //通过人员数量
@@ -43,20 +44,20 @@ class DeleteSubmissionMessageService
         }
 
         if ($this->roleCheck($telegram, $callbackQuery->id, $from->id, [
-                AuditorRole::DELETE_SUBMISSION,
-            ]) !== true) {
+            AuditorRole::DELETE_SUBMISSION,
+        ]) !== true) {
             return 'ok';
         }
 
-        if ($this->update_review_group_message_button($telegram, $botInfo, $chatId, $messageId, $manuscript, $review_num, $approvedNum, $rejectNum,true) === true) {
+        if ($this->update_review_group_message_button($telegram, $botInfo, $chatId, $messageId, $manuscript, $review_approved_num, $review_reject_num, $approvedNum, $rejectNum, true) === true) {
             return 'ok';
         }
-
-        //获取机器人对应的频道ID
-        $channelId = '@' . $botInfo->channel->name;
 
         //删除消息
         try {
+            //获取机器人对应的频道ID
+            $channelId = '@'.$manuscript->channel->name;
+
             $telegram->deleteMessage([
                 'chat_id' => $channelId,
                 'message_id' => $manuscript->message_id,
@@ -65,8 +66,8 @@ class DeleteSubmissionMessageService
             $manuscript->status = ManuscriptStatus::DELETE;
             $manuscript->save();
 
-            $inline_keyboard = KeyBoardData::REVIEW_GROUP_DELETE;
-            $inline_keyboard['inline_keyboard'][0][0]['callback_data'] .= ":".$manuscript->id;
+            $inline_keyboard = InlineKeyBoardData::$REVIEW_GROUP_DELETE;
+            $inline_keyboard['inline_keyboard'][0][0]['callback_data'] .= ':'.$manuscript->id;
 
             $telegram->editMessageReplyMarkup([
                 'chat_id' => $chatId,
@@ -75,13 +76,15 @@ class DeleteSubmissionMessageService
             ]);
             $telegram->answerCallbackQuery([
                 'callback_query_id' => $callbackQuery->id,
-                'text' => "对应的频道投稿已删除",
+                'text' => '对应的频道投稿已删除',
                 'show_alert' => true,
             ]);
-            $this->sendPostedByMessage($telegram, $manuscript,$botInfo, ManuscriptStatus::DELETE);
+            $this->sendPostedByMessage($telegram, $manuscript, $botInfo, ManuscriptStatus::DELETE);
+
             return 'ok';
         } catch (TelegramSDKException $telegramSDKException) {
             Log::error($telegramSDKException);
+
             return 'error';
         }
     }

@@ -3,9 +3,9 @@
 namespace App\Admin\Actions\Grid\MyBot;
 
 use App\Admin\Forms\MyBot\SetCommandsForm;
-use Dcat\Admin\Widgets\Modal;
 use Dcat\Admin\Grid\RowAction;
 use Dcat\Admin\Traits\HasPermissions;
+use Dcat\Admin\Widgets\Modal;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 
@@ -14,7 +14,7 @@ class SetCommands extends RowAction
     /**
      * @return string
      */
-	protected $title = '设置命令';
+    protected $title = '设置命令';
 
     public function render()
     {
@@ -29,9 +29,7 @@ class SetCommands extends RowAction
     }
 
     /**
-     * @param Model|Authenticatable|HasPermissions|null $user
-     *
-     * @return bool
+     * @param  Model|Authenticatable|HasPermissions|null  $user
      */
     protected function authorize($user): bool
     {

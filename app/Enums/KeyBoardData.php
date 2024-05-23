@@ -7,108 +7,180 @@ class KeyBoardData
     /**
      * 用户开启机器人初始键盘
      */
-    const START = [
-        'keyboard' => [
-            [
-                '开始投稿',
-            ],
-            /*[
-                '意见反馈',
-                '帮助中心',
-            ],*/
-        ],
-        'resize_keyboard' => true, // 让键盘大小适应屏幕
-        'one_time_keyboard' => false, // 是否只显示一次
-    ];
+    public static array $START;
 
     /**
      * 用户开始投稿键盘
      */
-    const START_SUBMISSION = [
-        'keyboard' => [
-            [
-                '结束发送',
-            ],
-            [
-                '重新开始',
-                '取消投稿',
-            ],
-        ],
-        'resize_keyboard' => true, // 让键盘大小适应屏幕
-        'one_time_keyboard' => false, // 是否只显示一次
-    ];
+    public static array $START_SUBMISSION;
 
     /**
      * 用户结束投稿键盘
      */
-    const END_SUBMISSION = [
-        'keyboard' => [
-            [
-                '确认投稿（公开）',
-                '确认投稿（匿名）',
-            ],
-            [
-                '重新开始',
-                '取消投稿',
-            ],
-        ],
-        'resize_keyboard' => true, // 让键盘大小适应屏幕
-        'one_time_keyboard' => false, // 是否只显示一次
-    ];
+    public static array $END_SUBMISSION;
 
     /**
-     * 审核群组键盘
+     * 用户选择频道投稿键盘
      */
-    const REVIEW_GROUP = [
-        'inline_keyboard' => [
-            [
-                ['text' => '通过', 'callback_data' => 'approved_submission'],
-                ['text' => '拒绝', 'callback_data' => 'reject_submission'],
-                ['text' => '私聊', 'callback_data' => 'private_message'],
-            ],
-            [
-                ['text' => '快捷通过', 'callback_data' => 'approved_submission_quick'],
-                ['text' => '快捷拒绝', 'callback_data' => 'reject_submission_quick'],
-            ],
-        ],
-    ];
+    public static array $SELECT_CHANNEL;
 
     /**
-     * 审核群组稿件通过键盘
+     * 用户选择频道后结束投稿键盘
      */
-    const REVIEW_GROUP_APPROVED = [
-        'inline_keyboard' => [
-            [
-                ['text' => '已通过', 'callback_data' => 'approved_submission_button'],
-                ['text'=>'查看消息','url'=>'https://t.me/'],
-            ],
-            [
-                ['text' => '删除消息', 'callback_data' => 'delete_submission_message'],
-            ],
-        ],
-    ];
+    public static array $SELECT_CHANNEL_END;
 
     /**
-     * 审核群组稿件拒绝键盘
+     * 用户开始意见反馈键盘
      */
-    const REVIEW_GROUP_REJECT = [
-        'inline_keyboard' => [
-            [
-                ['text' => '已拒绝', 'callback_data' => 'reject_submission_button'],
-            ],
-        ],
-    ];
+    public static array $START_FEEDBACK;
 
     /**
-     * 审核群组稿件删除键盘
+     * 用户开始投诉键盘
      */
-    const REVIEW_GROUP_DELETE = [
-        'inline_keyboard' => [
-            [
-                ['text' => '消息已被删除', 'callback_data' => 'delete_submission_message_success'],
-            ]
-        ],
-    ];
+    public static array $START_COMPLAINT;
+
+    /**
+     * @var array 用户结束投诉键盘
+     */
+    public static array $END_COMPLAINT;
+
+    /**
+     * @var array 用户选择是否显示来源键盘
+     */
+    public static array $FORWARD_ORIGIN_SELECT;
+
+    public static function init(): void
+    {
+        self::$START = [
+            'keyboard' => [
+                [
+                    get_keyboard_name_config('start.StartSubmission', KeyBoardName::StartSubmission),
+                ],
+                [
+                    get_keyboard_name_config('start.Feedback', KeyBoardName::Feedback),
+                    get_keyboard_name_config('start.HelpCenter', KeyBoardName::HelpCenter),
+                ],
+            ],
+            'resize_keyboard' => true, // 让键盘大小适应屏幕
+            'one_time_keyboard' => false, // 是否只显示一次
+        ];
+
+        self::$START_SUBMISSION = [
+            'keyboard' => [
+                [
+                    get_keyboard_name_config('submission.EndSending', KeyBoardName::EndSending),
+                ],
+                [
+                    get_keyboard_name_config('submission.Restart', KeyBoardName::Restart),
+                    get_keyboard_name_config('submission.CancelSubmission', KeyBoardName::CancelSubmission),
+                ],
+            ],
+            'resize_keyboard' => true, // 让键盘大小适应屏幕
+            'one_time_keyboard' => false, // 是否只显示一次
+        ];
+
+        self::$END_SUBMISSION = [
+            'keyboard' => [
+                [
+                    get_keyboard_name_config('submission_end.ConfirmSubmissionOpen', KeyBoardName::ConfirmSubmissionOpen),
+                    get_keyboard_name_config('submission_end.ConfirmSubmissionAnonymous', KeyBoardName::ConfirmSubmissionAnonymous),
+                ],
+                [
+                    get_keyboard_name_config('submission.Restart', KeyBoardName::Restart),
+                    get_keyboard_name_config('submission.CancelSubmission', KeyBoardName::CancelSubmission),
+                ],
+            ],
+            'resize_keyboard' => true, // 让键盘大小适应屏幕
+            'one_time_keyboard' => false, // 是否只显示一次
+        ];
+
+        self::$SELECT_CHANNEL = [
+            'keyboard' => [
+                [
+                    get_keyboard_name_config('select_channel.SelectChannel', KeyBoardName::SelectChannel),
+                ],
+                [
+                    get_keyboard_name_config('submission.Restart', KeyBoardName::Restart),
+                    get_keyboard_name_config('submission.CancelSubmission', KeyBoardName::CancelSubmission),
+                ],
+            ],
+            'resize_keyboard' => true, // 让键盘大小适应屏幕
+            'one_time_keyboard' => false, // 是否只显示一次
+        ];
+
+        self::$SELECT_CHANNEL_END = [
+            'keyboard' => [
+                [
+                    get_keyboard_name_config('submission_end.ConfirmSubmissionOpen', KeyBoardName::ConfirmSubmissionOpen),
+                    get_keyboard_name_config('submission_end.ConfirmSubmissionAnonymous', KeyBoardName::ConfirmSubmissionAnonymous),
+                ],
+                [
+                    get_keyboard_name_config('submission.Restart', KeyBoardName::Restart),
+                    get_keyboard_name_config('submission.CancelSubmission', KeyBoardName::CancelSubmission),
+                    get_keyboard_name_config('select_channel_end.SelectChannelAgain', KeyBoardName::SelectChannelAgain),
+                ],
+            ],
+            'resize_keyboard' => true, // 让键盘大小适应屏幕
+            'one_time_keyboard' => false, // 是否只显示一次
+        ];
+
+        self::$FORWARD_ORIGIN_SELECT = [
+            'keyboard' => [
+                [
+                    get_keyboard_name_config('submission.forward_origin_select_Yes', KeyBoardName::Yes),
+                    get_keyboard_name_config('submission.forward_origin_select_No', KeyBoardName::No),
+                ],
+                [
+                    get_keyboard_name_config('submission.Restart', KeyBoardName::Restart),
+                    get_keyboard_name_config('submission.CancelSubmission', KeyBoardName::CancelSubmission),
+                ],
+            ],
+            'resize_keyboard' => true, // 让键盘大小适应屏幕
+            'one_time_keyboard' => false, // 是否只显示一次
+        ];
+
+        self::$START_FEEDBACK = [
+            'keyboard' => [
+                [
+                    get_keyboard_name_config('feedback.SubmitComplaint', KeyBoardName::SubmitComplaint),
+                    get_keyboard_name_config('feedback.SubmitSuggestion', KeyBoardName::SubmitSuggestion),
+                ],
+                [
+                    get_keyboard_name_config('common.Cancel', KeyBoardName::Cancel),
+                ],
+            ],
+            'resize_keyboard' => true, // 让键盘大小适应屏幕
+            'one_time_keyboard' => false, // 是否只显示一次
+        ];
+
+        self::$START_COMPLAINT = [
+            'keyboard' => [
+                [
+                    get_keyboard_name_config('complaint.EndSending', KeyBoardName::EndSending),
+                ],
+                [
+                    get_keyboard_name_config('complaint.Restart', KeyBoardName::Restart),
+                    get_keyboard_name_config('common.Cancel', KeyBoardName::Cancel),
+                ],
+            ],
+            'resize_keyboard' => true, // 让键盘大小适应屏幕
+            'one_time_keyboard' => false, // 是否只显示一次
+        ];
+
+        self::$END_COMPLAINT = [
+            'keyboard' => [
+                [
+                    get_keyboard_name_config('complaint_end.ConfirmComplaint', KeyBoardName::ConfirmComplaint),
+                ],
+                [
+                    get_keyboard_name_config('complaint.Restart', KeyBoardName::Restart),
+                    get_keyboard_name_config('common.Cancel', KeyBoardName::Cancel),
+                ],
+            ],
+            'resize_keyboard' => true, // 让键盘大小适应屏幕
+            'one_time_keyboard' => false, // 是否只显示一次
+        ];
+    }
 
     /**
      * 黑名单用户删除键盘
@@ -117,39 +189,15 @@ class KeyBoardData
         'remove_keyboard' => true,
     ];
 
-    /**
-     * 白名单用户投稿完成发送到审核群组键盘
-     */
-    const WHITE_LIST_USER_SUBMISSION = [
-        'inline_keyboard' => [
+    const Cancel = [
+        'keyboard' => [
             [
-                ['text'=>'查看消息','url'=>'https://t.me/'],
-                ['text' => '删除白名单用户投稿', 'callback_data' => 'delete_white_list_user_submission_message'],
+                KeyBoardName::Cancel,
             ],
         ],
-    ];
-
-    /**
-     * 私聊用户信息键盘
-     */
-    const PRIVATE_MESSAGE = [
-        'inline_keyboard' => [
-            [
-                ['text' => '通用用户名联系', 'url' => 'https://t.me/'],
-                ['text' => '客户端协议联系', 'url' => 'tg://openmessage?user_id='],
-                ['text' => 'ID链接联系', 'url' => 'https://t.me/@id'],
-            ],
-        ],
-    ];
-
-    /**
-     * 查询投稿人信息键盘
-     */
-    const QUERY_SUBMISSION_USER = [
-        'inline_keyboard' => [
-            [
-                ['text' => '设置为普通用户', 'callback_data' => 'set'],
-            ],
-        ],
+        'resize_keyboard' => true, // 让键盘大小适应屏幕
+        'one_time_keyboard' => false, // 是否只显示一次
     ];
 }
+
+KeyBoardData::init();

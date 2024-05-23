@@ -11,15 +11,38 @@ class Bot extends Model
 
     protected $casts = [
         'tail_content_button' => 'json',
+        'channel_ids' => 'json',
     ];
 
-    public function review_group()
+    protected static function booted(): void
     {
-        return $this->hasOne(ReviewGroup::class, 'bot_id', 'id');
+        static::saved(function ($bot) {
+            self::clearBotCache($bot->id);
+        });
+
+        static::deleted(function ($bot) {
+            self::clearBotCache($bot->id);
+        });
     }
 
-    public function channel()
+    protected static function clearBotCache($id): void
     {
-        return $this->hasOne(Channel::class, 'id', 'channel_id');
+        $cacheKey = "bot_with_review_group_{$id}";
+        cache()->forget($cacheKey);
+    }
+
+    private function updateBotCache($id, $data = null): void
+    {
+        $cacheKey = "bot_with_review_group_{$id}";
+        if ($data) {
+            cache()->put($cacheKey, $data, now()->addWeek());
+        } else {
+            cache()->forget($cacheKey);
+        }
+    }
+
+    public function review_group(): \Illuminate\Database\Eloquent\Relations\HasOne
+    {
+        return $this->hasOne(ReviewGroup::class, 'bot_id', 'id');
     }
 }

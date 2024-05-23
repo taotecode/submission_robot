@@ -22,7 +22,7 @@ class SetTailContent extends RowAction
             ->payload([
                 'id' => $this->getKey(),
                 'tail_content' => $this->row->tail_content,
-                'tail_content_button' => json_encode($this->row->tail_content_button??[]),
+                'tail_content_button' => json_encode($this->row->tail_content_button ?? []),
             ]);
 
         return Modal::make()

@@ -8,7 +8,7 @@ return [
     'fields' => [
         'bot_id' => '机器人ID',
         'type' => '身份',
-        'userId' => '投稿人',
+        'user_id' => '投稿人',
         'name' => '名称',
     ],
     'options' => [

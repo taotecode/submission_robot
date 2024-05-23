@@ -5,7 +5,6 @@ namespace App\Services\CallBackQuery;
 use App\Enums\AuditorRole;
 use App\Enums\SubmissionUserType;
 use App\Models\Bot;
-use App\Models\Manuscript;
 use App\Models\SubmissionUser;
 use Illuminate\Support\Facades\Log;
 use Telegram\Bot\Api;
@@ -14,10 +13,9 @@ use Telegram\Bot\Objects\User;
 
 class SetSubmissionUserTypeService
 {
-
     use AuditorRoleCheckService;
 
-    public function setSubmissionUserType(Api $telegram,Bot $botInfo, User $from,$callbackQuery,$commandArray,$manuscriptId,$manuscript,$chatId,$messageId): string
+    public function setSubmissionUserType(Api $telegram, Bot $botInfo, User $from, $callbackQuery, $commandArray, $manuscriptId, $manuscript, $chatId, $messageId): string
     {
         //获取审核群组信息
         $reviewGroup = $botInfo->review_group;
@@ -27,76 +25,81 @@ class SetSubmissionUserTypeService
         }
 
         if ($this->roleCheck($telegram, $callbackQuery->id, $from->id, [
-                AuditorRole::SET_SUBMISSION_USER_TYPE,
-            ]) !== true) {
+            AuditorRole::SET_SUBMISSION_USER_TYPE,
+        ]) !== true) {
             return 'ok';
         }
 
-        if (!isset($commandArray[2]) || empty($commandArray[3])) {
-            Log::info('参数错误！',[
-                'commandArray'=>$commandArray,
+        if (! isset($commandArray[2]) || empty($commandArray[3])) {
+            Log::info('参数错误！', [
+                'commandArray' => $commandArray,
             ]);
             try {
                 $telegram->answerCallbackQuery([
                     'callback_query_id' => $callbackQuery->id,
-                    'text' => "参数错误！",
+                    'text' => '参数错误！',
                     'show_alert' => true,
-                ]);return 'ok';
+                ]);
+
+                return 'ok';
             } catch (TelegramSDKException $telegramSDKException) {
                 Log::error($telegramSDKException);
+
                 return 'error';
             }
         }
 
         if (! in_array($commandArray[2], SubmissionUserType::getKey())) {
-            Log::info('参数不存在！',[
-                'commandArray'=>$commandArray,
-                'key'=>SubmissionUserType::getKey(),
+            Log::info('参数不存在！', [
+                'commandArray' => $commandArray,
+                'key' => SubmissionUserType::getKey(),
             ]);
             try {
                 $telegram->answerCallbackQuery([
                     'callback_query_id' => $callbackQuery->id,
-                    'text' => "参数不存在！",
+                    'text' => '参数不存在！',
                     'show_alert' => true,
                 ]);
+
                 return 'ok';
             } catch (TelegramSDKException $telegramSDKException) {
                 Log::error($telegramSDKException);
+
                 return 'error';
             }
         }
 
-        $submissionUser=(new SubmissionUser())->where(['userId'=>$commandArray[3],'bot_id'=>$botInfo->id])->first();
-        $submissionUser->type=$commandArray[2];
+        $submissionUser = (new SubmissionUser())->where(['user_id' => $commandArray[3], 'bot_id' => $botInfo->id])->first();
+        $submissionUser->type = $commandArray[2];
         $submissionUser->save();
 
-        $submissionUsers=$manuscript->posted_by;
+        $submissionUsers = $manuscript->posted_by;
 
-        $text="用户ID：<code>".$submissionUsers['id']."</code> \r\n";
-        if (!empty($submissionUsers['username'])){
-            $text.="用户名：<code>".$submissionUsers['username']."</code> \r\n";
+        $text = '用户ID：<code>'.$submissionUsers['id']."</code> \r\n";
+        if (! empty($submissionUsers['username'])) {
+            $text .= '用户名：<code>'.$submissionUsers['username']."</code> \r\n";
         }
 
-        if (!empty($submissionUsers['first_name'])) {
-            $text .= "姓名：<code>" . $submissionUsers['first_name'] . "</code> \r\n";
+        if (! empty($submissionUsers['first_name'])) {
+            $text .= '姓名：<code>'.$submissionUsers['first_name']."</code> \r\n";
         }
 
-        if (!empty($submissionUsers['last_name'])) {
-            $text .= "姓氏：<code>" . $submissionUsers['last_name']. "</code> \r\n";
+        if (! empty($submissionUsers['last_name'])) {
+            $text .= '姓氏：<code>'.$submissionUsers['last_name']."</code> \r\n";
         }
 
-        $text.="用户身份：<code>".SubmissionUserType::MAP[$submissionUser->type]."</code> \r\n";
+        $text .= '用户身份：<code>'.SubmissionUserType::MAP[$submissionUser->type]."</code> \r\n";
 
-        $inline_keyboard=[
+        $inline_keyboard = [
             'inline_keyboard' => [
             ],
         ];
 
-        foreach (SubmissionUserType::MAP as $key=>$value){
-            if ($key==$submissionUser->type){
+        foreach (SubmissionUserType::MAP as $key => $value) {
+            if ($key == $submissionUser->type) {
                 continue;
             }
-            $inline_keyboard['inline_keyboard'][]=[
+            $inline_keyboard['inline_keyboard'][] = [
                 ['text' => '设置为'.$value.'用户', 'callback_data' => 'set_submission_user_type:'.$manuscriptId.':'.$key.':'.$submissionUser->userId],
             ];
         }
@@ -112,13 +115,14 @@ class SetSubmissionUserTypeService
 
             $telegram->answerCallbackQuery([
                 'callback_query_id' => $callbackQuery->id,
-                'text' => "设置成功！",
+                'text' => '设置成功！',
                 'show_alert' => true,
             ]);
 
             return 'ok';
         } catch (TelegramSDKException $telegramSDKException) {
             Log::error($telegramSDKException);
+
             return 'error';
         }
     }

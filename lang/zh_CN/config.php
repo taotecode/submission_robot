@@ -2,8 +2,8 @@
 
 return [
     'labels' => [
-        'Config' => '配置',
-        'config' => '配置',
+        'Config' => '配置表',
+        'config' => '配置表',
     ],
     'fields' => [
         'group' => '组',

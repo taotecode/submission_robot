@@ -14,7 +14,6 @@ class SetCommandsForm extends Form implements LazyRenderable
     /**
      * Handle the form request.
      *
-     * @param array $input
      *
      * @return mixed
      */
@@ -25,9 +24,9 @@ class SetCommandsForm extends Form implements LazyRenderable
         // return $this->response()->error('Your error message.');
 
         return $this
-				->response()
-				->success('Processed successfully.')
-				->refresh();
+            ->response()
+            ->success('Processed successfully.')
+            ->refresh();
     }
 
     /**
@@ -40,10 +39,10 @@ class SetCommandsForm extends Form implements LazyRenderable
             1,
         ])->help('将您需要展示给用户的命令点击添加到右侧列表中。不需要的展示的可以点击右侧列表添加到左侧列表中。');
         $this->listbox('all_group_chats', '群组命令')->options(Commands::ALL_GROUP_OPTIONS)->required()->default([
-            0
+            0,
         ])->help('将您需要展示给用户的命令点击添加到右侧列表中。不需要的展示的可以点击右侧列表添加到左侧列表中。');
         $this->listbox('all_group_chats', '群组命令')->options(Commands::ALL_GROUP_OPTIONS)->required()->default([
-            0
+            0,
         ])->help('将您需要展示给用户的命令点击添加到右侧列表中。不需要的展示的可以点击右侧列表添加到左侧列表中。');
     }
 
@@ -55,7 +54,7 @@ class SetCommandsForm extends Form implements LazyRenderable
     public function default()
     {
         return [
-            'name'  => 'John Doe',
+            'name' => 'John Doe',
             'email' => 'John.Doe@gmail.com',
         ];
     }

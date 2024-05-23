@@ -5,8 +5,8 @@ namespace App\Admin\Controllers;
 use App\Admin\Repositories\BotUser;
 use Dcat\Admin\Form;
 use Dcat\Admin\Grid;
-use Dcat\Admin\Show;
 use Dcat\Admin\Http\Controllers\AdminController;
+use Dcat\Admin\Show;
 
 class BotUserController extends AdminController
 {
@@ -29,14 +29,15 @@ class BotUserController extends AdminController
             $grid->column('type')->display(function () {
                 return admin_trans('bot-user.type')[$this->user_data['type']];
             })->label();
-            $grid->column('userId');
+            $grid->column('user_id');
             $grid->column('user_name')->display(function () {
-                if ($this->user_data['type'] != 'private'){
+                if ($this->user_data['type'] != 'private') {
                     return $this->user_data['title'];
                 }
+
                 return get_posted_by($this->user_data);
             })->expand(function () {
-                if ($this->user_data['type'] != 'private'){
+                if ($this->user_data['type'] != 'private') {
                     return "<div style='padding:10px 10px'><p>title: {$this->user_data['title']}</p></div>";
                 }
                 // 返回显示的详情
@@ -44,6 +45,7 @@ class BotUserController extends AdminController
                 $first_name = $this->user_data['first_name'] ?? '';
                 $last_name = $this->user_data['last_name'] ?? '';
                 $username = $this->user_data['username'] ?? '';
+
                 return "<div style='padding:10px 10px'><p>UID: $uid</p><p>first name: $first_name</p><p>last name: $last_name</p><p>用户名: $username</p></div>";
             });
             $grid->column('created_at');
@@ -60,8 +62,8 @@ class BotUserController extends AdminController
                 $filter->equal('bot_id')->select(function () {
                     return \App\Models\Bot::all()->pluck('appellation', 'id');
                 });
-                $filter->equal('userId');
-                $filter->like('user_data','用户名称');
+                $filter->equal('user_id');
+                $filter->like('user_data', '用户名称');
                 $filter->between('created_at')->datetime();
             });
         });
@@ -70,8 +72,7 @@ class BotUserController extends AdminController
     /**
      * Make a show builder.
      *
-     * @param mixed $id
-     *
+     * @param  mixed  $id
      * @return Show
      */
     protected function detail($id)
@@ -79,7 +80,7 @@ class BotUserController extends AdminController
         return Show::make($id, new BotUser('bot'), function (Show $show) {
             $show->field('id');
             $show->field('bot.appellation');
-            $show->field('userId');
+            $show->field('user_id');
             $show->field('user_name')->as(function () {
                 return get_posted_by($this->user_data);
             });
@@ -98,7 +99,7 @@ class BotUserController extends AdminController
         return Form::make(new BotUser(), function (Form $form) {
             $form->display('id');
             $form->text('bot_id');
-            $form->text('userId');
+            $form->text('user_id');
             $form->text('user_data');
 
             $form->display('created_at');

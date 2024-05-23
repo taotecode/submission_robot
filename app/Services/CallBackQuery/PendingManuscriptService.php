@@ -2,7 +2,7 @@
 
 namespace App\Services\CallBackQuery;
 
-use App\Enums\KeyBoardData;
+use App\Enums\InlineKeyBoardData;
 use App\Enums\ManuscriptStatus;
 use App\Models\Manuscript;
 use App\Services\SendTelegramMessageService;
@@ -15,9 +15,9 @@ class PendingManuscriptService
 {
     use SendTelegramMessageService;
 
-    public function refresh(Api $telegram, $botInfo,$chatId,$messageId,Message $message,$callbackQueryId)
+    public function refresh(Api $telegram, $botInfo, $chatId, $messageId, Message $message, $callbackQueryId)
     {
-        $inline_keyboard=[
+        $inline_keyboard = [
             'inline_keyboard' => [
                 [
                     [
@@ -29,30 +29,32 @@ class PendingManuscriptService
         ];
 
         $manuscript = (new \App\Models\Manuscript())->where('bot_id', $botInfo->id)->where('status', ManuscriptStatus::PENDING)->get();
-        if (!$manuscript->isEmpty()){
-            foreach ($manuscript as $item){
+        if (! $manuscript->isEmpty()) {
+            foreach ($manuscript as $item) {
                 $inline_keyboard['inline_keyboard'][] = [
                     [
-                        'text' => "【".$item->text."】",
+                        'text' => '【'.$item->text.'】',
                         'callback_data' => 'show_pending_manuscript:'.$item->id,
                     ],
                 ];
             }
         }
 
-        if ($message->replyMarkup){
-            $messageInlineKeyboard = json_decode($message->replyMarkup,true);
+        if ($message->replyMarkup) {
+            $messageInlineKeyboard = json_decode($message->replyMarkup, true);
             //检查是否与当前的inline_keyboard一致
-            if ($messageInlineKeyboard == $inline_keyboard){
+            if ($messageInlineKeyboard == $inline_keyboard) {
                 try {
                     $telegram->answerCallbackQuery([
                         'callback_query_id' => $callbackQueryId,
                         'text' => '暂无新稿件',
                         'show_alert' => true,
                     ]);
+
                     return 'ok';
                 } catch (TelegramSDKException $telegramSDKException) {
                     Log::error($telegramSDKException);
+
                     return 'error';
                 }
             }
@@ -64,14 +66,16 @@ class PendingManuscriptService
                 'message_id' => $messageId,
                 'reply_markup' => json_encode($inline_keyboard),
             ]);
+
             return 'ok';
         } catch (TelegramSDKException $telegramSDKException) {
             Log::error($telegramSDKException);
+
             return 'error';
         }
     }
 
-    public function show(Api $telegram, $botInfo,?Manuscript $manuscript): string
+    public function show(Api $telegram, $botInfo, ?Manuscript $manuscript): string
     {
         //机器人的审核数
         $review_num = $botInfo->review_num;
@@ -86,20 +90,20 @@ class PendingManuscriptService
         //拒绝人员数量
         $rejectNum = count($reject);
 
-        $inline_keyboard=null;
+        $inline_keyboard = null;
 
-        if ($approvedNum>=$review_num || $rejectNum>=$review_num){
-            if ($approvedNum>=$review_num) {
-                $inline_keyboard=KeyBoardData::REVIEW_GROUP_APPROVED;
-                $inline_keyboard['inline_keyboard'][0][0]['callback_data'] .= ":".$manuscript->id;
-                $inline_keyboard['inline_keyboard'][0][1]['url'] .= $botInfo->channel->name."/".$manuscript->message_id;
+        if ($approvedNum >= $review_num || $rejectNum >= $review_num) {
+            if ($approvedNum >= $review_num) {
+                $inline_keyboard = InlineKeyBoardData::$REVIEW_GROUP_APPROVED;
+                $inline_keyboard['inline_keyboard'][0][0]['callback_data'] .= ':'.$manuscript->id;
+                $inline_keyboard['inline_keyboard'][0][1]['url'] .= $botInfo->channel->name.'/'.$manuscript->message_id;
                 $inline_keyboard['inline_keyboard'][1][0]['callback_data'] .= ':'.$manuscript->id;
-            }elseif ($rejectNum>=$review_num){
-                $inline_keyboard=KeyBoardData::REVIEW_GROUP_REJECT;
-                $inline_keyboard['inline_keyboard'][0][0]['callback_data'] .= ":".$manuscript->id;
+            } elseif ($rejectNum >= $review_num) {
+                $inline_keyboard = InlineKeyBoardData::$REVIEW_GROUP_REJECT;
+                $inline_keyboard['inline_keyboard'][0][0]['callback_data'] .= ':'.$manuscript->id;
             }
-        }else{
-            $inline_keyboard = KeyBoardData::REVIEW_GROUP;
+        } else {
+            $inline_keyboard = InlineKeyBoardData::REVIEW_GROUP;
 
             $inline_keyboard['inline_keyboard'][0][0]['text'] .= "($approvedNum/$review_num)";
             $inline_keyboard['inline_keyboard'][0][0]['callback_data'] .= ":$manuscriptId";
@@ -114,7 +118,8 @@ class PendingManuscriptService
         }
 
         // 发送消息到审核群组
-        $this->sendGroupMessage($telegram, $botInfo, $manuscript->data, $manuscript->type, $manuscript->id,$inline_keyboard);
+        $this->sendGroupMessage($telegram, $botInfo, $manuscript->data, $manuscript->type, $manuscript->id, $inline_keyboard);
+
         return 'ok';
     }
 }

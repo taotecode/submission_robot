@@ -39,8 +39,9 @@ class HomeController extends Controller
     {
         Artisan::call('cache:clear');
         Artisan::call('config:clear');
+
         return response()->json([
-            'status'  => true,
+            'status' => true,
             'message' => '清除成功',
         ]);
     }

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "7528de8813e43ef59fe0d075691dff47",
+    "content-hash": "968a7091074b5dd52a155acf46749932",
     "packages": [
         {
             "name": "brick/math",
@@ -2440,6 +2440,47 @@
                 }
             ],
             "time": "2023-10-17T14:13:20+00:00"
+        },
+        {
+            "name": "lucadevelop/telegram-entities-decoder",
+            "version": "v1.3.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/LucaDevelop/telegram-entities-decoder.git",
+                "reference": "32cbdce21d02306c75708d6fbb1b3241069b018e"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/LucaDevelop/telegram-entities-decoder/zipball/32cbdce21d02306c75708d6fbb1b3241069b018e",
+                "reference": "32cbdce21d02306c75708d6fbb1b3241069b018e",
+                "shasum": ""
+            },
+            "require": {
+                "ext-mbstring": "*",
+                "php": ">=7.0.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "lucadevelop\\TelegramEntitiesDecoder\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "LucaDevelop",
+                    "email": "lsirri.gm@gmail.com"
+                }
+            ],
+            "description": "Telegram entities decoder in PHP",
+            "support": {
+                "issues": "https://github.com/LucaDevelop/telegram-entities-decoder/issues",
+                "source": "https://github.com/LucaDevelop/telegram-entities-decoder/tree/v1.3.1"
+            },
+            "time": "2024-02-01T17:06:13+00:00"
         },
         {
             "name": "monolog/monolog",
@@ -6705,16 +6746,16 @@
         },
         {
             "name": "kitloong/laravel-migrations-generator",
-            "version": "v6.11.0",
+            "version": "v6.11.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/kitloong/laravel-migrations-generator.git",
-                "reference": "220b5f17fcb16610a3e9757d68c197319c0f7444"
+                "reference": "0f007e86dce6e0cfd71dc0b757da18851c376c3b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/kitloong/laravel-migrations-generator/zipball/220b5f17fcb16610a3e9757d68c197319c0f7444",
-                "reference": "220b5f17fcb16610a3e9757d68c197319c0f7444",
+                "url": "https://api.github.com/repos/kitloong/laravel-migrations-generator/zipball/0f007e86dce6e0cfd71dc0b757da18851c376c3b",
+                "reference": "0f007e86dce6e0cfd71dc0b757da18851c376c3b",
                 "shasum": ""
             },
             "require": {
@@ -6727,8 +6768,8 @@
             "require-dev": {
                 "barryvdh/laravel-ide-helper": "^2.5",
                 "friendsofphp/php-cs-fixer": "^2.19.0|^3.1",
+                "larastan/larastan": "^0.4|^0.5|^0.6|^0.7|^1.0|^2.0",
                 "mockery/mockery": "^1.0",
-                "nunomaduro/larastan": "^0.4|^0.5|^0.6|^0.7|^1.0|^2.0",
                 "orchestra/testbench": "^3.6|^4.0|^5.0|^6.0|^7.0|^8.0",
                 "phpmd/phpmd": "^2.10",
                 "slevomat/coding-standard": "^6.0|^7.0|^8.5",
@@ -6768,7 +6809,7 @@
             ],
             "support": {
                 "issues": "https://github.com/kitloong/laravel-migrations-generator/issues",
-                "source": "https://github.com/kitloong/laravel-migrations-generator/tree/v6.11.0"
+                "source": "https://github.com/kitloong/laravel-migrations-generator/tree/v6.11.1"
             },
             "funding": [
                 {
@@ -6776,7 +6817,7 @@
                     "type": "custom"
                 }
             ],
-            "time": "2023-10-10T13:55:26+00:00"
+            "time": "2024-02-06T14:42:33+00:00"
         },
         {
             "name": "laravel/pint",

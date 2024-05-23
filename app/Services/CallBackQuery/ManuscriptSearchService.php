@@ -10,34 +10,35 @@ use Telegram\Bot\Exceptions\TelegramSDKException;
 
 class ManuscriptSearchService
 {
-
-    public function link(Api $telegram, $botInfo,?Manuscript $manuscript,$chatId): string
+    public function link(Api $telegram, $botInfo, ?Manuscript $manuscript, $chatId): string
     {
-        $url="https://t.me/".$botInfo->channel->name."/".$manuscript->message_id;
+        $url = 'https://t.me/'.$manuscript->channel->name.'/'.$manuscript->message_id;
 
-        $text= "<a href='$url'>【{$manuscript->text}】</a>";
+        $text = "<a href='$url'>【{$manuscript->text}】</a>";
 
         try {
             $telegram->sendMessage([
                 'chat_id' => $chatId,
                 'text' => $text,
-                'parse_mode' => 'HTML'
+                'parse_mode' => 'HTML',
             ]);
+
             return 'ok';
         } catch (TelegramSDKException $telegramSDKException) {
             Log::error($telegramSDKException);
+
             return 'error';
         }
     }
 
-    public function page(Api $telegram, $botInfo, ?Manuscript $manuscript, mixed $chatId,$messageId,$callbackQueryId, array $commandArray): string
+    public function page(Api $telegram, $botInfo, ?Manuscript $manuscript, mixed $chatId, $messageId, $callbackQueryId, array $commandArray): string
     {
-        $keyword = $commandArray[2]??'';
-        $page = $commandArray[3]??1;
-        $type=$commandArray[1]??'';
+        $keyword = $commandArray[2] ?? '';
+        $page = $commandArray[3] ?? 1;
+        $type = $commandArray[1] ?? '';
 
-        $inline_keyboard=[
-            'inline_keyboard' => []
+        $inline_keyboard = [
+            'inline_keyboard' => [],
         ];
 
         $manuscript = (new Manuscript())
@@ -48,40 +49,42 @@ class ManuscriptSearchService
             ->orderBy('id', 'desc')
             ->paginate(10, ['*'], 'page', $page);
 
-        if ($manuscript->isEmpty()){
+        if ($manuscript->isEmpty()) {
             try {
                 $telegram->answerCallbackQuery([
                     'callback_query_id' => $callbackQueryId,
                     'text' => '没有找到相关稿件！',
                     'show_alert' => true,
                 ]);
+
                 return 'ok';
             } catch (TelegramSDKException $telegramSDKException) {
                 Log::error($telegramSDKException);
+
                 return 'error';
             }
         }
 
-        $manuscript->each(function ($item) use (&$inline_keyboard){
+        $manuscript->each(function ($item) use (&$inline_keyboard) {
             $inline_keyboard['inline_keyboard'][] = [
-                ['text' => $item->text, 'callback_data' => 'manuscript_search_show_link:'.$item->id]
+                ['text' => $item->text, 'callback_data' => 'manuscript_search_show_link:'.$item->id],
             ];
         });
 
-        $pageInlineKeyboardNum = count($inline_keyboard['inline_keyboard'])+1;
+        $pageInlineKeyboardNum = count($inline_keyboard['inline_keyboard']) + 1;
 
         if ($manuscript->currentPage() > 1) {
             $inline_keyboard['inline_keyboard'][$pageInlineKeyboardNum][] = [
-                'text' => '◀️ 上一页', 'callback_data' => 'manuscript_search_page:prev:'.$keyword.':'.($manuscript->currentPage()-1)
+                'text' => '◀️ 上一页', 'callback_data' => 'manuscript_search_page:prev:'.$keyword.':'.($manuscript->currentPage() - 1),
             ];
         }
         if ($manuscript->lastPage() !== $manuscript->currentPage()) {
             $inline_keyboard['inline_keyboard'][$pageInlineKeyboardNum][] = [
-                'text' => '下一页 ▶️', 'callback_data' => 'manuscript_search_page:next:'.$keyword.':'.($manuscript->currentPage()+1)
+                'text' => '下一页 ▶️', 'callback_data' => 'manuscript_search_page:next:'.$keyword.':'.($manuscript->currentPage() + 1),
             ];
         }
 
-        $inline_keyboard['inline_keyboard']=array_values($inline_keyboard['inline_keyboard']);
+        $inline_keyboard['inline_keyboard'] = array_values($inline_keyboard['inline_keyboard']);
 
         try {
             $telegram->editMessageReplyMarkup([
@@ -89,11 +92,12 @@ class ManuscriptSearchService
                 'message_id' => $messageId,
                 'reply_markup' => json_encode($inline_keyboard),
             ]);
+
             return 'ok';
         } catch (TelegramSDKException $telegramSDKException) {
             Log::error($telegramSDKException);
+
             return 'error';
         }
     }
-
 }

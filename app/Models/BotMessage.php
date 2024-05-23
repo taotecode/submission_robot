@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use Dcat\Admin\Traits\HasDateTimeFormatter;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class BotMessage extends Model
@@ -14,13 +13,13 @@ class BotMessage extends Model
 
     protected $fillable = [
         'bot_id',
-        'userId',
-        'userData',
+        'user_id',
+        'user_data',
         'data',
     ];
 
     protected $casts = [
-        'userData' => 'json',
+        'user_data' => 'json',
         'data' => 'json',
     ];
 

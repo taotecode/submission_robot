@@ -2,7 +2,7 @@
 
 namespace App\Admin\RowActions\MyBot;
 
-use App\Admin\Forms\MyBot\Channel;
+use App\Admin\Forms\MyBot\SetChannel as SetChannelForm;
 use Dcat\Admin\Grid\RowAction;
 use Dcat\Admin\Widgets\Modal;
 
@@ -17,10 +17,15 @@ class SetChannel extends RowAction
 
     public function render()
     {
-        $form = Channel::make()
+        if (empty($this->row->channel_ids)) {
+            $channel_ids = '';
+        } else {
+            $channel_ids = json_encode($this->row->channel_ids);
+        }
+        $form = SetChannelForm::make()
             ->payload([
                 'id' => $this->getKey(),
-                'channel_id' => $this->row->channel_id??null,
+                'channel_ids' => $channel_ids,
             ]);
 
         return Modal::make()

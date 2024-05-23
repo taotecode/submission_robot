@@ -5,7 +5,9 @@ namespace App\Enums;
 class AuditorRole
 {
     const QUICK_APPROVAL = 1;
+
     const QUICK_REJECTION = 2;
+
     const PRIVATE_CHAT_SUBMISSION = 3;
 
     const APPROVAL = 4;

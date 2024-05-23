@@ -24,7 +24,7 @@ use Dcat\Admin\Layout\Navbar;
  */
 Admin::navbar(function (Navbar $navbar) {
 
-    $navbar->right(<<<HTML
+    $navbar->right(<<<'HTML'
 <button type="button" class="btn btn-primary" onclick="clearCache()">清除缓存</button>
 
 <script>

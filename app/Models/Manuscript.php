@@ -14,10 +14,12 @@ class Manuscript extends Model
      */
     protected $fillable = [
         'bot_id',
+        'channel_id',
         'message_id',
         'type',
         'text',
         'posted_by',
+        'posted_by_id',
         'is_anonymous',
         'data',
         'appendix',
@@ -42,8 +44,13 @@ class Manuscript extends Model
 
     const TYPE_TEXT = 'text';
 
-    public function bot()
+    public function bot(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
-        return $this->belongsTo(Bot::class,'id', 'bot_id');
+        return $this->belongsTo(Bot::class, 'bot_id', 'id');
+    }
+
+    public function channel(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(Channel::class, 'channel_id', 'id');
     }
 }

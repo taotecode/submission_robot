@@ -3,6 +3,7 @@
 use Fukuball\Jieba\Finalseg;
 use Fukuball\Jieba\Jieba;
 use Illuminate\Support\Str;
+use lucadevelop\TelegramEntitiesDecoder\EntityDecoder;
 
 function get_posted_by($data)
 {
@@ -92,11 +93,11 @@ function quickCut($text, $lexicon_path)
     return Jieba::cut($text);
 }
 
-
 function get_text_title($string)
 {
     $replaced = Str::replace('\r\n', PHP_EOL, $string);
     $limitedString = Str::limit($replaced);
+
     return Str::before($limitedString, PHP_EOL);
 }
 
@@ -104,5 +105,44 @@ function get_file_url($file_id)
 {
     $telegram = new \Telegram\Bot\Api(config('services.telegram.bot_token'));
     $file = $telegram->getFile(['file_id' => $file_id]);
+
     return 'https://api.telegram.org/file/bot'.config('services.telegram.bot_token').'/'.$file_id;
+}
+
+function preprocessMessageText(mixed $message, object $botInfo): array|string
+{
+    $messageCacheData = $message->toArray();
+
+    if (! empty($messageCacheData['text']) && $botInfo->is_message_text_preprocessing == 1) {
+        $entity_decoder = new EntityDecoder('HTML');
+        try {
+            $messageCacheDataTmp = is_object($message) ? $message : collect($message);
+            $messageCacheData['text'] = $entity_decoder->decode($messageCacheDataTmp);
+        } catch (Exception $e) {
+            Log::error('消息文字预处理失败：'.$e->getMessage());
+
+            return 'error';
+        }
+    }
+
+    return $messageCacheData;
+}
+
+function preprocessMessageCaption(mixed $message, object $botInfo): array|string
+{
+    $messageCacheData = $message->toArray();
+
+    if (! empty($messageCacheData['caption']) && $botInfo->is_message_text_preprocessing == 1) {
+        $entity_decoder = new EntityDecoder('HTML');
+        try {
+            $messageCacheDataTmp = is_object($message) ? $message : collect($message);
+            $messageCacheData['caption'] = $entity_decoder->decode($messageCacheDataTmp);
+        } catch (Exception $e) {
+            Log::error('消息标题预处理失败：'.$e->getMessage());
+
+            return 'error';
+        }
+    }
+
+    return $messageCacheData;
 }

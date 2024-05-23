@@ -2,7 +2,6 @@
 
 namespace App\Telegram\Commands;
 
-use App\Enums\KeyBoardData;
 use App\Enums\ManuscriptStatus;
 use App\Models\Bot;
 use Telegram\Bot\Commands\Command;
@@ -11,6 +10,7 @@ class ListCommand extends Command
 {
     //主要命令
     protected string $name = 'list';
+
     //命令描述
     protected string $description = '待审核的稿件列表';
 
@@ -25,9 +25,9 @@ class ListCommand extends Command
 
         if (! in_array($this->getUpdate()->getChat()->type, ['group', 'supergroup'])) {
             $this->replyWithMessage([
-                'text' => "<b>请在群组中使用！</b>",
+                'text' => '<b>请在群组中使用！</b>',
                 'parse_mode' => 'HTML',
-                'reply_markup'=>json_encode(['remove_keyboard'=>true,'selective'=>false]),
+                'reply_markup' => json_encode(['remove_keyboard' => true, 'selective' => false]),
                 'reply_to_message_id' => $message->id,
             ]);
 
@@ -36,18 +36,18 @@ class ListCommand extends Command
 
         $botData = $this->getTelegram()->getMe();
         $botInfo = (new Bot())->where('name', $botData->username)->first();
-        if (!$botInfo){
+        if (! $botInfo) {
             $this->replyWithMessage([
-                'text' => "<b>请先前往后台添加机器人！或后台机器人的用户名没有设置正确！</b>",
+                'text' => '<b>请先前往后台添加机器人！或后台机器人的用户名没有设置正确！</b>',
                 'parse_mode' => 'HTML',
-                'reply_markup'=>json_encode(['remove_keyboard'=>true,'selective'=>false]),
+                'reply_markup' => json_encode(['remove_keyboard' => true, 'selective' => false]),
                 'reply_to_message_id' => $message->id,
             ]);
 
             return 'ok';
         }
 
-        $inline_keyboard=[
+        $inline_keyboard = [
             'inline_keyboard' => [
                 [
                     [
@@ -59,11 +59,11 @@ class ListCommand extends Command
         ];
 
         $manuscript = (new \App\Models\Manuscript())->where('bot_id', $botInfo->id)->where('status', ManuscriptStatus::PENDING)->get();
-        if (!$manuscript->isEmpty()){
-            foreach ($manuscript as $item){
+        if (! $manuscript->isEmpty()) {
+            foreach ($manuscript as $item) {
                 $inline_keyboard['inline_keyboard'][] = [
                     [
-                        'text' => "【".$item->text."】",
+                        'text' => '【'.$item->text.'】',
                         'callback_data' => 'show_pending_manuscript:'.$item->id,
                     ],
                 ];

@@ -8,6 +8,7 @@ return [
     'fields' => [
         'name' => '公开频道用户名',
         'appellation' => '频道名称',
+        'sort_order' => '排序',
     ],
     'options' => [
     ],

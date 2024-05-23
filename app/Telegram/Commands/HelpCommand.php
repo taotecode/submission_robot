@@ -2,7 +2,7 @@
 
 namespace App\Telegram\Commands;
 
-use App\Enums\KeyBoardData;
+use App\Admin\Repositories\Bot;
 use Telegram\Bot\Commands\Command;
 
 class HelpCommand extends Command
@@ -23,10 +23,18 @@ class HelpCommand extends Command
      */
     public function handle(): void
     {
+        if ($this->getUpdate()->getChat()->type !== 'private') {
+            return;
+        }
         $message = $this->getUpdate()->getMessage();
+
+        $botId = request()->route('id');
+
+        $botInfo = (new Bot())->findInfo($botId);
+
         $this->replyWithMessage([
-            'text' => '您可以使用底部的操作键盘快速交互，或者发送 /help 命令查看详细的功能介绍',
-            'reply_markup' => json_encode(KeyBoardData::START),
+            'text' => get_config('command.help'),
+            'reply_markup' => json_encode(service_isOpen_check_return_keyboard($botInfo)),
             'reply_to_message_id' => $message->id,
         ]);
     }

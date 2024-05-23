@@ -12,6 +12,7 @@ class Channel extends Model
     protected $fillable = [
         'name',
         'appellation',
+        'sort_order',
         'created_at',
         'updated_at',
     ];

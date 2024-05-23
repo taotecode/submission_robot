@@ -2,13 +2,16 @@
 
 namespace App\Http\Controllers\Bots;
 
-use App\Enums\ManuscriptStatus;
 use App\Http\Controllers\Controller;
 use App\Models\Bot;
 use App\Services\BaseService;
-use App\Telegram\Commands\StartCommand;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
+use lucadevelop\TelegramEntitiesDecoder\EntityDecoder;
 use Telegram\Bot\Api;
+use Telegram\Bot\Helpers\Entities;
+use Telegram\Bot\Keyboard\Button;
+use Telegram\Bot\Keyboard\Keyboard;
 
 class TestController extends Controller
 {
@@ -16,18 +19,37 @@ class TestController extends Controller
     {
         $telegram = new Api(env('TELEGRAM_BOT_TOKEN'));
 
-        $file=$telegram->getFile(['file_id'=>'AgACAgEAAxkBAAIB2GYPabtpIuMVtmNIYreBYbEagoq7AALHqzEbvsSARJrVHae73dkSAQADAgADcwADNAQ']);
-        dd($file);
+        /*$reply_markup = Keyboard::make()
+            ->inline()
+            ->row([
+                Keyboard::button([
+                    'text' => 'Google',
+                    'url' => 'https://www.google.com',
+                ]),
+            ]);
+        dd($telegram->sendMessage([
+            'chat_id' => '6247385123',
+            'text' => 'ceshi',
+            'parse_mode' => 'HTML',
+            'reply_markup'=>$reply_markup,
+        ]));*/
 
-//        $text="稿件消息<a href='https://t.me/123'>123</a>";
-//
-//        dd($telegram->sendMessage([
-//            'chat_id' => '6247385123',
-//            'text' => $text,
-//            'parse_mode' => 'HTML',
-//        ]));
+        //        dd($telegram->deleteWebhook());
+
+        //        $text=new Entities("zhelsa <b>zhelsa</b>");
+        //        dump($text->toMarkdown());
+        $entity_decoder = new EntityDecoder('HTML');
+        $response = $telegram->getUpdates([
+            //            'offset'=>1,
+        ]);
+        dump($response);
+        foreach ($response as $item) {
+            dump($item->getMessage());
+            $decoded_text = $entity_decoder->decode($item->getMessage());
+            dump($decoded_text);
+        }
+        //        dd($response);
     }
-
 
     public function setCommands()
     {
@@ -52,7 +74,7 @@ class TestController extends Controller
             ],
         ]);
         $telegram->setMyCommands([
-            'commands'=>json_encode([
+            'commands' => json_encode([
                 [
                     'command' => 'get_group_id',
                     'description' => '获取群组ID',
@@ -63,7 +85,7 @@ class TestController extends Controller
             ]),
         ]);
         $telegram->setMyCommands([
-            'commands'=>json_encode([
+            'commands' => json_encode([
                 [
                     'command' => 'start',
                     'description' => '开始投稿',
@@ -75,7 +97,7 @@ class TestController extends Controller
                 [
                     'command' => 'get_me_id',
                     'description' => '获取我的ID',
-                ]
+                ],
             ]),
             'scope' => json_encode([
                 'type' => 'all_private_chats',
@@ -97,47 +119,22 @@ class TestController extends Controller
         $response = $telegram->getMe();
         dd($response);*/
 
-        $keyword='关键字';
+        $bot = Bot::find(1);
+        //        Cache::put('test', [
+        //            'bot'=>$bot,
+        //            'asd'=>[
+        //                123
+        //            ]
+        //        ], 60*60*24*7);
 
-        $manuscript = (new \App\Models\Manuscript())
-            ->where('bot_id', 1)
-            ->where('status', ManuscriptStatus::APPROVED)
-//            ->where('text', 'like', '%关键字%')
-            ->orderBy('id', 'desc')
-            ->paginate(10, ['*'], 'page');
-
-        $inline_keyboard=[
-            'inline_keyboard' => []
-        ];
-
-        $manuscript->each(function ($item) use (&$inline_keyboard){
-            $inline_keyboard['inline_keyboard'][] = [
-                ['text' => $item->text, 'callback_data' => 'manuscript_search_show_link:'.$item->id]
-            ];
-        });
-
-        $pageInlineKeyboardNum = count($inline_keyboard['inline_keyboard'])+1;
-
-        if ($manuscript->currentPage() > 1) {
-            $inline_keyboard['inline_keyboard'][$pageInlineKeyboardNum][] = [
-                'text' => '上一页', 'callback_data' => 'manuscript_search_page:prev:'.$keyword.':'.($manuscript->currentPage()-1)
-            ];
-        }
-        if ($manuscript->lastPage() !== $manuscript->currentPage()) {
-            $inline_keyboard['inline_keyboard'][$pageInlineKeyboardNum][] = [
-                'text' => '下一页', 'callback_data' => 'manuscript_search_page:next:'.$keyword.':'.($manuscript->currentPage()+1)
-            ];
-        }
-
-        dump($inline_keyboard);
-        dd($manuscript->toArray());
+        dd(Cache::get('test'));
     }
 
     public function webapp_hook()
     {
         $telegram = new Api(env('TELEGRAM_BOT_TOKEN'));
         $updates = $telegram->commandsHandler(true);
-        Log::info('',$updates->toArray());
+        Log::info('', $updates->toArray());
 
         $telegram->setMyCommands([
             'chat_id' => $updates->getChat()->id,
@@ -146,9 +143,9 @@ class TestController extends Controller
                 'inline_keyboard' => [
                     [
                         ['text' => '你的网页名称', 'url' => 'https://www.baidu.com'],
-                    ]
-                ]
-            ])
+                    ],
+                ],
+            ]),
         ]);
     }
 }

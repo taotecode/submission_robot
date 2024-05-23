@@ -33,7 +33,8 @@ class MyBotController extends AdminController
             $grid->column('name')->display(function ($name) {
                 return '@'.$name;
             })->copyable();
-            $grid->column('review_num')->badge();
+            $grid->column('review_approved_num')->badge();
+            $grid->column('review_reject_num')->badge();
             $grid->column('status')->switch();
             $grid->column('created_at');
             $grid->column('updated_at')->sortable();
@@ -92,8 +93,16 @@ class MyBotController extends AdminController
             $form->text('appellation')->help('机器人的用户名');
             $form->text('name')->help('不需要携带@符号，如：tougao_bot')->required();
             $form->password('token')->help('通过@BotFather创建机器人获取')->required();
-            $form->number('review_num')->min(1)->max(30)->default(1)->required()
+            $form->number('review_approved_num')->min(1)->max(30)->default(1)->required()
                 ->help('每条投稿消息的审核数量。如：设置1，那么只需要一个人就可以通过或拒绝。设置2，那么就需要两个人就可以通过或拒绝。<br>最小值为：1');
+            $form->number('review_reject_num')->min(1)->max(30)->default(1)->required()
+                ->help('每条投稿消息的审核数量。如：设置1，那么只需要一个人就可以通过或拒绝。设置2，那么就需要两个人就可以通过或拒绝。<br>最小值为：1');
+
+            $form->switch('is_message_text_preprocessing')->default(1)->help('是否开启消息文本预处理？<br>开启后，将会对消息文本格式进行保留，如：空格、换行、链接、加粗等。');
+
+            $form->switch('is_submission')->default(1)->help('是否开启投稿服务？');
+            $form->switch('is_complaint')->default(1)->help('是否开启投诉服务？');
+            $form->switch('is_suggestion')->default(1)->help('是否开启建议服务？');
 
             $form->switch('status')->default(1);
             $form->display('created_at');

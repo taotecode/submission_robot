@@ -26,7 +26,7 @@ class AuditorForm extends Form implements LazyRenderable
 
         foreach ($id as $key => $auditorId) {
             // 如果不在提交的审核员中，则删除
-            if (!in_array($auditorId, $auditor_id)) {
+            if (! in_array($auditorId, $auditor_id)) {
                 $model->destroy($key);
             } else {
                 // 如果在提交的审核员中，则从数组中删除
@@ -40,12 +40,11 @@ class AuditorForm extends Form implements LazyRenderable
             }
         }
 
-
         foreach ($auditor_id as $auditorId) {
             foreach ($id as $value) {
-                if ($value==$auditorId) {
+                if ($value == $auditorId) {
                     continue;
-                }else{
+                } else {
                     $sqlData[] = [
                         'review_group_id' => $review_group_id,
                         'auditor_id' => $auditorId,
