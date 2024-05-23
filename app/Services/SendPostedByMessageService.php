@@ -33,6 +33,8 @@ trait SendPostedByMessageService
                         ]);
                     }
 
+                    $text = html_entity_decode($text, ENT_QUOTES, 'UTF-8');
+
                     $telegram->sendMessage([
                         'chat_id' => $manuscript->posted_by['id'],
                         'text' => $text,
