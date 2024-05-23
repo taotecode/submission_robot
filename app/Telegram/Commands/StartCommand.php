@@ -3,7 +3,7 @@
 namespace App\Telegram\Commands;
 
 use App\Enums\CacheKey;
-use App\Models\Bot;
+use App\Admin\Repositories\Bot;
 use Illuminate\Support\Facades\Cache;
 use Telegram\Bot\Commands\Command;
 
@@ -24,7 +24,7 @@ class StartCommand extends Command
     {
 
         $botId = request()->route('id');
-        $botInfo = (new Bot())->find($botId);
+        $botInfo = (new Bot())->findInfo($botId);
 
         $message = $this->getUpdate()->getMessage();
         $chatId = $this->getUpdate()->getChat()->id;

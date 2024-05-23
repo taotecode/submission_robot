@@ -3,41 +3,45 @@
 namespace App\Http\Controllers\Bots;
 
 use App\Http\Controllers\Controller;
-use App\Models\Bot;
+use App\Admin\Repositories\Bot;
 use App\Services\CallBackQueryService;
 use App\Services\SaveBotUserService;
 use App\Services\StartService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Telegram\Bot\Api;
+use Telegram\Bot\Exceptions\TelegramSDKException;
 
 class HookController extends Controller
 {
     use SaveBotUserService;
 
-    public Bot $botModel;
+    public Bot $botRepository;
 
     public StartService $startService;
 
     public CallBackQueryService $callBackQueryService;
 
     public function __construct(
-        Bot $botModel,
+        Bot $botRepository,
         StartService $startService,
         CallBackQueryService $callBackQueryService
     ) {
-        $this->botModel = $botModel;
+        $this->botRepository = $botRepository;
         $this->startService = $startService;
         $this->callBackQueryService = $callBackQueryService;
     }
 
+    /**
+     * @throws TelegramSDKException
+     */
     public function index($id, Request $request)
     {
         if (config('app.env') === 'local') {
             Log::info('机器人请求', $request->all());
         }
         //查询机器人信息
-        $botInfo = $this->botModel->with('review_group')->find($id);
+        $botInfo = $this->botRepository->findInfo($id);
         if (! $botInfo) {
             Log::error('机器人数据不存在！', [$id]);
 

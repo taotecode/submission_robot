@@ -2,7 +2,7 @@
 
 namespace App\Telegram\Commands;
 
-use App\Models\Bot;
+use App\Admin\Repositories\Bot;
 use Telegram\Bot\Commands\Command;
 
 class HelpCommand extends Command
@@ -27,7 +27,7 @@ class HelpCommand extends Command
 
         $botId = request()->route('id');
 
-        $botInfo = (new Bot())->find($botId);
+        $botInfo = (new Bot())->findInfo($botId);
 
         $this->replyWithMessage([
             'text' => get_config('command.help'),
