@@ -352,9 +352,15 @@ class SubmissionService
             $chatText = get_config('submission.confirm_white_list');
 
             if (empty(get_text_title($manuscript->text))) {
-                $chatText .= "\r\n\r\n稿件消息直达链接：<a href='https://t.me/".$channel->name.'/'.$manuscript->message_id."'>点击查看</a>";
+                $chatText = str($chatText)->swap([
+                    '{url}' => 'https://t.me/'.$channel->name.'/'.$manuscript->message_id,
+                    '{title}' => '点击查看',
+                ]);
             } else {
-                $chatText .= "\r\n\r\n稿件消息直达链接：<a href='https://t.me/".$channel->name.'/'.$manuscript->message_id."'>".get_text_title($manuscript->text).'</a>';
+                $chatText = str($chatText)->swap([
+                    '{url}' => 'https://t.me/'.$channel->name.'/'.$manuscript->message_id,
+                    '{title}' => get_text_title($manuscript->text),
+                ]);
             }
 
             $this->sendTelegramMessage($telegram, 'sendMessage', [

@@ -34,6 +34,7 @@ class ConfigController extends AdminController
                 $filter->panel();
                 $filter->equal('id');
                 $filter->like('group');
+                $filter->like('name');
                 $filter->like('description');
                 $filter->like('value');
             });
@@ -79,7 +80,12 @@ class ConfigController extends AdminController
                 'max' => '不能大于10个字符',
             ])->required();
             $form->text('description')->required();
-            $form->textarea('value')->help("支持html格式(参考<a href='https://core.telegram.org/bots/api#html-style' target='_blank'>https://core.telegram.org/bots/api#html-style</a>)。");
+            $form->textarea('value')
+                ->help("
+支持html格式(参考<a href='https://core.telegram.org/bots/api#html-style' target='_blank'>https://core.telegram.org/bots/api#html-style</a>)。<br>
+如果字符内含有变量，请不要随意改动变量，如：<pre>{url}</pre>您可以移动位置，但是不能改为这种名称。<pre>{uri}</pre><br>
+其次，如果是这种<pre>".htmlspecialchars("<a href='{url}'>{title}</a>").'</pre>这种内容，请不要改动a标签以及href属性，只能改动{title}这种变量的左右内容，如：<pre>'.htmlspecialchars("<a href='{url}'>标题：{title}</a>").'</pre><br>
+');
 
             $form->display('created_at');
             $form->display('updated_at');

@@ -493,7 +493,7 @@ trait SendTelegramMessageService
             $keywords = array_unique($keywords);
             //拼接关键词
             if (! empty($keywords)) {
-                $textContent = PHP_EOL.PHP_EOL.'关键词：';
+                $textContent = get_config('submission.channel_keywords');
                 foreach ($keywords as $item) {
                     $textContent .= "#{$item} ";
                 }
@@ -512,9 +512,11 @@ trait SendTelegramMessageService
     {
         if (! empty($manuscript)) {
             if ($manuscript->is_anonymous === 1) {
-                $text = PHP_EOL.PHP_EOL.'匿名投稿';
+                $text = get_config('submission.channel_anonymous');
             } else {
-                $text = PHP_EOL.PHP_EOL.'投稿人：'.get_posted_by($manuscript->posted_by);
+                $text = str(get_config('submission.channel_anonymous_no'))->swap([
+                    '{posted_by}' => get_posted_by($manuscript->posted_by),
+                ]);
             }
 
             return $text;
