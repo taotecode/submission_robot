@@ -34,20 +34,13 @@ class GetUpdateController extends Controller
                 $callBackQueryService->index($botInfo, $updateData, $telegram);
             }
             if (
-                $updateData->objectType() === 'message' &&
-                ! $updateData->getMessage()->hasCommand() &&
-                ! $updateData->getChat()->has('group') &&
-                ! $updateData->getChat()->has('supergroup') &&
-                ! $updateData->getChat()->has('getChat') &&
-                ! in_array($updateData->getChat()->type, ['group', 'supergroup'])
+                $updateData->getChat()->type === 'private'
             ) {
-                if ($updateData->getChat()->type != 'private') {
-                    return 'ok';
-                }
                 $startService->index($botInfo, $updateData, $telegram);
             }
+            dump($updateData->getChat(),$updateData->objectType());
         }
 
-        dd($response);
+//        dd($response);
     }
 }

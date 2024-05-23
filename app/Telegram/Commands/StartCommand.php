@@ -2,8 +2,8 @@
 
 namespace App\Telegram\Commands;
 
-use App\Enums\CacheKey;
 use App\Admin\Repositories\Bot;
+use App\Enums\CacheKey;
 use Illuminate\Support\Facades\Cache;
 use Telegram\Bot\Commands\Command;
 
@@ -22,9 +22,12 @@ class StartCommand extends Command
 
     public function handle(): void
     {
-
         $botId = request()->route('id');
         $botInfo = (new Bot())->findInfo($botId);
+
+        if ($this->getUpdate()->getChat()->type !== 'private') {
+            return;
+        }
 
         $message = $this->getUpdate()->getMessage();
         $chatId = $this->getUpdate()->getChat()->id;

@@ -23,6 +23,9 @@ class HelpCommand extends Command
      */
     public function handle(): void
     {
+        if ($this->getUpdate()->getChat()->type !== 'private') {
+            return;
+        }
         $message = $this->getUpdate()->getMessage();
 
         $botId = request()->route('id');

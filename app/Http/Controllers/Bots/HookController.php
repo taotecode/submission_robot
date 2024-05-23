@@ -70,16 +70,9 @@ class HookController extends Controller
 
         //进入投稿服务
         if (
-            $updateData->objectType() === 'message' &&
-            ! $updateData->getMessage()->hasCommand() &&
-            ! $updateData->getChat()->has('group') &&
-            ! $updateData->getChat()->has('supergroup') &&
-            ! $updateData->getChat()->has('getChat') &&
-            ! in_array($updateData->getChat()->type, ['group', 'supergroup'])
+            $updateData->getChat()->type === 'private'
+
         ) {
-            if ($updateData->getChat()->type != 'private') {
-                return 'ok';
-            }
             $this->startService->index($botInfo, $updateData, $telegram);
         }
 
