@@ -363,6 +363,8 @@ class SubmissionService
                 ]);
             }
 
+            $chatText = html_entity_decode($chatText, ENT_QUOTES, 'UTF-8');
+
             $this->sendTelegramMessage($telegram, 'sendMessage', [
                 'chat_id' => $chatId,
                 'reply_to_message_id' => $messageId,
