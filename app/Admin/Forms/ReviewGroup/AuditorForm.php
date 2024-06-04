@@ -18,39 +18,25 @@ class AuditorForm extends Form implements LazyRenderable
     public function handle(array $input)
     {
         $model = new ReviewGroupAuditor();
-        $auditor_id = $input['auditor_id'];
-        $review_group_id = $input['review_group_id'];
-        $id = json_decode($input['id'], true);
+        $auditor_ids = array_filter($input['auditor_id']);//获取提交的审核员id
+        $review_group_id = $input['review_group_id'];//获取审核组id
+        $existing_ids = json_decode($input['id'], true);//获取已存在的审核员id
 
         $sqlData = [];
+        $deleteIds = array_diff($existing_ids, $auditor_ids); // 需要删除的审核员ID
+        $addIds = array_diff($auditor_ids, $existing_ids); // 需要新增的审核员ID
 
-        foreach ($id as $key => $auditorId) {
-            // 如果不在提交的审核员中，则删除
-            if (! in_array($auditorId, $auditor_id)) {
-                $model->destroy($key);
-            } else {
-                // 如果在提交的审核员中，则从数组中删除
-                if (in_array($auditorId, $auditor_id)) {
-                    continue;
-                }
-                $sqlData[] = [
-                    'review_group_id' => $review_group_id,
-                    'auditor_id' => $auditorId,
-                ];
-            }
+        // 删除不在提交的审核员中的已存在审核员
+        foreach ($deleteIds as $key => $auditorId) {
+            $model->destroy($key);
         }
 
-        foreach ($auditor_id as $auditorId) {
-            foreach ($id as $value) {
-                if ($value == $auditorId) {
-                    continue;
-                } else {
-                    $sqlData[] = [
-                        'review_group_id' => $review_group_id,
-                        'auditor_id' => $auditorId,
-                    ];
-                }
-            }
+        // 添加新的审核员
+        foreach ($addIds as $auditorId) {
+            $sqlData[] = [
+                'review_group_id' => $review_group_id,
+                'auditor_id' => $auditorId,
+            ];
         }
 
         if (empty($sqlData)) {
