@@ -69,7 +69,7 @@ class HookController extends Controller
         }
 
 
-        if ($updateData->hasCommand()&&$updateData->objectType()!=='callback_query'||$updateData->getMessage()->from->is_bot){
+        if ($updateData->hasCommand()&&$updateData->objectType()!=='callback_query'){
             return 'ok';
         }
 
