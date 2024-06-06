@@ -8,6 +8,8 @@
 
 # 最新功能更新日期：2024年6月6日
 
+更新通知频道：[纸飞机：@submission_robot_channel](https://t.me/submission_robot_channel)
+
 交流群：[纸飞机：@submission_robot_chat](https://t.me/submission_robot_chat)
 
 ## 功能列表
