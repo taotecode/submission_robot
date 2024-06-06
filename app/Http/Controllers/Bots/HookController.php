@@ -38,7 +38,7 @@ class HookController extends Controller
     public function index($id, Request $request)
     {
         if (config('app.env') === 'local') {
-            Log::info('机器人请求', $request->all());
+            Log::info('机器人收到请求', $request->all());
         }
         //查询机器人信息
         $botInfo = $this->botRepository->findInfo($id);
@@ -69,7 +69,7 @@ class HookController extends Controller
         }
 
 
-        if ($updateData->hasCommand()){
+        if ($updateData->hasCommand()&&$updateData->objectType()!=='callback_query'){
             return 'ok';
         }
 
