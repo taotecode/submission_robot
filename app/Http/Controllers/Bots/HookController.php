@@ -23,10 +23,11 @@ class HookController extends Controller
     public CallBackQueryService $callBackQueryService;
 
     public function __construct(
-        Bot $botRepository,
-        StartService $startService,
+        Bot                  $botRepository,
+        StartService         $startService,
         CallBackQueryService $callBackQueryService
-    ) {
+    )
+    {
         $this->botRepository = $botRepository;
         $this->startService = $startService;
         $this->callBackQueryService = $callBackQueryService;
@@ -42,7 +43,7 @@ class HookController extends Controller
         }
         //查询机器人信息
         $botInfo = $this->botRepository->findInfo($id);
-        if (! $botInfo) {
+        if (!$botInfo) {
             Log::error('机器人数据不存在！', [$id]);
 
             return false;
@@ -69,21 +70,15 @@ class HookController extends Controller
         }
 
 
-        if ($updateData->hasCommand()&&$updateData->objectType()!=='callback_query'){
+        if ($updateData->hasCommand() && $updateData->objectType() !== 'callback_query') {
             return 'ok';
         }
 
         //进入投稿服务
-        if (
-            $updateData->getChat()->type === 'private'
-
-        ) {
-            $this->startService->index($botInfo, $updateData, $telegram);
-        }
-
-        //按键相应
-        if ($updateData->objectType() === 'callback_query') {
+        if ($updateData->objectType() === 'callback_query') {//按键相应
             $this->callBackQueryService->index($botInfo, $updateData, $telegram);
+        } elseif ($updateData->getChat()->type === 'private') {
+            $this->startService->index($botInfo, $updateData, $telegram);
         }
 
         return 'ok';
