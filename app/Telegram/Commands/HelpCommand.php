@@ -27,6 +27,9 @@ class HelpCommand extends Command
             return;
         }
         $message = $this->getUpdate()->getMessage();
+        if ($message->from->is_bot){
+            return;
+        }
 
         $botId = request()->route('id');
 

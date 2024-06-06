@@ -30,6 +30,10 @@ class StartCommand extends Command
         }
 
         $message = $this->getUpdate()->getMessage();
+        if ($message->from->is_bot){
+            return;
+        }
+
         $chatId = $this->getUpdate()->getChat()->id;
         Cache::tags(CacheKey::Submission.'.'.$chatId)->flush();
         Cache::tags(CacheKey::Complaint.'.'.$chatId)->flush();

@@ -26,6 +26,7 @@ class SetSubmissionUserTypeService
 
         if ($this->roleCheck($telegram, $callbackQuery->id, $from->id, [
             AuditorRole::SET_SUBMISSION_USER_TYPE,
+                AuditorRole::ADD_BLACK,
         ]) !== true) {
             return 'ok';
         }
