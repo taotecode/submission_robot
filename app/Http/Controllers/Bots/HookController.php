@@ -68,6 +68,11 @@ class HookController extends Controller
             $this->save_bot_user($botInfo, $updateData->getChat() ?? null, $updateData->getMessage() ?? null);
         }
 
+
+        if ($updateData->hasCommand()){
+            return 'ok';
+        }
+
         //进入投稿服务
         if (
             $updateData->getChat()->type === 'private'
