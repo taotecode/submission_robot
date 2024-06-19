@@ -69,4 +69,6 @@ class KeyBoardName
     const Yes = '是';
 
     const No = '否';
+
+    const Confirm = '确认';
 }

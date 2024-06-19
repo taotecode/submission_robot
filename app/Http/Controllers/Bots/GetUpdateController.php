@@ -30,6 +30,7 @@ class GetUpdateController extends Controller
         }
 
         foreach ($response as $updateData) {
+            dump($updateData);
             if ($updateData->hasCommand()&&$updateData->objectType()!=='callback_query'){
                 continue;
             }

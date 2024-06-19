@@ -11,6 +11,7 @@ use App\Models\Manuscript;
 use App\Models\SubmissionUser;
 use App\Services\CallBackQuery\ApprovedAndRejectedSubmissionService;
 use App\Services\CallBackQuery\DeleteSubmissionMessageService;
+use App\Services\CallBackQuery\ForwardOriginService;
 use App\Services\CallBackQuery\ManuscriptSearchService;
 use App\Services\CallBackQuery\PendingManuscriptService;
 use App\Services\CallBackQuery\PrivateMessageService;
@@ -118,6 +119,54 @@ class CallBackQueryService
                 break;
             case 'quick_submission':
                 $this->quick_submission($telegram, $botInfo, $updateData->getMessage()->replyToMessage);
+                break;
+            case 'forward_origin_select_Yes':
+                $this->forward_origin_select_Yes($telegram, $chatId, $messageId);
+                break;
+            case 'forward_origin_select_No':
+                $this->forward_origin_select_No($telegram, $chatId, $messageId);
+                break;
+            case 'forward_origin_select_restart':
+                $this->forward_origin_select_restart($telegram, $chatId, $messageId);
+                break;
+            case 'forward_origin_input_cancel':
+                $this->forward_origin_input_cancel($telegram, $chatId, $messageId);
+                break;
+            case 'disable_message_preview_yes':
+                $this->selectCommonByYesOrNo($telegram, $chatId, $messageId,
+                    1,'disable_message_preview_status','disable_message_preview_id',
+                    get_config('submission.disable_message_preview_end_tip')
+                );
+                break;
+            case 'disable_message_preview_no':
+                $this->selectCommonByYesOrNo($telegram, $chatId, $messageId,
+                    0,'disable_message_preview_status','disable_message_preview_id',
+                    get_config('submission.disable_message_preview_end_tip')
+                );
+                break;
+            case 'disable_notification_yes':
+                $this->selectCommonByYesOrNo($telegram, $chatId, $messageId,
+                    1,'disable_notification_status','disable_notification_id',
+                    get_config('submission.disable_notification_end_tip')
+                );
+                break;
+            case 'disable_notification_no':
+                $this->selectCommonByYesOrNo($telegram, $chatId, $messageId,
+                    0,'disable_notification_status','disable_notification_id',
+                    get_config('submission.disable_notification_end_tip')
+                );
+                break;
+            case 'protect_content_yes':
+                $this->selectCommonByYesOrNo($telegram, $chatId, $messageId,
+                    1,'protect_content_status','protect_content_id',
+                    get_config('submission.protect_content_end_tip')
+                );
+                break;
+            case 'protect_content_no':
+                $this->selectCommonByYesOrNo($telegram, $chatId, $messageId,
+                    0,'protect_content_status','protect_content_id',
+                    get_config('submission.protect_content_end_tip')
+                );
                 break;
         }
     }
@@ -235,9 +284,9 @@ class CallBackQueryService
         $objectType = $message->objectType();
         $chatId = $message->chat->id;
 
-        Cache::tags(CacheKey::Submission.'.'.$chatId)->flush();
+        Cache::tags(CacheKey::Submission . '.' . $chatId)->flush();
         //开启投稿服务标识
-        Cache::tags(CacheKey::Submission.'.'.$chatId)->put($chatId, $message->chat->toArray(), now()->addDay());
+        Cache::tags(CacheKey::Submission . '.' . $chatId)->put($chatId, $message->chat->toArray(), now()->addDay());
 
         $submissionUser = (new SubmissionUser)->firstOrCreate([
             'bot_id' => $botInfo->id,
@@ -252,7 +301,7 @@ class CallBackQueryService
 
         //判断是否是黑名单用户
         if ($submissionUser->type == SubmissionUserType::BLACK) {
-            Cache::tags(CacheKey::Submission.'.'.$chatId)->flush();
+            Cache::tags(CacheKey::Submission . '.' . $chatId)->flush();
 
             return $this->sendTelegramMessage($telegram, 'sendMessage', [
                 'chat_id' => $chatId,
@@ -271,5 +320,43 @@ class CallBackQueryService
                 return (new SubmissionService())->startUpdateByMedia($telegram, $botInfo, $chatId, $message->messageId, $message, $objectType);
                 break;
         }
+    }
+
+    private function forward_origin_select_Yes(Api $telegram, $chatId, $messageId)
+    {
+        return (new ForwardOriginService())->forward_origin_select_Yes($telegram, $chatId, $messageId);
+    }
+
+    private function forward_origin_select_No(Api $telegram, $chatId, $messageId)
+    {
+        return (new ForwardOriginService())->forward_origin_select_No($telegram, $chatId, $messageId);
+    }
+
+    private function forward_origin_select_restart(Api $telegram, $chatId, $messageId)
+    {
+        return (new ForwardOriginService())->forward_origin_select_restart($telegram, $chatId, $messageId);
+    }
+
+    private function forward_origin_input_cancel(Api $telegram, mixed $chatId, mixed $messageId)
+    {
+        return (new ForwardOriginService())->forward_origin_input_cancel($telegram, $chatId, $messageId);
+    }
+
+    private function selectCommonByYesOrNo(Api $telegram, $chatId, $messageId, $status, $cacheKey,$cacheMessageId, $text)
+    {
+        $cacheTag = CacheKey::Submission . '.' . $chatId;
+        Cache::tags($cacheTag)->put($cacheKey, $status, now()->addDay());
+
+        $this->sendTelegramMessage($telegram,'deleteMessage',[
+            'chat_id' => $chatId,
+            'message_id' => Cache::tags($cacheTag)->get($cacheMessageId),
+        ]);
+
+        return $this->sendTelegramMessage($telegram, 'sendMessage', [
+            'chat_id' => $chatId,
+            'text' => $text,
+            'parse_mode' => 'HTML',
+            'reply_markup' => json_encode(KeyBoardData::$START_SUBMISSION),
+        ]);
     }
 }

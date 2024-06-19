@@ -45,9 +45,9 @@ class KeyBoardData
     public static array $END_COMPLAINT;
 
     /**
-     * @var array 用户选择是否显示来源键盘
+     * @var array 用户选择是与否的公共键盘
      */
-    public static array $FORWARD_ORIGIN_SELECT;
+    public static array $COMMON_YES_OR_NO;
 
     public static function init(): void
     {
@@ -124,21 +124,6 @@ class KeyBoardData
             'one_time_keyboard' => false, // 是否只显示一次
         ];
 
-        self::$FORWARD_ORIGIN_SELECT = [
-            'keyboard' => [
-                [
-                    get_keyboard_name_config('submission.forward_origin_select_Yes', KeyBoardName::Yes),
-                    get_keyboard_name_config('submission.forward_origin_select_No', KeyBoardName::No),
-                ],
-                [
-                    get_keyboard_name_config('submission.Restart', KeyBoardName::Restart),
-                    get_keyboard_name_config('submission.CancelSubmission', KeyBoardName::CancelSubmission),
-                ],
-            ],
-            'resize_keyboard' => true, // 让键盘大小适应屏幕
-            'one_time_keyboard' => false, // 是否只显示一次
-        ];
-
         self::$START_FEEDBACK = [
             'keyboard' => [
                 [
@@ -175,6 +160,19 @@ class KeyBoardData
                 [
                     get_keyboard_name_config('complaint.Restart', KeyBoardName::Restart),
                     get_keyboard_name_config('common.Cancel', KeyBoardName::Cancel),
+                ],
+            ],
+            'resize_keyboard' => true, // 让键盘大小适应屏幕
+            'one_time_keyboard' => false, // 是否只显示一次
+        ];
+
+        self::$COMMON_YES_OR_NO=[
+            'keyboard' => [
+                [
+                    get_keyboard_name_config('common.yes', KeyBoardName::Yes),
+                ],
+                [
+                    get_keyboard_name_config('common.no', KeyBoardName::No),
                 ],
             ],
             'resize_keyboard' => true, // 让键盘大小适应屏幕

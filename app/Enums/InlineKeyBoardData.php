@@ -26,6 +26,25 @@ class InlineKeyBoardData
 
     public static array $ERROR_FOR_MESSAGE;
 
+    /**
+     * @var array 用户选择是否显示来源键盘
+     */
+    public static array $FORWARD_ORIGIN_SELECT;
+
+    /**
+     * @var array 用户输入来源键盘
+     */
+    public static array $FORWARD_ORIGIN_INPUT;
+
+    /**
+     * @var array 用户确认输入来源键盘
+     */
+    public static array $FORWARD_ORIGIN_INPUT_CONFIRM;
+
+    public static array $DISABLE_MESSAGE_PREVIEW;
+
+    public static array $DISABLE_NOTIFICATION;
+
     public static function init(): void
     {
         self::$REVIEW_GROUP_APPROVED = [
@@ -95,6 +114,92 @@ class InlineKeyBoardData
                     ],
                 ],
             ],
+        ];
+
+        self::$FORWARD_ORIGIN_SELECT = [
+            'inline_keyboard' => [
+                [
+                    [
+                        'text' => get_keyboard_name_config('submission.forward_origin_select_Yes', KeyBoardName::Yes),
+                        'callback_data' => 'forward_origin_select_Yes'
+                    ],
+                    [
+                        'text' => get_keyboard_name_config('submission.forward_origin_select_No', KeyBoardName::No),
+                        'callback_data' => 'forward_origin_select_No'
+                    ]
+                ],
+            ],
+        ];
+
+        self::$FORWARD_ORIGIN_INPUT = [
+            'inline_keyboard' => [
+                [
+                    [
+                        'text' => get_keyboard_name_config('submission.forward_origin_input_cancel', KeyBoardName::Cancel),
+                        'callback_data' => 'forward_origin_input_cancel'
+                    ]
+                ],
+            ],
+        ];
+
+        self::$FORWARD_ORIGIN_INPUT_CONFIRM = [
+            'inline_keyboard' => [
+                [
+                    [
+                        'text' => get_keyboard_name_config('submission.forward_origin_input_confirm', KeyBoardName::Confirm),
+                        'callback_data' => 'forward_origin_input_confirm'
+                    ],
+                    [
+                        'text' => get_keyboard_name_config('submission.forward_origin_input_cancel', KeyBoardName::Cancel),
+                        'callback_data' => 'forward_origin_input_cancel'
+                    ]
+                ],
+            ],
+        ];
+
+        self::$DISABLE_MESSAGE_PREVIEW = [
+            'inline_keyboard' => [
+                [
+                    [
+                        'text' => get_keyboard_name_config('common.yes', KeyBoardName::Yes),
+                        'callback_data' => 'disable_message_preview_yes'
+                    ],
+                    [
+                        'text' => get_keyboard_name_config('common.no', KeyBoardName::No),
+                        'callback_data' => 'disable_message_preview_no'
+                    ]
+                ],
+            ]
+        ];
+
+        self::$DISABLE_NOTIFICATION = [
+            'inline_keyboard' => [
+                [
+                    [
+                        'text' => get_keyboard_name_config('common.yes', KeyBoardName::Yes),
+                        'callback_data' => 'disable_notification_yes'
+                    ],
+                    [
+                        'text' => get_keyboard_name_config('common.no', KeyBoardName::No),
+                        'callback_data' => 'disable_notification_no'
+                    ]
+                ],
+            ]
+        ];
+
+        self::$PROTECT_CONTENT = [
+            'inline_keyboard' => [
+                [
+                    [
+                        'text' => get_keyboard_name_config('common.yes', KeyBoardName::Yes),
+                        'callback_data' => 'protect_content_yes'
+                    ],
+                    [
+                        'text' => get_keyboard_name_config('common.no', KeyBoardName::No),
+                        'callback_data' => 'protect_content_no'
+                    ]
+                ],
+            ]
         ];
     }
 

@@ -18,8 +18,8 @@ trait SendTelegramMessageService
         ?string $custom_header_content = null, ?string $custom_tail_content = null
     ): mixed {
         return $this->objectTypeHandle(
-            $telegram, $botInfo, $chatId, $objectType, $message, null, false, true,
-            false, null, $is_addKeyWord, $is_addAnonymous, $is_addTailContent,
+            $telegram, $botInfo, $chatId, $objectType, $message, null, false, false,
+            true, false, null, $is_addKeyWord, $is_addAnonymous, $is_addTailContent,
             $custom_header_content, $custom_tail_content
         );
     }
@@ -65,8 +65,8 @@ trait SendTelegramMessageService
         }
 
         return $this->objectTypeHandle(
-            $telegram, $botInfo, $chatId, $objectType, $message, $inline_keyboard, true, true,
-            false, null, $is_addKeyWord, $is_addAnonymous, $is_addTailContent,
+            $telegram, $botInfo, $chatId, $objectType, $message, $inline_keyboard, true,false,
+            true, false, null, $is_addKeyWord, $is_addAnonymous, $is_addTailContent,
             $custom_header_content, $custom_tail_content
         );
     }
@@ -133,6 +133,7 @@ trait SendTelegramMessageService
             $message,
             null,
             false,
+            true,
             false,
             true,
             $manuscript,
@@ -154,7 +155,7 @@ trait SendTelegramMessageService
      */
     private function objectTypeHandle(
         Api $telegram, mixed $botInfo, array|int|string $chatId, string $objectType, $message, ?array $inline_keyboard = null,
-        bool $isReviewGroup = false, bool $isReturnText = false, bool $isReturnTelegramMessage = false,
+        bool $isReviewGroup = false,bool $isChannel = false, bool $isReturnText = false, bool $isReturnTelegramMessage = false,
         $manuscript = null, bool $is_addKeyWord = true, bool $is_addAnonymous = true, bool $is_addTailContent = true,
         ?string $custom_header_content = null, ?string $custom_tail_content = null
     ): mixed {
@@ -201,6 +202,29 @@ trait SendTelegramMessageService
                 $text .= $message['caption'];
                 $textStr = $message['caption'];
             }
+            //来源
+            if ($botInfo->is_forward_origin == 1) {
+                if (isset($message['forward_origin_type']) && $message['forward_origin_type']==1){
+                    if (isset($message['forward_origin']['username'])){
+                        $str=str(get_config('submission.forward_origin_text_link'))->swap([
+                            '{link}' => "https://t.me/".$message['forward_origin']['username']."/".$message['forward_origin']['message_id'],
+                            '{name}' => $message['forward_from_chat']['title'],
+                        ]);
+                        $text .= $str;
+                    }else{
+                        $str=str(get_config('submission.forward_origin_text'))->swap([
+                            '{name}' => $message['forward_from_chat']['title'],
+                        ]);
+                        $text .= $str;
+                    }
+                }
+                if (isset($message['forward_origin_input_status']) && $message['forward_origin_input_status']==1){
+                    $str=str(get_config('submission.forward_origin_text'))->swap([
+                        '{name}' => $message['forward_origin_input_data'],
+                    ]);
+                    $text .= $str;
+                }
+            }
             //自动关键词
             if ($is_addKeyWord) {
                 $text .= $this->addKeyWord($botInfo->is_auto_keyword, $botInfo->keyword, $botInfo->id, $textStr);
@@ -218,6 +242,11 @@ trait SendTelegramMessageService
         switch ($objectType) {
             case 'text':
                 $params['text'] = $text;
+
+                //消息预览
+                if ($message['disable_message_preview']!=1){
+                    $params['disable_web_page_preview']=true;
+                }
                 break;
             case 'photo':
                 $file_id = $message['photo'][0]['file_id'];
@@ -356,6 +385,11 @@ trait SendTelegramMessageService
                 $text .= $custom_tail_content;
             }
             $params['caption'] = $text;
+        }
+
+        //静默发送
+        if ($isChannel && $message['disable_notification']==1){
+            $params['disable_notification'] = true;
         }
 
         if ($objectType === 'media_group_audio') {
@@ -542,28 +576,37 @@ trait SendTelegramMessageService
      */
     public function addReviewEndText($approved, $one_approved, $reject, $one_reject): string
     {
-        $text = "\r\n ------------------- \r\n";
-        $text .= '审核通过人员：';
+        $text = "\r\n\r\n ------------------- \r\n\r\n";
 
-        foreach ($approved as $approved_val) {
-            $text .= "\r\n <code>".get_posted_by($approved_val).' </code>';
+        $text .= '审核通过人员：';
+        if (empty($approved)||count($approved)<=0){
+            $text .= '无';
+        }else{
+            foreach ($approved as $approved_val) {
+                $text .= "\r\n <code>".get_posted_by($approved_val).' </code>';
+            }
         }
 
         if (! empty($one_approved)) {
+            $text .= "\r\n\r\n 快速审核通过人员：";
             $text .= "\r\n <code>".get_posted_by($one_approved).' </code>';
         }
 
-        $text .= "\r\n审核拒绝人员：";
-
-        foreach ($reject as $reject_val) {
-            $text .= "\r\n <code>".get_posted_by($reject_val).' </code>';
+        $text .= "\r\n\r\n审核拒绝人员：";
+        if (empty($reject)||count($reject)<=0){
+            $text .= '无';
+        }else {
+            foreach ($reject as $reject_val) {
+                $text .= "\r\n <code>" . get_posted_by($reject_val) . ' </code>';
+            }
         }
 
         if (! empty($one_reject)) {
+            $text .= "\r\n\r\n 快速审核拒绝人员：";
             $text .= "\r\n <code>".get_posted_by($one_reject).' </code>';
         }
 
-        $text .= "\r\n审核通过时间：".date('Y-m-d H:i:s', time());
+        $text .= "\r\n\r\n 审核通过时间：".date('Y-m-d H:i:s', time());
 
         return $text;
     }

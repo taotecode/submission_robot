@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Enums\CacheKey;
+use App\Enums\InlineKeyBoardData;
 use App\Enums\KeyBoardData;
 use App\Enums\KeyBoardName;
 use App\Enums\SubmissionUserType;
@@ -54,19 +55,20 @@ class SubmissionService
     /**
      * 开始API并使用给定的参数。
      *
-     * @param  Api  $telegram API对象。
-     * @param  string  $chatId 聊天ID。
-     * @param  string  $text 要发送的文本消息。默认为"请直接发送您要投稿的内容\r\n发送完毕后，请点击下方的 “结束发送” 按钮。"
+     * @param Api $telegram API对象。
+     * @param string $chatId 聊天ID。
+     * @param string $text 要发送的文本消息。默认为"请直接发送您要投稿的内容\r\n发送完毕后，请点击下方的 “结束发送” 按钮。"
      * @return string API调用的结果。可能的值为"ok"或"error"。
      */
     public function start(
-        Api $telegram,
-        $botInfo,
-        string $chatId,
+        Api        $telegram,
+                   $botInfo,
+        string     $chatId,
         Collection $chat,
-        string $text = "请直接发送您要投稿的内容\r\n发送完毕后，请点击下方的 “结束发送” 按钮。",
-    ): string {
-        Cache::tags(CacheKey::Submission.'.'.$chatId)->flush();
+        string     $text = "请直接发送您要投稿的内容\r\n发送完毕后，请点击下方的 “结束发送” 按钮。",
+    ): string
+    {
+        Cache::tags(CacheKey::Submission . '.' . $chatId)->flush();
 
         //检查机器人是否开启投稿服务
         if ($botInfo->is_submission == 0) {
@@ -81,11 +83,15 @@ class SubmissionService
         $chatInfo = $chat->toArray();
 
         //开启投稿服务标识
-        Cache::tags(CacheKey::Submission.'.'.$chatId)->put($chatId, $chatInfo, now()->addDay());
+        Cache::tags(CacheKey::Submission . '.' . $chatId)->put($chatId, $chatInfo, now()->addDay());
+        Cache::tags(CacheKey::Submission . '.' . $chatId)->put('forward_origin_type', 0, now()->addDay());
+        Cache::tags(CacheKey::Submission . '.' . $chatId)->put('forward_origin_input_status', 0, now()->addDay());
+        Cache::tags(CacheKey::Submission . '.' . $chatId)->put('forward_origin_input_data', 0, now()->addDay());
+        Cache::tags(CacheKey::Submission . '.' . $chatId)->put('disable_message_preview_status', 3, now()->addDay());
 
         //存入投稿用户数据
-        if (Cache::has(CacheKey::SubmissionUserList.':'.$botInfo->id)) {
-            $list = Cache::get(CacheKey::SubmissionUserList.':'.$botInfo->id);
+        if (Cache::has(CacheKey::SubmissionUserList . ':' . $botInfo->id)) {
+            $list = Cache::get(CacheKey::SubmissionUserList . ':' . $botInfo->id);
             $list[] = [
                 $chatId => now()->addDay()->timestamp,
             ];
@@ -94,7 +100,7 @@ class SubmissionService
                 $chatId => now()->addDay()->timestamp,
             ];
         }
-        Cache::put(CacheKey::SubmissionUserList.':'.$botInfo->id, $list, now()->addWeek());
+        Cache::put(CacheKey::SubmissionUserList . ':' . $botInfo->id, $list, now()->addWeek());
 
         $submissionUser = (new SubmissionUser)->firstOrCreate([
             'bot_id' => $botInfo->id,
@@ -109,7 +115,7 @@ class SubmissionService
 
         //判断是否是黑名单用户
         if ($submissionUser->type == SubmissionUserType::BLACK) {
-            Cache::tags(CacheKey::Submission.'.'.$chatId)->flush();
+            Cache::tags(CacheKey::Submission . '.' . $chatId)->flush();
 
             return $this->sendTelegramMessage($telegram, 'sendMessage', [
                 'chat_id' => $chatId,
@@ -130,13 +136,13 @@ class SubmissionService
     /**
      * 取消投稿。
      *
-     * @param  Api  $telegram Telegram API对象。
-     * @param  string  $chatId 聊天ID。
+     * @param Api $telegram Telegram API对象。
+     * @param string $chatId 聊天ID。
      * @return string 取消投稿的结果：如果成功则为'ok'，否则为'error'。
      */
     private function cancel(Api $telegram, $botInfo, string $chatId): string
     {
-        Cache::tags(CacheKey::Submission.'.'.$chatId)->flush();
+        Cache::tags(CacheKey::Submission . '.' . $chatId)->flush();
 
         return $this->sendTelegramMessage($telegram, 'sendMessage', [
             'chat_id' => $chatId,
@@ -151,7 +157,7 @@ class SubmissionService
      */
     private function end(Api $telegram, $chatId, $botInfo): string
     {
-        $cacheTag = CacheKey::Submission.'.'.$chatId;
+        $cacheTag = CacheKey::Submission . '.' . $chatId;
         $objectType = Cache::tags($cacheTag)->get('objectType');
         $messageId = '';
         $messageCache = [];
@@ -171,7 +177,7 @@ class SubmissionService
             case 'media_group_video':
             case 'media_group_audio':
                 $mediaGroupId = Cache::tags($cacheTag)->get('media_group');
-                $messageCache = Cache::tags($cacheTag)->get('media_group:'.$mediaGroupId);
+                $messageCache = Cache::tags($cacheTag)->get('media_group:' . $mediaGroupId);
                 $messageId = $messageCache[0]['message_id'] ?? '';
                 if ($objectType === 'media_group_audio' && Cache::tags($cacheTag)->has('text')) {
                     $textCache = Cache::tags($cacheTag)->get('text');
@@ -199,14 +205,144 @@ class SubmissionService
         }
 
         //判断消息是否有来源
-        /*if ($botInfo->is_forward_origin === 1 && isset($messageCache['forward_origin'])) {
-            $forward_origin = $messageCache['forward_origin'];
-            if ($botInfo->is_forward_origin_select === 1) {
-                $replyMarkup = KeyBoardData::$FORWARD_ORIGIN_SELECT;
-            } else {
-                Cache::tags(CacheKey::Submission.'.'.$chatId)->put('forward_origin', $messageCache['forward_origin'], now()->addDay());
+        if ($botInfo->is_forward_origin == 1) {
+            if (isset($messageCache['forward_origin'])) {//来源用户主动选择
+                if ($botInfo->is_forward_origin_select == 1) {
+                    if (Cache::tags($cacheTag)->get('forward_origin_type') == 0) {
+                        return $this->sendTelegramMessage($telegram, 'sendMessage', [
+                            'chat_id' => $chatId,
+                            'reply_to_message_id' => $messageId,
+                            'text' => get_config('submission.select_forward_origin_is_tip'),
+                            'parse_mode' => 'HTML',
+                            'reply_markup' => json_encode(InlineKeyBoardData::$FORWARD_ORIGIN_SELECT),
+                        ]);
+                    } else {
+                        $messageCache['forward_origin_type'] = Cache::tags($cacheTag)->get('forward_origin_type');
+                    }
+                } else {
+                    $messageCache['forward_origin_type'] = 1;
+                }
+            } elseif ($botInfo->is_forward_origin_input == 1) {//用户主动输入
+                if (Cache::tags($cacheTag)->get('forward_origin_input_status') == 0 || Cache::tags($cacheTag)->get('forward_origin_input_status') == 01) {
+                    //用户已输入
+                    if (!empty(Cache::tags($cacheTag)->get('forward_origin_input_data'))) {
+                        Cache::tags($cacheTag)->put('forward_origin_input_status', 1);//标记状态为已输入
+                        $messageCache['forward_origin_input_status'] = 1;
+                        $messageCache['forward_origin_input_data'] = Cache::tags($cacheTag)->get('forward_origin_input_data');
+                    } else {
+                        //用户未输入
+                        $telegramReturnMessage = $this->sendTelegramMessage($telegram, 'sendMessage', [
+                            'chat_id' => $chatId,
+                            'reply_to_message_id' => $messageId,
+                            'text' => get_config('submission.select_forward_origin_input_tip'),
+                            'parse_mode' => 'HTML',
+                            'reply_markup' => json_encode([
+                                'force_reply' => true,
+                                'selective' => true,
+                            ]),
+                        ], true);
+                        $telegramReturnMessageId = $telegramReturnMessage->message_id;
+                        Cache::tags($cacheTag)->put('forward_origin_input_id', $telegramReturnMessageId);//标记需要回复的消息ID
+                        Cache::tags($cacheTag)->put('forward_origin_input_status', 01);//标记状态为待输入
+                        return $this->sendTelegramMessage($telegram, 'sendMessage', [
+                            'chat_id' => $chatId,
+                            'reply_to_message_id' => $telegramReturnMessageId,
+                            'text' => get_config('submission.select_forward_origin_input_c_tip'),
+                            'parse_mode' => 'HTML',
+                            'reply_markup' => json_encode(InlineKeyBoardData::$FORWARD_ORIGIN_INPUT),
+                        ]);
+                    }
+                } elseif (Cache::tags($cacheTag)->get('forward_origin_input_status') == 1) {
+                    $messageCache['forward_origin_input_status'] = 1;
+                    $messageCache['forward_origin_input_data'] = Cache::tags($cacheTag)->get('forward_origin_input_data');
+                }
             }
-        }*/
+        }
+
+        //消息预览功能
+        $disable_message_preview=$this->selectCommonByYesOrNo(
+            $messageCache, $botInfo->is_link_preview,$cacheTag,
+            'disable_message_preview_status','disable_message_preview'
+        );
+        if (!$disable_message_preview){
+            $disable_message_preview_message=$this->sendTelegramMessage($telegram, 'sendMessage', [
+                'chat_id' => $chatId,
+                'reply_to_message_id' => $messageId,
+                'text' => get_config('submission.disable_message_preview_select_tip'),
+                'parse_mode' => 'HTML',
+                'reply_markup' => json_encode(InlineKeyBoardData::$DISABLE_MESSAGE_PREVIEW),
+            ],true);
+            if (isset($disable_message_preview_message->message_id)){
+                Cache::tags($cacheTag)->put('disable_message_preview_id', $disable_message_preview_message->message_id);//标记需要回复的消息ID
+                return 'ok';
+            }else{
+                return 'error';
+            }
+        }else{
+            $messageCache=$disable_message_preview;
+        }
+
+        //消息静默发送
+        $disable_notification=$this->selectCommonByYesOrNo(
+            $messageCache, $botInfo->is_disable_notification,$cacheTag,
+            'disable_notification_status','disable_notification'
+        );
+        if (!$disable_notification){
+            $disable_notification_message=$this->sendTelegramMessage($telegram, 'sendMessage', [
+                'chat_id' => $chatId,
+                'reply_to_message_id' => $messageId,
+                'text' => get_config('submission.disable_notification_select_tip'),
+                'parse_mode' => 'HTML',
+                'reply_markup' => json_encode(InlineKeyBoardData::$DISABLE_NOTIFICATION),
+            ],true);
+            if (isset($disable_notification_message->message_id)){
+                Cache::tags($cacheTag)->put('disable_notification_id', $disable_notification_message->message_id);//标记需要回复的消息ID
+                return 'ok';
+            }else{
+                return 'error';
+            }
+        }else{
+            $messageCache=$disable_notification;
+        }
+
+        //消息禁止被转发和保存
+        $protect_content=$this->selectCommonByYesOrNo(
+            $messageCache, $botInfo->is_protect_content,$cacheTag,
+            'protect_content_status','protect_content'
+        );
+        if (!$protect_content){
+            $protect_content_message=$this->sendTelegramMessage($telegram, 'sendMessage', [
+                'chat_id' => $chatId,
+                'reply_to_message_id' => $messageId,
+                'text' => get_config('submission.protect_content_select_tip'),
+                'parse_mode' => 'HTML',
+                'reply_markup' => json_encode(InlineKeyBoardData::$DISABLE_NOTIFICATION),
+            ],true);
+            if (isset($protect_content_message->message_id)){
+                Cache::tags($cacheTag)->put('protect_content_id', $protect_content_message->message_id);//标记需要回复的消息ID
+                return 'ok';
+            }else{
+                return 'error';
+            }
+        }else{
+            $messageCache=$protect_content;
+        }
+
+        //更新稿件缓存
+        switch ($objectType) {
+            case 'text':
+            case 'photo':
+            case 'video':
+            case 'audio':
+                Cache::tags($cacheTag)->put($objectType, $messageCache, now()->addDay());
+                break;
+            case 'media_group_photo':
+            case 'media_group_video':
+            case 'media_group_audio':
+                $mediaGroupId = Cache::tags($cacheTag)->get('media_group');
+                Cache::tags($cacheTag)->put('media_group:' . $mediaGroupId, $messageCache, now()->addDay());
+                break;
+        }
 
         //发送预览消息
         $this->sendPreviewMessage($telegram, $botInfo, $chatId, $messageCache, $objectType);
@@ -237,7 +373,7 @@ class SubmissionService
         $channels = (new Channel)->whereIn('id', $botInfo->channel_ids)->orderBy('sort_order', 'desc')->get();
         foreach ($channels as $channel) {
             $inline_keyboard['inline_keyboard'][] = [
-                ['text' => $channel->appellation, 'callback_data' => 'select_channel:null:'.$channel->id],
+                ['text' => $channel->appellation, 'callback_data' => 'select_channel:null:' . $channel->id],
             ];
         }
 
@@ -249,12 +385,29 @@ class SubmissionService
         ]);
     }
 
+    private function selectCommonByYesOrNo($messageCache,$functionData,$cacheTag,$cacheKey,$messageKey)
+    {
+        if ($functionData==0){//关闭消息预览
+            $messageCache[$messageKey] = 0;
+        }elseif ($functionData==1){//开启消息预览
+            $messageCache[$messageKey] = 1;
+        }elseif ($functionData==2){//用户自主选择
+            $status=Cache::tags($cacheTag)->get($cacheKey);
+            if ($status==3){
+                return false;
+            }else{
+                $messageCache[$messageKey] = $status;
+            }
+        }
+        return $messageCache;
+    }
+
     /**
      * 确认投稿
      */
     private function confirm(Api $telegram, $chatId, $chat, $botInfo, $is_anonymous): string
     {
-        $objectType = Cache::tags(CacheKey::Submission.'.'.$chatId)->get('objectType');
+        $objectType = Cache::tags(CacheKey::Submission . '.' . $chatId)->get('objectType');
         $messageId = '';
         $messageCache = [];
         $messageText = '';
@@ -268,8 +421,8 @@ class SubmissionService
                 break;
             case 'media_group_photo':
             case 'media_group_video':
-                $media_group_id = Cache::tags(CacheKey::Submission.'.'.$chatId)->get('media_group');
-                $messageCache = Cache::tags(CacheKey::Submission.'.'.$chatId)->get('media_group:'.$media_group_id);
+                $media_group_id = Cache::tags(CacheKey::Submission . '.' . $chatId)->get('media_group');
+                $messageCache = Cache::tags(CacheKey::Submission . '.' . $chatId)->get('media_group:' . $media_group_id);
                 $messageId = $messageCache[0]['message_id'] ?? '';
                 foreach ($messageCache as $key => $value) {
                     $messageText .= $value['caption'] ?? '';
@@ -277,19 +430,19 @@ class SubmissionService
                 break;
             case 'media_group_audio':
                 //特殊情况，需要先判断有没有文字，如果有，那就是文字+多音频
-                if (Cache::tags(CacheKey::Submission.'.'.$chatId)->has('text')) {
-                    $messageCache = Cache::tags(CacheKey::Submission.'.'.$chatId)->get('text');
+                if (Cache::tags(CacheKey::Submission . '.' . $chatId)->has('text')) {
+                    $messageCache = Cache::tags(CacheKey::Submission . '.' . $chatId)->get('text');
                     $messageId = $messageCache['message_id'] ?? '';
-                    $media_group_id = Cache::tags(CacheKey::Submission.'.'.$chatId)->get('media_group');
-                    $audioMessageCache = Cache::tags(CacheKey::Submission.'.'.$chatId)->get('media_group:'.$media_group_id);
+                    $media_group_id = Cache::tags(CacheKey::Submission . '.' . $chatId)->get('media_group');
+                    $audioMessageCache = Cache::tags(CacheKey::Submission . '.' . $chatId)->get('media_group:' . $media_group_id);
                     $messageCache = [
                         'text' => $messageCache,
                         'audio' => $audioMessageCache,
                     ];
                     $messageText = $messageCache['text']['text'] ?? '';
                 } else {
-                    $media_group_id = Cache::tags(CacheKey::Submission.'.'.$chatId)->get('media_group');
-                    $messageCache = Cache::tags(CacheKey::Submission.'.'.$chatId)->get('media_group:'.$media_group_id);
+                    $media_group_id = Cache::tags(CacheKey::Submission . '.' . $chatId)->get('media_group');
+                    $messageCache = Cache::tags(CacheKey::Submission . '.' . $chatId)->get('media_group:' . $media_group_id);
                     $messageId = $messageCache[0]['message_id'] ?? '';
                     foreach ($messageCache as $key => $value) {
                         $messageText .= $value['caption'] ?? '';
@@ -309,7 +462,7 @@ class SubmissionService
         ]);
 
         if (count($botInfo->channel_ids) > 1) {
-            $channelId = Cache::tags(CacheKey::Submission.'.'.$chatId)->get('channel_id');
+            $channelId = Cache::tags(CacheKey::Submission . '.' . $chatId)->get('channel_id');
         } else {
             $channelId = $botInfo->channel_ids[0];
         }
@@ -342,23 +495,23 @@ class SubmissionService
         if ($submissionUser->type == SubmissionUserType::WHITE) {
             $manuscript->status = 1;
             $channelMessageId = $this->sendChannelMessage($telegram, $botInfo, $manuscript);
-            if (! $channelMessageId) {
+            if (!$channelMessageId) {
                 return 'ok';
             }
             $manuscript->message_id = $channelMessageId['message_id'] ?? null;
             $manuscript->save();
-            Cache::tags(CacheKey::Submission.'.'.$chatId)->flush();
+            Cache::tags(CacheKey::Submission . '.' . $chatId)->flush();
 
             $chatText = get_config('submission.confirm_white_list');
 
             if (empty(get_text_title($manuscript->text))) {
                 $chatText = str($chatText)->swap([
-                    '{url}' => 'https://t.me/'.$channel->name.'/'.$manuscript->message_id,
+                    '{url}' => 'https://t.me/' . $channel->name . '/' . $manuscript->message_id,
                     '{title}' => '点击查看',
                 ]);
             } else {
                 $chatText = str($chatText)->swap([
-                    '{url}' => 'https://t.me/'.$channel->name.'/'.$manuscript->message_id,
+                    '{url}' => 'https://t.me/' . $channel->name . '/' . $manuscript->message_id,
                     '{title}' => get_text_title($manuscript->text),
                 ]);
             }
@@ -376,7 +529,7 @@ class SubmissionService
             return $this->sendGroupMessageWhiteUser($telegram, $botInfo, $manuscript, $channel);
         }
 
-        $custom_tail_content = "\r\n\r\n 用户投稿至频道：<a href='https://t.me/".$channel->name."'>".$channel->appellation.'</a>';
+        $custom_tail_content = "\r\n\r\n 用户投稿至频道：<a href='https://t.me/" . $channel->name . "'>" . $channel->appellation . '</a>';
 
         // 发送消息到审核群组
         $this->sendGroupMessage(
@@ -385,7 +538,7 @@ class SubmissionService
         );
         //            $text=$this->sendGroupMessage($telegram,$botInfo,$messageCache,$objectType,1);
 
-        Cache::tags(CacheKey::Submission.'.'.$chatId)->flush();
+        Cache::tags(CacheKey::Submission . '.' . $chatId)->flush();
 
         return $this->sendTelegramMessage($telegram, 'sendMessage', [
             'chat_id' => $chatId,
@@ -399,31 +552,72 @@ class SubmissionService
     /**
      * 更新API中的指定消息。
      *
-     * @param  Api  $telegram API对象。
-     * @param  string  $chatId 聊天ID。
-     * @param  string  $messageId 消息ID。
-     * @param  Collection  $message 要更新的消息。
+     * @param Api $telegram API对象。
+     * @param string $chatId 聊天ID。
+     * @param string $messageId 消息ID。
+     * @param Collection $message 要更新的消息。
      * @return string 更新的状态。
      */
     public function startUpdateByText(
-        Api $telegram,
-        Bot $botInfo,
-        string $chatId,
-        string $messageId,
+        Api        $telegram,
+        Bot        $botInfo,
+        string     $chatId,
+        string     $messageId,
         Collection $message
-    ): string {
+    ): string
+    {
+        $cacheTag = CacheKey::Submission . '.' . $chatId;
+        if (Cache::tags($cacheTag)->get('forward_origin_input_status') == 01) {
+
+            //获取$message中的回复消息ID
+            $reply_to_message_id = $message->replyToMessage->messageId ?? null;
+            $forward_origin_input_id = Cache::tags($cacheTag)->get('forward_origin_input_id');
+            if (empty($reply_to_message_id) || $reply_to_message_id != $forward_origin_input_id) {
+                return $this->sendTelegramMessage($telegram, 'sendMessage', [
+                    'chat_id' => $chatId,
+                    'reply_to_message_id' => $forward_origin_input_id,
+                    'text' => get_config('submission.select_forward_origin_input_id_error_tip'),
+                    'parse_mode' => 'HTML',
+                ]);
+            }
+
+            $messageCacheData = preprocessMessageText($message, $botInfo);
+            $messageText = $messageCacheData['text'];
+            Cache::tags($cacheTag)->put('forward_origin_input_data', $messageText, now()->addDay());
+
+            $text = str(get_config('submission.select_forward_origin_input_confirm_tip'))->swap([
+                '{data}' => $messageText,
+            ]);
+
+            return $this->sendTelegramMessage($telegram, 'sendMessage', [
+                'chat_id' => $chatId,
+                'reply_to_message_id' => $forward_origin_input_id,
+                'text' => $text->toString(),
+                'parse_mode' => 'HTML',
+                'reply_markup' => json_encode(KeyBoardData::$START_SUBMISSION),
+            ]);
+        }
         return $this->updateByText(
             $telegram, $botInfo, $chatId, $messageId, $message,
-            CacheKey::Submission.'.'.$chatId, KeyBoardData::$START_SUBMISSION,
+            CacheKey::Submission . '.' . $chatId, KeyBoardData::$START_SUBMISSION,
             get_config('submission.start_text_tips'), get_config('submission.start_update_text_tips')
         );
     }
 
     public function startUpdateByMedia(Api $telegram, $botInfo, $chatId, $messageId, Collection $message, $type): string
     {
+        $cacheTag = CacheKey::Submission . '.' . $chatId;
+        if (Cache::tags($cacheTag)->get('forward_origin_input_status') == 01) {
+            return $this->sendTelegramMessage($telegram, 'sendMessage', [
+                'chat_id' => $chatId,
+                'reply_to_message_id' => $messageId,
+                'text' => get_config('submission.select_forward_origin_input_media_tip'),
+                'parse_mode' => 'HTML',
+            ]);
+        }
         return $this->updateByMedia(
             $telegram, $botInfo, $chatId, $messageId, $message, $type,
-            CacheKey::Submission.'.'.$chatId, KeyBoardData::$START_SUBMISSION,
+            CacheKey::Submission . '.' . $chatId, KeyBoardData::$START_SUBMISSION,
             get_config('submission.start_text_tips'), get_config('submission.start_update_text_tips')
         );
     }

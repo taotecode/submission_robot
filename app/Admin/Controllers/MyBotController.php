@@ -90,7 +90,7 @@ class MyBotController extends AdminController
     {
         return Form::make(new Bot(), function (Form $form) {
             $form->display('id');
-            $form->text('appellation')->help('机器人的用户名');
+            $form->text('appellation')->help('机器人的用户名名称，如：我的测试机器人')->required();
             $form->text('name')->help('不需要携带@符号，如：tougao_bot')->required();
             $form->password('token')->help('通过@BotFather创建机器人获取')->required();
             $form->number('review_approved_num')->min(1)->max(30)->default(1)->required()
@@ -99,6 +99,32 @@ class MyBotController extends AdminController
                 ->help('每条投稿消息的审核数量。如：设置1，那么只需要一个人就可以通过或拒绝。设置2，那么就需要两个人就可以通过或拒绝。<br>最小值为：1');
 
             $form->switch('is_message_text_preprocessing')->default(1)->help('是否开启消息文本预处理？<br>开启后，将会对消息文本格式进行保留，如：空格、换行、链接、加粗等。');
+            $radio_options=[1 => '开启', 0 => '关闭',2=>'用户在投稿时主动选择'];
+            $form->radio('is_link_preview')->default(1)->options($radio_options)->help('是否开启消息预览？<br>开启后，将会对消息文件、链接、图片进行预览。');
+            $form->radio('is_disable_notification')->default(1)->options($radio_options)->help('是否开启消息静默发送？<br>开启后，用户在频道中，将不会收到消息提醒。');
+            $form->radio('is_protect_content')->default(1)->options($radio_options)->help('是否开启消息禁止被转发和保存？<br>开启后，将会对消息进行禁止转发和保存。');
+
+            $form->radio('is_forward_origin')
+                ->when(1, function (Form $form) {
+                    $form->switch('is_forward_origin_select')->default(1)
+                        ->help('
+是否开启消息来源用户主动选择是否标注？<br>
+开启后，用户投稿的消息如果带有来源频道消息，将会在确认投稿之前让用户选择是否标注来源信息。<br>
+关闭后，用户投稿的消息如果带有来源频道消息，将会自动标注来源信息。
+');
+                    $form->switch('is_forward_origin_input')->default(1)
+                        ->help('
+是否开启用户主动输入消息来源进行标注？<br>
+开启后，用户投稿的消息如果没有带有来源频道消息，将会在确认投稿之前让用户主动输入来源信息。<br>
+关闭后，用户投稿的消息如果没有带有来源频道消息，将不会显示来源信息。
+');
+                })
+                ->options([
+                    1 => '开启',
+                    0 => '关闭',
+                ])
+                ->default(1)
+                ->help('是否开启消息来源自动标注？<br>开启后，用户投稿的消息如果带有来源频道消息或没有来源消息，将会自动或手动标注来源频道以及对应的消息链接。');
 
             $form->switch('is_submission')->default(1)->help('是否开启投稿服务？');
             $form->switch('is_complaint')->default(1)->help('是否开启投诉服务？');
@@ -108,49 +134,5 @@ class MyBotController extends AdminController
             $form->display('created_at');
             $form->display('updated_at');
         });
-    }
-
-    public function lexiconCheck($id, Content $content)
-    {
-        if (request()->isMethod('PUT')) {
-            $lexicon = request()->input('lexicon');
-            $text = request()->input('text');
-            $time = time();
-            Storage::put("public/lexicon_temp_{$time}.txt", $lexicon);
-            $result = quickCut($text, storage_path('app/public/lexicon_temp_'.$time.'.txt'));
-            Storage::delete("public/lexicon_temp_{$time}.txt");
-            if (empty($result)) {
-                return JsonResponse::make()->error('分词结果为空');
-            }
-
-            return JsonResponse::make()->alert()->success('分词结果为')->detail(implode('|', $result));
-        }
-        $form = Form::make(new Bot(), function (Form $form) use ($id) {
-            $form->action(route('dcat.admin.bots.lexiconCheck', $id));
-            $form->textarea('text', '稿件文本内容')->required();
-            $form->textarea('lexicon', '词库')->required()->help('
-        词库格式为每行一个词，如果需要提升分词准确率，可以在词语后面加上词性，词性之间用空格隔开，词性列表如下：<br>
-        新闻 1<br>
-        一般数值在1-10之间，数值越大，分词越准确，但是分词速度越慢，建议平均值为：3<br>
-        ');
-
-            $form->footer(function ($footer) {
-
-                // 去掉`继续编辑`checkbox
-                $footer->disableEditingCheck();
-
-                // 去掉`继续创建`checkbox
-                $footer->disableCreatingCheck();
-
-                // 去掉`查看`checkbox
-                $footer->disableViewCheck();
-            });
-        });
-
-        return $content
-            ->translation($this->translation())
-            ->title($this->title())
-            ->description('词库验证')
-            ->body($form->edit($id));
     }
 }
