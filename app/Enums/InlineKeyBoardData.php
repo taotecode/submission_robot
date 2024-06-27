@@ -45,6 +45,8 @@ class InlineKeyBoardData
 
     public static array $DISABLE_NOTIFICATION;
 
+    public static array $PROTECT_CONTENT;
+
     public static function init(): void
     {
         self::$REVIEW_GROUP_APPROVED = [
