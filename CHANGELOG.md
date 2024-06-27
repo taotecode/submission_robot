@@ -1,4 +1,18 @@
 # 开发进度
+## v0.1.07 - 2024-06-27
+* 针对稿件来源功能进行开发和优化
+* 优化后台对于配置表的编辑功能和管理
+* 新增对于消息预览功能的管理
+* 新增对于消息静默发送功能的管理
+* 新增对于消息禁止被转发和保存功能的管理
+
+更新表结构，需要执行：
+
+php artisan migrate
+
+php artisan db:seed --class=ConfigSeeder
+
+php artisan db:seed --class=KeyboardNameConfigSeeder
 
 ## v0.1.06 - 2024-06-06
 * 修复添加审核人员到审核群的bug
