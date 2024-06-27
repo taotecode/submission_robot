@@ -318,7 +318,7 @@ class SubmissionService
                 'reply_to_message_id' => $messageId,
                 'text' => get_config('submission.protect_content_select_tip'),
                 'parse_mode' => 'HTML',
-                'reply_markup' => json_encode(InlineKeyBoardData::$DISABLE_NOTIFICATION),
+                'reply_markup' => json_encode(InlineKeyBoardData::$PROTECT_CONTENT),
             ],true);
             if (isset($protect_content_message->message_id)){
                 Cache::tags($cacheTag)->put('protect_content_id', $protect_content_message->message_id);//标记需要回复的消息ID
