@@ -88,6 +88,8 @@ class SubmissionService
         Cache::tags(CacheKey::Submission . '.' . $chatId)->put('forward_origin_input_status', 0, now()->addDay());
         Cache::tags(CacheKey::Submission . '.' . $chatId)->put('forward_origin_input_data', 0, now()->addDay());
         Cache::tags(CacheKey::Submission . '.' . $chatId)->put('disable_message_preview_status', 3, now()->addDay());
+        Cache::tags(CacheKey::Submission . '.' . $chatId)->put('disable_notification_status', 3, now()->addDay());
+        Cache::tags(CacheKey::Submission . '.' . $chatId)->put('protect_content_status', 3, now()->addDay());
 
         //存入投稿用户数据
         if (Cache::has(CacheKey::SubmissionUserList . ':' . $botInfo->id)) {
