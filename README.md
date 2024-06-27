@@ -6,7 +6,7 @@
 
 更新日志及开发进度：[CHANGELOG.md](https://github.com/taotecode/submission_robot/blob/master/CHANGELOG.md)
 
-# 最新功能更新日期：2024年6月6日
+# 最新功能更新日期：2024年6月27日
 
 更新通知频道：[纸飞机：@submission_robot_channel](https://t.me/submission_robot_channel)
 
@@ -26,6 +26,9 @@
 - [x] 支持已投稿稿件删除
 - [x] 稿件草稿超时提醒
 - [x] 简单用户管理
+- [x] 消息预览功能管理
+- [x] 消息静默发送功能管理
+- [x] 消息禁止被转发和保存功能管理
   - [x] 黑名单/白名单
   - [ ] 查看用户投稿统计
   - [x] 检索用户
