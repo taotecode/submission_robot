@@ -23,6 +23,7 @@ class GetUpdateController extends Controller
                 \App\Telegram\Commands\WhoCommand::class,
                 \App\Telegram\Commands\ListCommand::class,
                 \App\Telegram\Commands\SearchCommand::class,
+                \App\Telegram\Commands\SettingsCommand::class,
             ]);
             $response = $telegram->commandsHandler(false);
         } catch (\Exception $e) {

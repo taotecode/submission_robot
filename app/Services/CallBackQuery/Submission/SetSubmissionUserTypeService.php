@@ -1,11 +1,12 @@
 <?php
 
-namespace App\Services\CallBackQuery;
+namespace App\Services\CallBackQuery\Submission;
 
 use App\Enums\AuditorRole;
 use App\Enums\SubmissionUserType;
 use App\Models\Bot;
 use App\Models\SubmissionUser;
+use App\Services\CallBackQuery\AuditorRoleCheckService;
 use Illuminate\Support\Facades\Log;
 use Telegram\Bot\Api;
 use Telegram\Bot\Exceptions\TelegramSDKException;

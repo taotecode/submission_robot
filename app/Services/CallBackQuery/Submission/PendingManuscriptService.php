@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\CallBackQuery;
+namespace App\Services\CallBackQuery\Submission;
 
 use App\Enums\InlineKeyBoardData;
 use App\Enums\ManuscriptStatus;

@@ -1,12 +1,13 @@
 <?php
 
-namespace App\Services\CallBackQuery;
+namespace App\Services\CallBackQuery\Submission;
 
 use App\Enums\AuditorRole;
 use App\Enums\InlineKeyBoardData;
 use App\Enums\ManuscriptStatus;
 use App\Models\Bot;
 use App\Models\Manuscript;
+use App\Services\CallBackQuery\AuditorRoleCheckService;
 use App\Services\SendPostedByMessageService;
 use App\Services\SendTelegramMessageService;
 use Illuminate\Support\Facades\Log;

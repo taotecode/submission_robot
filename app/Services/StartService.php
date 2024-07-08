@@ -38,6 +38,8 @@ class StartService
         if (Cache::tags(CacheKey::Suggestion.'.'.$chatId)->has($chatId)) {
             return $this->index($botInfo, $updateData, $telegram);
         }
+        //如果进入私聊状态，直接进入私聊服务
+
 
         return match ($objectType) {
             'text' => match ($message->text) {

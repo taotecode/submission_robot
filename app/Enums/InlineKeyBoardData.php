@@ -215,6 +215,9 @@ class InlineKeyBoardData
                 ['text' => '客户端协议联系', 'url' => 'tg://openmessage?user_id='],
                 ['text' => 'ID链接联系', 'url' => 'https://t.me/@id'],
             ],
+            /*[
+                ['text'=>'通过机器人联系','callback_data'=>'private_message_open_bot'],
+            ]*/
         ],
     ];
 
