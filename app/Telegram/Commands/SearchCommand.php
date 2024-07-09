@@ -73,13 +73,13 @@ class SearchCommand extends Command
 
         $manuscript->each(function ($item) use (&$inline_keyboard) {
             $inline_keyboard['inline_keyboard'][] = [
-                ['text' => $item->text, 'callback_data' => 'manuscript_search_show_link:'.$item->id],
+                ['text' => $item->text, 'callback_data' => 's_c_c_m_s_show:'.$item->id],
             ];
         });
 
         if ($manuscript->lastPage() > 1) {
             $inline_keyboard['inline_keyboard'][] = [
-                ['text' => '下一页', 'callback_data' => 'manuscript_search_page:next:'.$keyword.':'.$manuscript->currentPage() + 1],
+                ['text' => '下一页', 'callback_data' => 's_c_c_m_s_page:next:'.$keyword.':'.$manuscript->currentPage() + 1],
             ];
         }
 

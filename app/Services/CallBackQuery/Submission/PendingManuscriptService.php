@@ -22,7 +22,7 @@ class PendingManuscriptService
                 [
                     [
                         'text' => '刷新 🔄',
-                        'callback_data' => 'refresh_pending_manuscript_list',
+                        'callback_data' => 's_r_g_m_p_m_r_list',
                     ],
                 ],
             ],
@@ -34,7 +34,7 @@ class PendingManuscriptService
                 $inline_keyboard['inline_keyboard'][] = [
                     [
                         'text' => '【'.$item->text.'】',
-                        'callback_data' => 'show_pending_manuscript:'.$item->id,
+                        'callback_data' => 's_r_g_m_p_m_show:'.$item->id,
                     ],
                 ];
             }

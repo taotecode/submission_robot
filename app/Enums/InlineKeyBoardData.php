@@ -54,7 +54,7 @@ class InlineKeyBoardData
                 [
                     [
                         'text' => get_keyboard_name_config('review_group_approved.ApprovedEnd', KeyBoardName::ApprovedEnd),
-                        'callback_data' => 'approved_submission_button',
+                        'callback_data' => 's_r_g_m_e_approved',//approved_submission_button
                     ],
                     [
                         'text' => get_keyboard_name_config('review_group_approved.ViewMessage', KeyBoardName::ViewMessage),
@@ -64,7 +64,7 @@ class InlineKeyBoardData
                 [
                     [
                         'text' => get_keyboard_name_config('review_group_approved.DeleteMessage', KeyBoardName::DeleteMessage),
-                        'callback_data' => 'delete_submission_message',
+                        'callback_data' => 's_r_g_m_e_del_m',//delete_submission_message
                     ],
                 ],
             ],
@@ -75,7 +75,7 @@ class InlineKeyBoardData
                 [
                     [
                         'text' => get_keyboard_name_config('review_group_rejected.RejectedEnd', KeyBoardName::RejectedEnd),
-                        'callback_data' => 'reject_submission_button',
+                        'callback_data' => 's_r_g_m_e_reject',
                     ],
                 ],
             ],
@@ -86,7 +86,7 @@ class InlineKeyBoardData
                 [
                     [
                         'text' => get_keyboard_name_config('review_group_deleted.MessageDeleted', KeyBoardName::MessageDeleted),
-                        'callback_data' => 'delete_submission_message_success',
+                        'callback_data' => 's_r_g_m_e_del_m_s',//delete_submission_message_success
                     ],
                 ],
             ],
@@ -101,7 +101,7 @@ class InlineKeyBoardData
                     ],
                     [
                         'text' => get_keyboard_name_config('white_list_user_submission.DeleteWhiteListUser', KeyBoardName::DeleteWhiteListUser),
-                        'callback_data' => 'delete_white_list_user_submission_message',
+                        'callback_data' => 's_r_g_m_e_del_w_u_m',//delete_white_list_user_submission_message
                     ],
                 ],
             ],
@@ -112,7 +112,7 @@ class InlineKeyBoardData
                 [
                     [
                         'text' => get_keyboard_name_config('start.error_and_submission', KeyBoardName::StartSubmission),
-                        'callback_data' => 'quick_submission',
+                        'callback_data' => 's_p_q_submission',
                     ],
                 ],
             ],
@@ -123,11 +123,11 @@ class InlineKeyBoardData
                 [
                     [
                         'text' => get_keyboard_name_config('submission.forward_origin_select_Yes', KeyBoardName::Yes),
-                        'callback_data' => 'forward_origin_select_Yes'
+                        'callback_data' => 's_p_m_s_f_o_yes'
                     ],
                     [
                         'text' => get_keyboard_name_config('submission.forward_origin_select_No', KeyBoardName::No),
-                        'callback_data' => 'forward_origin_select_No'
+                        'callback_data' => 's_p_m_s_f_o_no'
                     ]
                 ],
             ],
@@ -138,7 +138,7 @@ class InlineKeyBoardData
                 [
                     [
                         'text' => get_keyboard_name_config('submission.forward_origin_input_cancel', KeyBoardName::Cancel),
-                        'callback_data' => 'forward_origin_input_cancel'
+                        'callback_data' => 's_p_m_s_f_o_i_cancel'
                     ]
                 ],
             ],
@@ -153,7 +153,7 @@ class InlineKeyBoardData
                     ],
                     [
                         'text' => get_keyboard_name_config('submission.forward_origin_input_cancel', KeyBoardName::Cancel),
-                        'callback_data' => 'forward_origin_input_cancel'
+                        'callback_data' => 's_p_m_s_f_o_i_cancel'
                     ]
                 ],
             ],
@@ -164,11 +164,11 @@ class InlineKeyBoardData
                 [
                     [
                         'text' => get_keyboard_name_config('common.yes', KeyBoardName::Yes),
-                        'callback_data' => 'disable_message_preview_yes'
+                        'callback_data' => 's_p_m_s_d_m_p_yes'
                     ],
                     [
                         'text' => get_keyboard_name_config('common.no', KeyBoardName::No),
-                        'callback_data' => 'disable_message_preview_no'
+                        'callback_data' => 's_p_m_s_d_m_p_no'
                     ]
                 ],
             ]
@@ -179,11 +179,11 @@ class InlineKeyBoardData
                 [
                     [
                         'text' => get_keyboard_name_config('common.yes', KeyBoardName::Yes),
-                        'callback_data' => 'disable_notification_yes'
+                        'callback_data' => 's_p_m_s_d_n_yes'
                     ],
                     [
                         'text' => get_keyboard_name_config('common.no', KeyBoardName::No),
-                        'callback_data' => 'disable_notification_no'
+                        'callback_data' => 's_p_m_s_d_n_no'
                     ]
                 ],
             ]
@@ -194,11 +194,11 @@ class InlineKeyBoardData
                 [
                     [
                         'text' => get_keyboard_name_config('common.yes', KeyBoardName::Yes),
-                        'callback_data' => 'protect_content_yes'
+                        'callback_data' => 's_p_m_s_p_c_yes'
                     ],
                     [
                         'text' => get_keyboard_name_config('common.no', KeyBoardName::No),
-                        'callback_data' => 'protect_content_no'
+                        'callback_data' => 's_p_m_s_p_c_no'
                     ]
                 ],
             ]
@@ -238,13 +238,13 @@ class InlineKeyBoardData
     const REVIEW_GROUP = [
         'inline_keyboard' => [
             [
-                ['text' => KeyBoardName::Approved, 'callback_data' => 'approved_submission'],
-                ['text' => KeyBoardName::Rejected, 'callback_data' => 'reject_submission'],
+                ['text' => KeyBoardName::Approved, 'callback_data' => 's_r_g_m_r_approved'],
+                ['text' => KeyBoardName::Rejected, 'callback_data' => 's_r_g_m_r_reject'],
                 ['text' => KeyBoardName::PrivateChat, 'callback_data' => 'private_message'],
             ],
             [
-                ['text' => KeyBoardName::QuickApproved, 'callback_data' => 'approved_submission_quick'],
-                ['text' => KeyBoardName::QuickRejected, 'callback_data' => 'reject_submission_quick'],
+                ['text' => KeyBoardName::QuickApproved, 'callback_data' => 's_r_g_m_r_approved_quick'],
+                ['text' => KeyBoardName::QuickRejected, 'callback_data' => 's_r_g_m_r_reject_quick'],
             ],
         ],
     ];

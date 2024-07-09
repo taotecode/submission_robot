@@ -34,75 +34,79 @@ class SubmissionService
         $telegram, $botInfo,$updateData, $command,$commandArray,$chat,$chatId,$messageId,$callbackQuery,$callbackQueryId,$message,$from,$replyToMessage,$manuscript,$manuscriptId
     ){
         switch ($command) {
-            case 'approved_submission':
+            case 's_r_g_m_r_approved'://submission_review_group_manuscript_review_approved；审核群组的稿件审核通过
                 return $this->approved_and_rejected_submission($telegram, $botInfo, $manuscript, $chatId, $from, $messageId, true, $callbackQuery);
-            case 'reject_submission':
+            case 's_r_g_m_r_reject'://submission_review_group_manuscript_review_reject；审核群组的稿件审核拒绝
                 return $this->approved_and_rejected_submission($telegram, $botInfo, $manuscript, $chatId, $from, $messageId, false, $callbackQuery);
-            case 'approved_submission_quick':
+            case 's_r_g_m_r_approved_quick'://submission_review_group_manuscript_review_approved_quick；审核群组的稿件快速审核通过
                 return $this->submission_quick($telegram, $botInfo, $manuscript, $chatId, $from, $messageId, true, $callbackQuery);
-            case 'reject_submission_quick':
+            case 's_r_g_m_r_reject_quick'://submission_review_group_manuscript_review_reject_quick；审核群组的稿件快速审核拒绝
                 return $this->submission_quick($telegram, $botInfo, $manuscript, $chatId, $from, $messageId, false, $callbackQuery);
-            case 'approved_submission_button':
+            case 's_r_g_m_e_approved'://submission_review_group_manuscript_end_approved；审核群组的稿件审核结束-通过
                 return $this->approvedOrRejectSubmission($telegram, true, $callbackQuery);
-            case 'reject_submission_button':
+            case 's_r_g_m_e_reject'://submission_review_group_manuscript_end_reject；审核群组的稿件审核结束-拒绝
                 return $this->approvedOrRejectSubmission($telegram, false, $callbackQuery);
-            case 'delete_submission_message':
-            case 'delete_white_list_user_submission_message':
+            case 's_r_g_m_e_del_m'://submission_review_group_manuscript_end_delete_message；审核群组的稿件审核结束-删除消息
+            case 's_r_g_m_e_del_w_u_m'://submission_review_group_manuscript_end_delete_white_user_message；审核群组的稿件审核结束-删除白名单用户投稿
                 return $this->deleteSubmissionMessage($telegram, $botInfo, $manuscript, $callbackQuery, $chatId, $messageId, $from);
-            case 'delete_submission_message_success':
+            case 's_r_g_m_e_del_m_s'://submission_review_group_manuscript_end_delete_message_success；审核群组的稿件审核结束-删除消息成功
                 return $this->deleteSubmissionMessageSuccess($telegram, $callbackQuery);
-            case 'set_submission_user_type':
+            case 's_r_g_m_s_u_type'://submission_review_group_manuscript_set_user_type；设置投稿人身份
                 return $this->setSubmissionUserType($telegram, $botInfo, $from, $callbackQuery, $commandArray, $manuscriptId, $manuscript, $chatId, $messageId);
-            case 'select_channel':
+            case 's_r_g_m_p_m_r_list'://submission_review_group_manuscript_pending_manuscript_refresh_list；审核群组的稿件待审核列表
+                return $this->refreshPendingManuscriptList($telegram, $botInfo, $chatId, $messageId, $message, $callbackQueryId);
+            case 's_r_g_m_p_m_show'://submission_review_group_manuscript_pending_manuscript_show；审核群组的稿件待审核详情
+                return $this->showPendingManuscript($telegram, $botInfo, $manuscript);
+
+
+            case 's_p_m_s_channel'://submission_private_manuscript_set_channel；投稿-私聊-设置发布频道
                 return $this->selectChannel($telegram, $botInfo, $chatId, $messageId, $callbackQueryId, $commandArray);
-            case 'quick_submission':
+            case 's_p_q_submission'://submission_private_quick_submission；投稿-私聊-快速投稿
                 return $this->quick_submission($telegram, $botInfo, $updateData->getMessage()->replyToMessage);
-            case 'forward_origin_select_Yes':
+            case 's_p_m_s_f_o_yes'://submission_private_manuscript_set_forward_origin_yes；投稿-私聊-设置转发来源-是
                 return $this->forward_origin_select($telegram, $chatId, $messageId,1);
-            case 'forward_origin_select_No':
+            case 's_p_m_s_f_o_no'://submission_private_manuscript_set_forward_origin_no；投稿-私聊-设置转发来源-否
                 return $this->forward_origin_select($telegram, $chatId, $messageId,2);
-            case 'forward_origin_select_restart':
+            case 's_p_m_s_f_o_restart'://submission_private_manuscript_set_forward_origin_restart；投稿-私聊-设置转发来源-重置
                 return $this->forward_origin_select($telegram, $chatId, $messageId,3);
-            case 'forward_origin_input_cancel':
+            case 's_p_m_s_f_o_i_cancel'://submission_private_manuscript_set_forward_origin_input_cancel；投稿-私聊-设置转发来源-取消输入
                 return $this->forward_origin_select($telegram, $chatId, $messageId,4);
-            case 'disable_message_preview_yes':
+            case 's_p_m_s_d_m_p_yes'://submission_private_manuscript_set_disable_message_preview_yes；投稿-私聊-禁用消息预览-是
                 return $this->selectCommonByYesOrNo($telegram, $chatId, $messageId,
                     1,'disable_message_preview_status','disable_message_preview_id',
                     get_config('submission.disable_message_preview_end_tip')
                 );
-            case 'disable_message_preview_no':
+            case 's_p_m_s_d_m_p_no'://submission_private_manuscript_set_disable_message_preview_no；投稿-私聊-禁用消息预览-否
                 return $this->selectCommonByYesOrNo($telegram, $chatId, $messageId,
                     0,'disable_message_preview_status','disable_message_preview_id',
                     get_config('submission.disable_message_preview_end_tip')
                 );
-            case 'disable_notification_yes':
+            case 's_p_m_s_d_n_yes'://submission_private_manuscript_set_disable_notification_yes；投稿-私聊-禁用通知-是
                 return $this->selectCommonByYesOrNo($telegram, $chatId, $messageId,
                     1,'disable_notification_status','disable_notification_id',
                     get_config('submission.disable_notification_end_tip')
                 );
-            case 'disable_notification_no':
+            case 's_p_m_s_d_n_no'://submission_private_manuscript_set_disable_notification_no；投稿-私聊-禁用通知-否
                 return $this->selectCommonByYesOrNo($telegram, $chatId, $messageId,
                     0,'disable_notification_status','disable_notification_id',
                     get_config('submission.disable_notification_end_tip')
                 );
-            case 'protect_content_yes':
+            case 's_p_m_s_p_c_yes'://submission_private_manuscript_set_protect_content_no；投稿-私聊-保护内容-是
                 return $this->selectCommonByYesOrNo($telegram, $chatId, $messageId,
                     1,'protect_content_status','protect_content_id',
                     get_config('submission.protect_content_end_tip')
                 );
-            case 'protect_content_no':
+            case 's_p_m_s_p_c_no'://submission_private_manuscript_set_protect_content_no；投稿-私聊-保护内容-否
                 return $this->selectCommonByYesOrNo($telegram, $chatId, $messageId,
                     0,'protect_content_status','protect_content_id',
                     get_config('submission.protect_content_end_tip')
                 );
-            case 'refresh_pending_manuscript_list':
-                return $this->refreshPendingManuscriptList($telegram, $botInfo, $chatId, $messageId, $message, $callbackQueryId);
-            case 'show_pending_manuscript':
-                return $this->showPendingManuscript($telegram, $botInfo, $manuscript);
-            case 'manuscript_search_show_link':
-                return $this->manuscriptSearchShowLink($telegram, $botInfo, $manuscript, $chatId);
-            case 'manuscript_search_page':
+
+
+            case 's_c_c_m_s_page'://submission_common_command_manuscript_search_page；投稿-公共-命令-稿件搜索-分页
                 return $this->manuscriptSearchPage($telegram, $botInfo, $manuscript, $chatId, $messageId, $callbackQueryId, $commandArray);
+            case 's_c_c_m_s_show'://submission_common_command_manuscript_show；投稿-公共-命令-稿件搜索-稿件详情
+                return $this->manuscriptSearchShowLink($telegram, $botInfo, $manuscript, $chatId);
         }
     }
 

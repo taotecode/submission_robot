@@ -67,7 +67,7 @@ class ManuscriptSearchService
 
         $manuscript->each(function ($item) use (&$inline_keyboard) {
             $inline_keyboard['inline_keyboard'][] = [
-                ['text' => $item->text, 'callback_data' => 'manuscript_search_show_link:'.$item->id],
+                ['text' => $item->text, 'callback_data' => 's_c_c_m_s_show:'.$item->id],
             ];
         });
 
@@ -75,12 +75,12 @@ class ManuscriptSearchService
 
         if ($manuscript->currentPage() > 1) {
             $inline_keyboard['inline_keyboard'][$pageInlineKeyboardNum][] = [
-                'text' => '◀️ 上一页', 'callback_data' => 'manuscript_search_page:prev:'.$keyword.':'.($manuscript->currentPage() - 1),
+                'text' => '◀️ 上一页', 'callback_data' => 's_c_c_m_s_page:prev:'.$keyword.':'.($manuscript->currentPage() - 1),
             ];
         }
         if ($manuscript->lastPage() !== $manuscript->currentPage()) {
             $inline_keyboard['inline_keyboard'][$pageInlineKeyboardNum][] = [
-                'text' => '下一页 ▶️', 'callback_data' => 'manuscript_search_page:next:'.$keyword.':'.($manuscript->currentPage() + 1),
+                'text' => '下一页 ▶️', 'callback_data' => 's_c_c_m_s_page:next:'.$keyword.':'.($manuscript->currentPage() + 1),
             ];
         }
 

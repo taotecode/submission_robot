@@ -140,7 +140,7 @@ class WhoCommand extends Command
                 continue;
             }
             $inline_keyboard['inline_keyboard'][] = [
-                ['text' => '设置为'.$value.'用户', 'callback_data' => 'set_submission_user_type:'.$manuscriptId.':'.$key.':'.$submissionUser['id']],
+                ['text' => '设置为'.$value.'用户', 'callback_data' => 's_r_g_m_s_u_type:'.$manuscriptId.':'.$key.':'.$submissionUser['id']],
             ];
         }
 

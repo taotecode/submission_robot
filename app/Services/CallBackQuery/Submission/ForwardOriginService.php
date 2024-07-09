@@ -32,7 +32,7 @@ class ForwardOriginService
                         [
                             [
                                 'text'=>get_keyboard_name_config('submission.forward_origin_select_restart'),
-                                'callback_data'=>'forward_origin_select_restart'
+                                'callback_data'=>'s_p_m_s_f_o_restart'
                             ],
                         ]
                     ]
@@ -66,7 +66,7 @@ class ForwardOriginService
                         [
                             [
                                 'text'=>get_keyboard_name_config('submission.forward_origin_select_restart'),
-                                'callback_data'=>'forward_origin_select_restart'
+                                'callback_data'=>'s_p_m_s_f_o_restart'
                             ],
                         ]
                     ]
