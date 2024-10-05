@@ -71,22 +71,22 @@ class SubmissionService
                 return $this->forward_origin_select($telegram, $chatId, $messageId,3);
             case 's_p_m_s_f_o_i_cancel'://submission_private_manuscript_set_forward_origin_input_cancel；投稿-私聊-设置转发来源-取消输入
                 return $this->forward_origin_select($telegram, $chatId, $messageId,4);
-            case 's_p_m_s_d_m_p_yes'://submission_private_manuscript_set_disable_message_preview_yes；投稿-私聊-禁用消息预览-是
+            case 's_p_m_s_d_m_p_yes'://submission_private_manuscript_set_disable_message_preview_yes；投稿-私聊-消息预览-是
                 return $this->selectCommonByYesOrNo($telegram, $chatId, $messageId,
                     1,'disable_message_preview_status','disable_message_preview_id',
                     get_config('submission.disable_message_preview_end_tip')
                 );
-            case 's_p_m_s_d_m_p_no'://submission_private_manuscript_set_disable_message_preview_no；投稿-私聊-禁用消息预览-否
+            case 's_p_m_s_d_m_p_no'://submission_private_manuscript_set_disable_message_preview_no；投稿-私聊-消息预览-否
                 return $this->selectCommonByYesOrNo($telegram, $chatId, $messageId,
                     0,'disable_message_preview_status','disable_message_preview_id',
                     get_config('submission.disable_message_preview_end_tip')
                 );
-            case 's_p_m_s_d_n_yes'://submission_private_manuscript_set_disable_notification_yes；投稿-私聊-禁用通知-是
+            case 's_p_m_s_d_n_yes'://submission_private_manuscript_set_disable_notification_yes；投稿-私聊-消息通知-是
                 return $this->selectCommonByYesOrNo($telegram, $chatId, $messageId,
                     1,'disable_notification_status','disable_notification_id',
                     get_config('submission.disable_notification_end_tip')
                 );
-            case 's_p_m_s_d_n_no'://submission_private_manuscript_set_disable_notification_no；投稿-私聊-禁用通知-否
+            case 's_p_m_s_d_n_no'://submission_private_manuscript_set_disable_notification_no；投稿-私聊-消息通知-否
                 return $this->selectCommonByYesOrNo($telegram, $chatId, $messageId,
                     0,'disable_notification_status','disable_notification_id',
                     get_config('submission.disable_notification_end_tip')

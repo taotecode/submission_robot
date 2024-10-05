@@ -26,7 +26,7 @@ class SetTailContent extends RowAction
             ]);
 
         return Modal::make()
-            ->lg()
+            ->xl()
             ->scrollable() // 设置弹窗内容可滚动
             ->title($this->title)
             ->body($form)

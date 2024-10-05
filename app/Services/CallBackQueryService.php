@@ -2,14 +2,12 @@
 
 namespace App\Services;
 
-use App\Models\Bot;
 use App\Models\Complaint;
 use App\Models\Manuscript;
 use App\Services\CallBackQuery\PrivateMessageService;
+use App\Services\CallBackQuery\SettingsServices;
 use Telegram\Bot\Api;
-use Telegram\Bot\Objects\CallbackQuery;
 use Telegram\Bot\Objects\Update;
-use Telegram\Bot\Objects\User;
 
 class CallBackQueryService
 {
@@ -71,10 +69,10 @@ class CallBackQueryService
             case 's_p_m_s_f_o_no'://submission_private_manuscript_set_forward_origin_no；投稿-私聊-设置转发来源-否
             case 's_p_m_s_f_o_restart'://submission_private_manuscript_set_forward_origin_restart；投稿-私聊-设置转发来源-重置
             case 's_p_m_s_f_o_i_cancel'://submission_private_manuscript_set_forward_origin_input_cancel；投稿-私聊-设置转发来源-取消输入
-            case 's_p_m_s_d_m_p_yes'://submission_private_manuscript_set_disable_message_preview_yes；投稿-私聊-禁用消息预览-是
-            case 's_p_m_s_d_m_p_no'://submission_private_manuscript_set_disable_message_preview_no；投稿-私聊-禁用消息预览-否
-            case 's_p_m_s_d_n_yes'://submission_private_manuscript_set_disable_notification_yes；投稿-私聊-禁用通知-是
-            case 's_p_m_s_d_n_no'://submission_private_manuscript_set_disable_notification_no；投稿-私聊-禁用通知-否
+            case 's_p_m_s_d_m_p_yes'://submission_private_manuscript_set_disable_message_preview_yes；投稿-私聊-消息预览-是
+            case 's_p_m_s_d_m_p_no'://submission_private_manuscript_set_disable_message_preview_no；投稿-私聊-消息预览-否
+            case 's_p_m_s_d_n_yes'://submission_private_manuscript_set_disable_notification_yes；投稿-私聊-消息通知-是
+            case 's_p_m_s_d_n_no'://submission_private_manuscript_set_disable_notification_no；投稿-私聊-消息通知-否
             case 's_p_m_s_p_c_yes'://submission_private_manuscript_set_protect_content_no；投稿-私聊-保护内容-是
             case 's_p_m_s_p_c_no'://submission_private_manuscript_set_protect_content_no；投稿-私聊-保护内容-否
 
@@ -83,7 +81,6 @@ class CallBackQueryService
                 return (new \App\Services\CallBackQuery\SubmissionService())->index(
                     $telegram,$botInfo,$updateData, $command,$commandArray,$chat,$chatId,$messageId,$callbackQuery,$callbackQueryId,$message,$from,$replyToMessage,$manuscript,$manuscriptId
                 );
-                break;
             case 'approved_complaint':
                 //                $this->approved_and_reject_complaint($telegram, $botInfo, $manuscriptId, $chatId, $from, $messageId, true, $callbackQuery);
                 break;
@@ -92,7 +89,15 @@ class CallBackQueryService
                 return (new PrivateMessageService())->index(
                     $telegram,$botInfo,$updateData, $command,$commandArray,$chat,$chatId,$messageId,$callbackQuery,$callbackQueryId,$message,$from,$replyToMessage,$manuscript,$manuscriptId
                 );
-                break;
+            case 'c_c_s_anonymous'://common_command_setting_anonymous；公共-命令-设置-匿名
+            case 'c_c_s_d_m_p'://common_command_setting_disable_message_preview；公共-命令-设置-消息预览
+            case 'c_c_s_d_n'://common_command_setting_disable_notification；公共-命令-设置-消息通知
+            case 's_p_m_s_f_o'://common_command_setting_forward_origin；公共-命令-设置-转发来源
+                return (new SettingsServices())->index(
+                    $telegram,$botInfo,$updateData, $command,$commandArray,$chat,$chatId,$messageId,$callbackQuery,$callbackQueryId,$message,$from,$replyToMessage
+                );
+            default:
+                return 'error';
         }
     }
 }

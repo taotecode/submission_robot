@@ -3,6 +3,7 @@
 namespace App\Telegram\Commands;
 
 use App\Models\Bot;
+use App\Models\BotUser;
 use Telegram\Bot\Commands\Command;
 
 class SettingsCommand extends Command
@@ -42,22 +43,32 @@ class SettingsCommand extends Command
             return 'ok';
         }
 
+        $chatId=$this->getUpdate()->getChat()->id;
+
+        $botUser=(new BotUser())->where('bot_id', $botInfo->id)->where('user_id', $chatId)->first();
+
+
+        $type_text=($botUser->is_anonymous==1)?'匿名':'不匿名';
+        $type_text1=($botUser->is_link_preview==1)?'是':'否';
+        $type_text2=($botUser->is_disable_notification==1)?'是':'否';
+        $type_text3=($botUser->is_protect_content==1)?'主动输入':'从不输入';
+
         $this->replyWithMessage([
             'text' => "设置",
             'parse_mode' => 'HTML',
             'reply_markup' => json_encode([
                 'inline_keyboard' => [
                     [
-                        ['text' => '投稿身份【匿名】', 'callback_data' => 'a1'],
+                        ['text' => '投稿身份【'.$type_text.'】', 'callback_data' => 'c_c_s_anonymous:null:'.$botUser->is_anonymous],
                     ],
                     [
-                        ['text' => '消息预览【否】', 'callback_data' => 'a1'],
+                        ['text' => '消息预览【'.$type_text1.'】', 'callback_data' => 'c_c_s_d_m_p:null:'.$botUser->is_anonymous],
                     ],
                     [
-                        ['text' => '消息静默发送【是】', 'callback_data' => 'a1'],
+                        ['text' => '消息静默发送【'.$type_text2.'】', 'callback_data' => 'c_c_s_d_n:null:'.$botUser->is_anonymous],
                     ],
                     [
-                        ['text' => '消息来源【从不输入】', 'callback_data' => 'a1'],
+                        ['text' => '消息来源【'.$type_text3.'】', 'callback_data' => 's_p_m_s_f_o:null:'.$botUser->is_anonymous],
                     ],
                 ],
             ]),

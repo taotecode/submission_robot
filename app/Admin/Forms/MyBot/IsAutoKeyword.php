@@ -49,8 +49,9 @@ class IsAutoKeyword extends Form implements LazyRenderable
                     词库格式为每行一个词，如果需要提升分词准确率，可以在词语后面加上词性，词性之间用空格隔开，词性列表如下：<br>
         新闻 1<br>
         一般数值在1-10之间，数值越大，分词越准确，但是分词速度越慢，建议平均值为：3<br>
-        可以点击<a href="'.route('dcat.admin.bots.lexiconCheck', $id).'">词库验证</a>进行分词测试<br>
+
                     ')->default('新闻')->value($lexicon);
+                //        可以点击<a href="'.route('dcat.admin.bots.lexiconCheck', $id).'">词库验证</a>进行分词测试<br>
             })
             ->options([
                 '0' => '关闭自动关键词',
