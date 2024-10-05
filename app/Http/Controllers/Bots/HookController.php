@@ -69,6 +69,9 @@ class HookController extends Controller
             $this->save_bot_user($botInfo, $updateData->getChat() ?? null, $updateData->getMessage() ?? null);
         }
 
+        logger("obj".$updateData->objectType());
+        logger("up".json_encode($updateData));
+
 
         if ($updateData->hasCommand() && $updateData->objectType() !== 'callback_query') {
             return 'ok';
