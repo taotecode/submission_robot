@@ -19,6 +19,7 @@ class StartService
         $chat = $updateData->getChat();
         $chatId = $chat->id;
         $message = $updateData->getMessage();
+        logger(json_encode($message));
         $messageId = $message->messageId;
         $objectType = $message->objectType();
 
