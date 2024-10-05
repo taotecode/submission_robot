@@ -118,7 +118,7 @@ class SetSubmissionUserTypeService
             $telegram->answerCallbackQuery([
                 'callback_query_id' => $callbackQuery->id,
                 'text' => '设置成功！',
-                'show_alert' => true,
+                'show_alert' => false,
             ]);
 
             return 'ok';

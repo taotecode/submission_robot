@@ -48,7 +48,7 @@ class PendingManuscriptService
                     $telegram->answerCallbackQuery([
                         'callback_query_id' => $callbackQueryId,
                         'text' => '暂无新稿件',
-                        'show_alert' => true,
+                        'show_alert' => false,
                     ]);
 
                     return 'ok';

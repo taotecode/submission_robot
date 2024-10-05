@@ -78,7 +78,7 @@ class DeleteSubmissionMessageService
             $telegram->answerCallbackQuery([
                 'callback_query_id' => $callbackQuery->id,
                 'text' => '对应的频道投稿已删除',
-                'show_alert' => true,
+                'show_alert' => false,
             ]);
             $this->sendPostedByMessage($telegram, $manuscript, $botInfo, ManuscriptStatus::DELETE);
 
