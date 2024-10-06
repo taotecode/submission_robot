@@ -70,10 +70,7 @@ class HookController extends Controller
         } catch (Exception $e) {
             logger(json_encode($e));
             // 检查错误代码并返回 "ok"
-            if ($e->getCode() === 403 && strpos($e->getMessage(), 'bot was blocked by the user') !== false) {
-                // 返回 "ok" 给 Telegram
-                return 'ok';
-            }
+            return 'ok';
             // 处理其他类型的异常（如果需要）
             // 可以选择记录日志或者返回其他信息
         }
