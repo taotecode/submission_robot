@@ -24,6 +24,7 @@ return [
         'is_submission' => '投稿服务',
         'is_complaint' => '投诉服务',
         'is_suggestion' => '建议服务',
+        'is_user_setting' => '用户个人设置',
         'keyword' => '关键词',
         'lexicon' => '词库',
     ],
