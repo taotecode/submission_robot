@@ -67,10 +67,9 @@ class HookController extends Controller
         //存入使用机器人的用户
         if ($updateData->objectType() !== 'my_chat_member') {
             $this->save_bot_user($botInfo, $updateData->getChat() ?? null, $updateData->getMessage() ?? null);
+        }else{
+            return 'ok';
         }
-
-        logger("obj".$updateData->objectType());
-        logger("up".json_encode($updateData));
 
 
         if ($updateData->hasCommand() && $updateData->objectType() !== 'callback_query') {
