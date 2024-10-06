@@ -6,6 +6,7 @@ use App\Enums\CacheKey;
 use App\Enums\InlineKeyBoardData;
 use App\Enums\KeyBoardName;
 use App\Models\Bot;
+use App\Models\BotUser;
 use Illuminate\Support\Facades\Cache;
 use Telegram\Bot\Api;
 use Telegram\Bot\Objects\Update;
@@ -26,9 +27,18 @@ class StartService
         $feedbackService = new FeedbackService();
         $complaintService = new ComplaintService();
 
+        //识别并获取用户信息
+        $botUser=(new BotUser())->where(['bot_id'=>$botInfo->id, 'user_id' => $chatId])->first();
+        if (!$botUser){
+            return $this->sendTelegramMessage($telegram, 'sendMessage', [
+                'chat_id' => $chatId,
+                'text' => "发生错误信息，用户信息不存在，请尝试使用 /start 命令重新开始。",
+            ]);
+        }
+
         //如果用户已经进入投稿状态，直接进入投稿服务
         if (Cache::tags(CacheKey::Submission.'.'.$chatId)->has($chatId)) {
-            return $submissionService->index($botInfo, $updateData, $telegram);
+            return $submissionService->index($botInfo,$botUser, $updateData, $telegram);
         }
         //如果用户已经进入投诉状态，直接进入投诉服务
         if (Cache::tags(CacheKey::Complaint.'.'.$chatId)->has($chatId)) {
@@ -39,6 +49,7 @@ class StartService
             return $this->index($botInfo, $updateData, $telegram);
         }
         //如果进入私聊状态，直接进入私聊服务
+
 
 
         return match ($objectType) {

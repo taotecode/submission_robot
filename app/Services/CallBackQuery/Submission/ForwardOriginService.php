@@ -13,10 +13,10 @@ use Telegram\Bot\Exceptions\TelegramSDKException;
 class ForwardOriginService
 {
 
-    public function forward_origin_select_Yes(Api $telegram, $chatId,$messageId)
+    public function forward_origin_select_Yes(Api $telegram, $chatId, $messageId)
     {
-        $cacheTag=CacheKey::Submission.'.'.$chatId;
-        $objectType=Cache::tags($cacheTag)->get('objectType');
+        $cacheTag = CacheKey::Submission . '.' . $chatId;
+        $objectType = Cache::tags($cacheTag)->get('objectType');
         $messageCache = Cache::tags($cacheTag)->get($objectType);
         $messageCache['forward_origin_type'] = 1;
         Cache::tags($cacheTag)->put($objectType, $messageCache);
@@ -31,8 +31,8 @@ class ForwardOriginService
                     'inline_keyboard' => [
                         [
                             [
-                                'text'=>get_keyboard_name_config('submission.forward_origin_select_restart'),
-                                'callback_data'=>'s_p_m_s_f_o_restart'
+                                'text' => get_keyboard_name_config('submission.forward_origin_select_restart'),
+                                'callback_data' => 's_p_m_s_f_o_restart'
                             ],
                         ]
                     ]
@@ -47,10 +47,10 @@ class ForwardOriginService
         }
     }
 
-    public function forward_origin_select_No(Api $telegram, $chatId,$messageId)
+    public function forward_origin_select_No(Api $telegram, $chatId, $messageId)
     {
-        $cacheTag=CacheKey::Submission.'.'.$chatId;
-        $objectType=Cache::tags($cacheTag)->get('objectType');
+        $cacheTag = CacheKey::Submission . '.' . $chatId;
+        $objectType = Cache::tags($cacheTag)->get('objectType');
         $messageCache = Cache::tags($cacheTag)->get($objectType);
         $messageCache['forward_origin_type'] = 2;
         Cache::tags($cacheTag)->put($objectType, $messageCache);
@@ -65,8 +65,8 @@ class ForwardOriginService
                     'inline_keyboard' => [
                         [
                             [
-                                'text'=>get_keyboard_name_config('submission.forward_origin_select_restart'),
-                                'callback_data'=>'s_p_m_s_f_o_restart'
+                                'text' => get_keyboard_name_config('submission.forward_origin_select_restart'),
+                                'callback_data' => 's_p_m_s_f_o_restart'
                             ],
                         ]
                     ]
@@ -81,10 +81,10 @@ class ForwardOriginService
         }
     }
 
-    public function forward_origin_select_restart(Api $telegram, $chatId,$messageId)
+    public function forward_origin_select_restart(Api $telegram, $chatId, $messageId)
     {
-        $cacheTag=CacheKey::Submission.'.'.$chatId;
-        $objectType=Cache::tags($cacheTag)->get('objectType');
+        $cacheTag = CacheKey::Submission . '.' . $chatId;
+        $objectType = Cache::tags($cacheTag)->get('objectType');
         $messageCache = Cache::tags($cacheTag)->get($objectType);
         $messageCache['forward_origin_type'] = 0;
         Cache::tags($cacheTag)->put($objectType, $messageCache);
@@ -105,10 +105,10 @@ class ForwardOriginService
         }
     }
 
-    public function forward_origin_input_cancel(Api $telegram, mixed $chatId, mixed $messageId)
+    public function forward_origin_input_cancel(Api $telegram, $callbackQueryId, mixed $chatId, mixed $messageId)
     {
-        $cacheTag=CacheKey::Submission.'.'.$chatId;
-        $objectType=Cache::tags($cacheTag)->get('objectType');
+        $cacheTag = CacheKey::Submission . '.' . $chatId;
+        $objectType = Cache::tags($cacheTag)->get('objectType');
         $messageCache = Cache::tags($cacheTag)->get($objectType);
         try {
 
@@ -129,12 +129,18 @@ class ForwardOriginService
                 'reply_markup' => json_encode(KeyBoardData::$START_SUBMISSION),
             ]);
 
+            $telegram->answerCallbackQuery([
+                'callback_query_id' => $callbackQueryId,
+                'text' => '已取消',
+                'show_alert' => false,
+            ]);
+
 
             $messageCache['forward_origin_input_status'] = 2;
             Cache::tags($cacheTag)->put($objectType, $messageCache);
             Cache::tags($cacheTag)->put('forward_origin_input_status', 2, now()->addDay());
-            Cache::tags($cacheTag)->put('forward_origin_input_id',0, now()->addDay());
-            Cache::tags($cacheTag)->put('forward_origin_input_data',0, now()->addDay());
+            Cache::tags($cacheTag)->put('forward_origin_input_id', 0, now()->addDay());
+            Cache::tags($cacheTag)->put('forward_origin_input_data', 0, now()->addDay());
 
             return 'ok';
         } catch (TelegramSDKException $telegramSDKException) {

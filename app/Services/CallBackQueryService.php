@@ -94,7 +94,7 @@ class CallBackQueryService
             case 'c_c_s_d_n'://common_command_setting_disable_notification；公共-命令-设置-消息通知
             case 's_p_m_s_f_o'://common_command_setting_forward_origin；公共-命令-设置-转发来源
                 return (new SettingsServices())->index(
-                    $telegram,$botInfo,$updateData, $command,$commandArray,$chat,$chatId,$messageId,$callbackQuery,$callbackQueryId,$message,$from,$replyToMessage
+                    $telegram,$botInfo, $command,$commandArray,$chatId,$messageId,$callbackQueryId
                 );
             default:
                 return 'error';

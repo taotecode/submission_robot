@@ -8,6 +8,7 @@ use App\Enums\KeyBoardData;
 use App\Enums\KeyBoardName;
 use App\Enums\SubmissionUserType;
 use App\Models\Bot;
+use App\Models\BotUser;
 use App\Models\Channel;
 use App\Models\Manuscript;
 use App\Models\SubmissionUser;
@@ -20,7 +21,7 @@ class SubmissionService
 {
     use SendTelegramMessageService;
 
-    public function index($botInfo, Update $updateData, Api $telegram)
+    public function index($botInfo,BotUser $botUser, Update $updateData, Api $telegram)
     {
         $chat = $updateData->getChat();
         $chatId = $chat->id;
@@ -41,7 +42,7 @@ class SubmissionService
                 return match ($message->text) {
                     get_keyboard_name_config('submission.CancelSubmission', KeyBoardName::CancelSubmission) => $this->cancel($telegram, $botInfo, $chatId),
                     get_keyboard_name_config('submission.Restart', KeyBoardName::Restart) => $this->start($telegram, $botInfo, $chatId, $chat, get_config('submission.restart')),
-                    get_keyboard_name_config('submission.EndSending', KeyBoardName::EndSending) => $this->end($telegram, $chatId, $botInfo),
+                    get_keyboard_name_config('submission.EndSending', KeyBoardName::EndSending) => $this->end($telegram,$botInfo,$botUser,$chatId,$chat),
                     get_keyboard_name_config('select_channel.SelectChannel', KeyBoardName::SelectChannel),
                     get_keyboard_name_config('select_channel_end.SelectChannelAgain', KeyBoardName::SelectChannelAgain) => $this->selectChannel($telegram, $chatId, $botInfo),
                     get_keyboard_name_config('submission_end.ConfirmSubmissionOpen', KeyBoardName::ConfirmSubmissionOpen) => $this->confirm($telegram, $chatId, $chat, $botInfo, 0),
@@ -157,7 +158,7 @@ class SubmissionService
     /**
      * 结束发送投稿
      */
-    private function end(Api $telegram, $chatId, $botInfo): string
+    private function end(Api $telegram, $botInfo,$botUser,$chatId,$chat): string
     {
         $cacheTag = CacheKey::Submission . '.' . $chatId;
         $objectType = Cache::tags($cacheTag)->get('objectType');
@@ -207,9 +208,10 @@ class SubmissionService
         }
 
         //判断消息是否有来源
-        if ($botInfo->is_forward_origin == 1) {
-            if (isset($messageCache['forward_origin'])) {//来源用户主动选择
-                if ($botInfo->is_forward_origin_select == 1) {
+        if ($botInfo->is_forward_origin == 1) {//机器人启动了【消息来源自动标注】
+            //is_forward_origin_select=1表示用户可以选择来源，0表示机器人自动标注
+            if (isset($messageCache['forward_origin'])) {//如果消息中存在来源
+                if ($botInfo->is_forward_origin_select == 1) {//用户可以选择是否引用来源
                     if (Cache::tags($cacheTag)->get('forward_origin_type') == 0) {
                         return $this->sendTelegramMessage($telegram, 'sendMessage', [
                             'chat_id' => $chatId,
@@ -221,10 +223,10 @@ class SubmissionService
                     } else {
                         $messageCache['forward_origin_type'] = Cache::tags($cacheTag)->get('forward_origin_type');
                     }
-                } else {
+                } else {//用户不能自主选择是否引用来源，并直接强制引用来源。
                     $messageCache['forward_origin_type'] = 1;
                 }
-            } elseif ($botInfo->is_forward_origin_input == 1) {//用户主动输入
+            } elseif ($botInfo->is_forward_origin_input == 1) {//没有来源时，选择让用户主动输入
                 if (Cache::tags($cacheTag)->get('forward_origin_input_status') == 0 || Cache::tags($cacheTag)->get('forward_origin_input_status') == 01) {
                     //用户已输入
                     if (!empty(Cache::tags($cacheTag)->get('forward_origin_input_data'))) {
@@ -263,8 +265,9 @@ class SubmissionService
 
         //消息预览功能
         $disable_message_preview=$this->selectCommonByYesOrNo(
+            $botInfo,$botUser,
             $messageCache, $botInfo->is_link_preview,$cacheTag,
-            'disable_message_preview_status','disable_message_preview'
+            'disable_message_preview_status','disable_message_preview','is_link_preview'
         );
         if (!$disable_message_preview){
             $disable_message_preview_message=$this->sendTelegramMessage($telegram, 'sendMessage', [
@@ -286,8 +289,9 @@ class SubmissionService
 
         //消息静默发送
         $disable_notification=$this->selectCommonByYesOrNo(
+            $botInfo,$botUser,
             $messageCache, $botInfo->is_disable_notification,$cacheTag,
-            'disable_notification_status','disable_notification'
+            'disable_notification_status','disable_notification','is_disable_notification'
         );
         if (!$disable_notification){
             $disable_notification_message=$this->sendTelegramMessage($telegram, 'sendMessage', [
@@ -309,8 +313,9 @@ class SubmissionService
 
         //消息禁止被转发和保存
         $protect_content=$this->selectCommonByYesOrNo(
+            $botInfo,$botUser,
             $messageCache, $botInfo->is_protect_content,$cacheTag,
-            'protect_content_status','protect_content'
+            'protect_content_status','protect_content','is_protect_content'
         );
         if (!$protect_content){
             $protect_content_message=$this->sendTelegramMessage($telegram, 'sendMessage', [
@@ -357,6 +362,15 @@ class SubmissionService
             ? get_config('submission.preview_tips_channel')
             : get_config('submission.preview_tips');
 
+        //
+        if ($botInfo->is_user_setting==1 && count($botInfo->channel_ids) <=1){
+            if ($botUser['is_anonymous']==1){//匿名
+                return $this->confirm($telegram,$chatId,$chat,$botInfo,1);
+            }else{
+                return $this->confirm($telegram,$chatId,$chat,$botInfo,1);
+            }
+        }
+
         return $this->sendTelegramMessage($telegram, 'sendMessage', [
             'chat_id' => $chatId,
             'reply_to_message_id' => $messageId,
@@ -387,18 +401,26 @@ class SubmissionService
         ]);
     }
 
-    private function selectCommonByYesOrNo($messageCache,$functionData,$cacheTag,$cacheKey,$messageKey)
+    private function selectCommonByYesOrNo($botInfo,$botUser,$messageCache,$functionData,$cacheTag,$cacheKey,$messageKey,$botUserSettingKey='')
     {
         if ($functionData==0){//关闭消息预览
             $messageCache[$messageKey] = 0;
         }elseif ($functionData==1){//开启消息预览
             $messageCache[$messageKey] = 1;
         }elseif ($functionData==2){//用户自主选择
-            $status=Cache::tags($cacheTag)->get($cacheKey);
-            if ($status==3){
-                return false;
+            if ($botInfo->is_user_setting==1){
+                if ($botUser[$botUserSettingKey]==1){
+                    $messageCache[$messageKey] = 1;
+                }else{
+                    $messageCache[$messageKey] = 0;
+                }
             }else{
-                $messageCache[$messageKey] = $status;
+                $status=Cache::tags($cacheTag)->get($cacheKey);
+                if ($status==3){
+                    return false;
+                }else{
+                    $messageCache[$messageKey] = $status;
+                }
             }
         }
         return $messageCache;
@@ -531,7 +553,13 @@ class SubmissionService
             return $this->sendGroupMessageWhiteUser($telegram, $botInfo, $manuscript, $channel);
         }
 
-        $custom_tail_content = "\r\n\r\n 用户投稿至频道：<a href='https://t.me/" . $channel->name . "'>" . $channel->appellation . '</a>';
+        $custom_tail_content = "\n\n 用户投稿至频道：<a href='https://t.me/" . $channel->name . "'>" . $channel->appellation . '</a>';
+        //添加相关配置信息
+        $custom_tail_content.= "\n\n 稿件配置：";
+        $custom_tail_content.= "\n ·是否匿名：" . (($is_anonymous==1)?"是":"否 【".get_posted_by($chat)."】");
+        $custom_tail_content.= "\n ·消息是否禁止被转发和保存：" . (($messageCache['protect_content']==1)?"是":"否");
+        $custom_tail_content.= "\n ·消息是否静默方式发送：" . (($messageCache['disable_notification']==1)?"是":"否");
+        $custom_tail_content.= "\n ·消息是否允许链接预览：" . (($messageCache['disable_message_preview']==1)?"是":"否");
 
         // 发送消息到审核群组
         $this->sendGroupMessage(

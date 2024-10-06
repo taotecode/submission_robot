@@ -6,72 +6,77 @@ use App\Models\BotUser;
 
 class SettingsServices
 {
-    public function index(
-        $telegram, $botInfo,$updateData, $command,$commandArray,$chat,$chatId,$messageId,$callbackQuery,$callbackQueryId,$message,$from,$replyToMessage
-    )
+    public function index($telegram, $botInfo, $command, $commandArray, $chatId, $messageId, $callbackQueryId)
     {
-        $status=$commandArray[2];
-        switch ($command) {
-            case 'c_c_s_anonymous'://common_command_setting_anonymous；公共-命令-设置-匿名
-                return $this->common_command_setting($telegram,$botInfo,'is_anonymous',$status,$chatId,$messageId);
-            case 'c_c_s_d_m_p'://common_command_setting_disable_message_preview；公共-命令-设置-消息预览
-                return $this->common_command_setting($telegram,$botInfo,'is_link_preview',$status,$chatId,$messageId);
-            case 'c_c_s_d_n'://common_command_setting_disable_notification；公共-命令-设置-消息通知
-                return $this->common_command_setting($telegram,$botInfo,'is_disable_notification',$status,$chatId,$messageId);
-            case 's_p_m_s_f_o'://common_command_setting_forward_origin；公共-命令-设置-转发来源
-                return $this->common_command_setting($telegram,$botInfo,'is_protect_content',$status,$chatId,$messageId);
-            default:
-                return 'error';
+        $status = $commandArray[2];
+        $settingsMap = [
+            'c_c_s_anonymous' => 'is_anonymous',
+            'c_c_s_d_m_p' => 'is_link_preview',
+            'c_c_s_d_n' => 'is_disable_notification',
+            's_p_m_s_f_o' => 'is_protect_content'
+        ];
+
+        if (!isset($settingsMap[$command])) {
+            return 'error';
         }
+
+        $type = $settingsMap[$command];
+        return $this->updateSetting($telegram, $botInfo, $type, $status, $chatId, $messageId, $callbackQueryId);
     }
 
-    private function common_command_setting($telegram,$botInfo,$type,$status,$chatId,$messageId)
+    private function updateSetting($telegram, $botInfo, $type, $status, $chatId, $messageId, $callbackQueryId)
     {
-        //更新信息
-        $botUser=BotUser::where('bot_id', $botInfo->id)->where('user_id', $chatId)->first();
-        $type_text=($botUser->is_anonymous==1)?'匿名':'不匿名';
-        $type_text1=($botUser->is_link_preview==1)?'是':'否';
-        $type_text2=($botUser->is_disable_notification==1)?'是':'否';
-        $type_text3=($botUser->is_protect_content==1)?'主动输入':'从不输入';
-
-        $botUser->$type=$status;
+        // 更新信息
+        $botUser = BotUser::where('bot_id', $botInfo->id)->where('user_id', $chatId)->first();
+        $botUser->$type = $status;
         $botUser->save();
 
-        switch ($type){
-            case 'is_anonymous':
-                $type_text=($status==1)?'匿名':'不匿名';
-                break;
-            case 'is_link_preview':
-                $type_text1=($status==1)?'是':'否';
-                break;
-            case 'is_disable_notification':
-                $type_text2=($status==1)?'是':'否';
-                break;
-            case 'is_protect_content':
-                $type_text3=($status==1)?'主动输入':'从不输入';
-                break;
-        }
+        $settingsText = $this->getSettingsText($botUser, $status, $type);
 
-        return $telegram->editMessageReplyMarkup([
+        $replyMarkup = json_encode($this->createReplyMarkup($botUser));
+
+        $telegram->editMessageReplyMarkup([
             'chat_id' => $chatId,
             'message_id' => $messageId,
-            'reply_markup' => json_encode([
-                'inline_keyboard' => [
-                    [
-                        ['text' => '投稿身份【'.$type_text.'】', 'callback_data' => 'c_c_s_anonymous:null:'.$botUser->is_anonymous],
-                    ],
-                    [
-                        ['text' => '消息预览【'.$type_text1.'】', 'callback_data' => 'c_c_s_d_m_p:null:'.$botUser->is_link_preview],
-                    ],
-                    [
-                        ['text' => '消息静默发送【'.$type_text2.'】', 'callback_data' => 'c_c_s_d_n:null:'.$botUser->is_disable_notification],
-                    ],
-                    [
-                        ['text' => '消息来源【'.$type_text3.'】', 'callback_data' => 's_p_m_s_f_o:null:'.$botUser->is_protect_content],
-                    ],
-                ],
-            ]),
+            'reply_markup' => $replyMarkup,
         ]);
 
+        return $telegram->answerCallbackQuery([
+            'callback_query_id' => $callbackQueryId,
+            'text' => '设置已变更',
+            'show_alert' => false,
+        ]);
+    }
+
+    private function getSettingsText($botUser, $status, $type)
+    {
+        $texts = [
+            'is_anonymous' => $status ? '匿名' : '不匿名',
+            'is_link_preview' => $status ? '是' : '否',
+            'is_disable_notification' => $status ? '是' : '否',
+            'is_protect_content' => $status ? '开启' : '不开启',
+        ];
+
+        return $texts[$type] ?? '';
+    }
+
+    private function createReplyMarkup($botUser)
+    {
+        return [
+            'inline_keyboard' => [
+                [
+                    ['text' => '投稿身份【' . ($botUser->is_anonymous ? '匿名' : '不匿名') . '】', 'callback_data' => 'c_c_s_anonymous:null:' . ($botUser->is_anonymous ? 0 : 1)],
+                ],
+                [
+                    ['text' => '消息预览【' . ($botUser->is_link_preview ? '是' : '否') . '】', 'callback_data' => 'c_c_s_d_m_p:null:' . ($botUser->is_link_preview ? 0 : 1)],
+                ],
+                [
+                    ['text' => '消息静默发送【' . ($botUser->is_disable_notification ? '是' : '否') . '】', 'callback_data' => 'c_c_s_d_n:null:' . ($botUser->is_disable_notification ? 0 : 1)],
+                ],
+                [
+                    ['text' => '消息禁止被转发和保存【' . ($botUser->is_protect_content ? '开启' : '不开启') . '】', 'callback_data' => 's_p_m_s_f_o:null:' . ($botUser->is_protect_content ? 0 : 1)],
+                ],
+            ],
+        ];
     }
 }

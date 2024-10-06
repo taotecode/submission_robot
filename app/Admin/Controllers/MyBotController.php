@@ -100,9 +100,9 @@ class MyBotController extends AdminController
 
             $form->switch('is_message_text_preprocessing')->default(1)->help('是否开启消息文本预处理？<br>开启后，将会对消息文本格式进行保留，如：空格、换行、链接、加粗等。');
             $radio_options=[1 => '开启', 0 => '关闭',2=>'用户在投稿时主动选择'];
-            $form->radio('is_link_preview')->default(1)->options($radio_options)->help('是否开启消息预览？<br>开启后，将会对消息文件、链接、图片进行预览。');
-            $form->radio('is_disable_notification')->default(1)->options($radio_options)->help('是否开启消息静默发送？<br>开启后，用户在频道中，将不会收到消息提醒。');
-            $form->radio('is_protect_content')->default(1)->options($radio_options)->help('是否开启消息禁止被转发和保存？<br>开启后，将会对消息进行禁止转发和保存。');
+            $form->radio('is_link_preview')->default(1)->options($radio_options)->help('是否开启消息预览？<br>开启后，将会对消息文件、链接、图片进行预览。<br>当选项为【用户在投稿时主动选择】时，如果用户已经自己设置了【是】或【否】，那么系统将根据用户的设置来进行（前提是机器人启动了用户的个人设置功能）。');
+            $form->radio('is_disable_notification')->default(1)->options($radio_options)->help('是否开启消息静默发送？<br>开启后，用户在频道中，将不会收到消息提醒。<br>当选项为【用户在投稿时主动选择】时，如果用户已经自己设置了【是】或【否】，那么系统将根据用户的设置来进行。（前提是机器人启动了用户的个人设置功能）');
+            $form->radio('is_protect_content')->default(1)->options($radio_options)->help('是否开启消息禁止被转发和保存？<br>开启后，将会对消息进行禁止转发和保存。<br>当选项为【用户在投稿时主动选择】时，如果用户已经自己设置了【开启】或【不开启】，那么系统将根据用户的设置来进行。（前提是机器人启动了用户的个人设置功能）');
 
             $form->radio('is_forward_origin')
                 ->when(1, function (Form $form) {
@@ -129,6 +129,8 @@ class MyBotController extends AdminController
             $form->switch('is_submission')->default(1)->help('是否开启投稿服务？');
             $form->switch('is_complaint')->default(1)->help('是否开启投诉服务？');
             $form->switch('is_suggestion')->default(1)->help('是否开启建议服务？');
+
+            $form->switch('is_user_setting')->default(1)->help('是否开启用户个人设置？');
 
             $form->switch('status')->default(1);
             $form->display('created_at');

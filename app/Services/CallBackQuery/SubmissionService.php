@@ -64,13 +64,13 @@ class SubmissionService
             case 's_p_q_submission'://submission_private_quick_submission；投稿-私聊-快速投稿
                 return $this->quick_submission($telegram, $botInfo, $updateData->getMessage()->replyToMessage);
             case 's_p_m_s_f_o_yes'://submission_private_manuscript_set_forward_origin_yes；投稿-私聊-设置转发来源-是
-                return $this->forward_origin_select($telegram, $chatId, $messageId,1);
+                return $this->forward_origin_select($telegram, $callbackQueryId, $chatId, $messageId,1);
             case 's_p_m_s_f_o_no'://submission_private_manuscript_set_forward_origin_no；投稿-私聊-设置转发来源-否
-                return $this->forward_origin_select($telegram, $chatId, $messageId,2);
+                return $this->forward_origin_select($telegram, $callbackQueryId, $chatId, $messageId,2);
             case 's_p_m_s_f_o_restart'://submission_private_manuscript_set_forward_origin_restart；投稿-私聊-设置转发来源-重置
-                return $this->forward_origin_select($telegram, $chatId, $messageId,3);
+                return $this->forward_origin_select($telegram, $callbackQueryId, $chatId, $messageId,3);
             case 's_p_m_s_f_o_i_cancel'://submission_private_manuscript_set_forward_origin_input_cancel；投稿-私聊-设置转发来源-取消输入
-                return $this->forward_origin_select($telegram, $chatId, $messageId,4);
+                return $this->forward_origin_select($telegram, $callbackQueryId, $chatId, $messageId,4);
             case 's_p_m_s_d_m_p_yes'://submission_private_manuscript_set_disable_message_preview_yes；投稿-私聊-消息预览-是
                 return $this->selectCommonByYesOrNo($telegram, $chatId, $messageId,
                     1,'disable_message_preview_status','disable_message_preview_id',
@@ -219,13 +219,13 @@ class SubmissionService
         }
     }
 
-    private function forward_origin_select(Api $telegram, $chatId, $messageId,$status): string
+    private function forward_origin_select(Api $telegram, $callbackQueryId, $chatId, $messageId,$status): string
     {
         return match ($status) {
             1 => (new ForwardOriginService())->forward_origin_select_Yes($telegram, $chatId, $messageId),
             2 => (new ForwardOriginService())->forward_origin_select_No($telegram, $chatId, $messageId),
             3 => (new ForwardOriginService())->forward_origin_select_restart($telegram, $chatId, $messageId),
-            default => (new ForwardOriginService())->forward_origin_input_cancel($telegram, $chatId, $messageId),
+            default => (new ForwardOriginService())->forward_origin_input_cancel($telegram, $callbackQueryId, $chatId, $messageId),
         };
     }
 
