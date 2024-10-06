@@ -181,7 +181,7 @@ class SubmissionService
             case 'media_group_audio':
                 $mediaGroupId = Cache::tags($cacheTag)->get('media_group');
                 $messageCache = Cache::tags($cacheTag)->get('media_group:' . $mediaGroupId);
-                $messageId = $messageCache[0]['message_id'] ?? '';
+                $messageId = $messageCache['media_group'][0]['message_id'] ?? '';
                 if ($objectType === 'media_group_audio' && Cache::tags($cacheTag)->has('text')) {
                     $textCache = Cache::tags($cacheTag)->get('text');
                     $messageId = $textCache['message_id'] ?? '';
@@ -190,7 +190,7 @@ class SubmissionService
                         'audio' => $messageCache,
                     ];
                 }
-                $isEmpty = isMediaGroupEmpty($messageCache);
+                $isEmpty = isMediaGroupEmpty($messageCache['media_group']);
                 break;
             default:
                 $isEmpty = true;
@@ -447,7 +447,7 @@ class SubmissionService
             case 'media_group_video':
                 $media_group_id = Cache::tags(CacheKey::Submission . '.' . $chatId)->get('media_group');
                 $messageCache = Cache::tags(CacheKey::Submission . '.' . $chatId)->get('media_group:' . $media_group_id);
-                $messageId = $messageCache[0]['message_id'] ?? '';
+                $messageId = $messageCache['media_group'][0]['message_id'] ?? '';
                 foreach ($messageCache as $key => $value) {
                     $messageText .= $value['caption'] ?? '';
                 }

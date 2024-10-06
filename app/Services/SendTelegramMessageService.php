@@ -280,13 +280,24 @@ trait SendTelegramMessageService
                 break;
             case 'media_group_photo':
             case 'media_group_video':
-                foreach ($message as $key => $item) {
+                foreach ($message['media_group'] as $key => $item) {
                     $temp_array = [];
                     if (isset($item['photo'])) {
-                        $temp_array = [
-                            'type' => 'photo',
-                            'media' => $item['photo'][0]['file_id'],
-                        ];
+                        if (count($item['photo'])>1){
+                            foreach ($item['photo'] as $photo){
+                                $temp_array[] = [
+                                    'type' => 'photo',
+                                    'media' => $photo['file_id'],
+                                ];
+                            }
+                            $media = $temp_array;
+                        }else{
+                            $temp_array = [
+                                'type' => 'photo',
+                                'media' => $item['photo'][0]['file_id'],
+                            ];
+                            $media[] = $temp_array;
+                        }
                     }
                     if (isset($item['video'])) {
                         $temp_array = [
@@ -317,7 +328,6 @@ trait SendTelegramMessageService
                         $temp_array['caption'] = $text;
                         $temp_array['parse_mode'] = 'HTML';
                     }
-                    $media[] = $temp_array;
                 }
                 $params['media'] = json_encode($media);
                 $method = 'sendMediaGroup';
@@ -399,11 +409,15 @@ trait SendTelegramMessageService
                 'parse_mode' => 'HTML',
             ]);
         }
+        //多媒体
         if ($isReviewGroup && in_array($objectType, ['media_group_photo', 'media_group_video', 'media_group_audio'])) {
             $mediaResult = $this->sendTelegramMessage($telegram, 'sendMediaGroup', [
                 'chat_id' => $chatId,
                 'media' => json_encode($media),
             ], true);
+            if ($mediaResult==="error"){
+                return "error";
+            }
             $result = $this->sendTelegramMessage($telegram, 'sendMessage', [
                 'chat_id' => $chatId,
                 'text' => $isReviewGroupText,
@@ -474,7 +488,7 @@ trait SendTelegramMessageService
             $cacheKeyGroupId = 'media_group:'.$media_group_id;
 
             $messageCache = $cacheTag->get($cacheKeyGroupId, []);
-            $messageCache[] = $messageCacheData;
+            $messageCache['media_group'][] = $messageCacheData;
             $text = count($messageCache) > 1 ? $text_2 : $text_1;
 
             $cacheTag->put($cacheKeyGroup, $media_group_id, now()->addDay());
