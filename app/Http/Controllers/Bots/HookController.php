@@ -10,6 +10,7 @@ use App\Services\StartService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Telegram\Bot\Api;
+use Telegram\Bot\Exceptions\TelegramOtherException;
 use Telegram\Bot\Exceptions\TelegramSDKException;
 
 class HookController extends Controller
@@ -62,7 +63,18 @@ class HookController extends Controller
             \App\Telegram\Commands\SearchCommand::class,
         ]);
 
-        $updateData = $telegram->commandsHandler(true);
+        // 处理更新数据
+        try {
+            $updateData = $telegram->commandsHandler(true);
+        } catch (TelegramOtherException $e) {
+            // 检查错误代码并返回 "ok"
+            if ($e->getCode() === 403 && strpos($e->getMessage(), 'bot was blocked by the user') !== false) {
+                // 返回 "ok" 给 Telegram
+                return 'ok';
+            }
+            // 处理其他类型的异常（如果需要）
+            // 可以选择记录日志或者返回其他信息
+        }
 
         //存入使用机器人的用户
         if ($updateData->objectType() !== 'my_chat_member') {
