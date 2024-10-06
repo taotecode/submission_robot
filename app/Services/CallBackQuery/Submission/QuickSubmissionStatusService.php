@@ -17,7 +17,7 @@ class QuickSubmissionStatusService
     use SendPostedByMessageService;
     use UpdateReviewGroupMessageButtonService;
 
-    public function quick_submission($telegram, $callbackQuery, User $from, $botInfo, $manuscript, $chatId, $messageId, bool $isApproved): string
+    public function quick_submission($telegram, $callbackQuery, User $from, $botInfo, $manuscript, $chatId, $messageId,$message, bool $isApproved): string
     {
         //获取审核群组信息
         $reviewGroup = $botInfo->review_group;
@@ -62,6 +62,9 @@ class QuickSubmissionStatusService
                 $manuscript->one_approved = $from->toArray();
                 $manuscript->status = ManuscriptStatus::APPROVED;
                 $channelMessageId = $this->sendChannelMessage($telegram, $botInfo, $manuscript);
+                if (!isset($channelMessageId['message_id'])){
+                    $channelMessageId=$channelMessageId[0];
+                }
                 $this->sendPostedByMessage($telegram, $manuscript, $botInfo, ManuscriptStatus::APPROVED);
 
                 $telegram->editMessageReplyMarkup([

@@ -55,7 +55,20 @@ trait UpdateReviewGroupMessageButtonService
 
                 if ($manuscript->type != Manuscript::TYPE_TEXT) {
                     $params['caption'] = $text;
-                    $telegram->editMessageCaption($params);
+                    //如果是多媒体
+                    if (isset($message['reply_to_message'])){
+                        $reply_to_message_id=$message['reply_to_message']['message_id'];
+                        $params['message_id']=$reply_to_message_id;
+                        unset($params['reply_markup']);
+                        $telegram->editMessageCaption($params);
+                        unset($params['parse_mode']);
+                        unset($params['caption']);
+                        $params['message_id']=$messageId;
+                        $params['reply_markup']=json_encode($inline_keyboard_approved);
+                        $telegram->editMessageReplyMarkup($params);
+                    }else{
+                        $telegram->editMessageCaption($params);
+                    }
                 } else {
                     $params['text'] = $text;
                     $telegram->editMessageText($params);
@@ -65,6 +78,9 @@ trait UpdateReviewGroupMessageButtonService
                     $manuscript->status = ManuscriptStatus::APPROVED;
 
                     $channelMessageId = $this->sendChannelMessage($telegram, $botInfo, $manuscript);
+                    if (!isset($channelMessageId['message_id'])){
+                        $channelMessageId=$channelMessageId[0];
+                    }
                     $this->sendPostedByMessage($telegram, $manuscript, $botInfo, ManuscriptStatus::APPROVED);
 
                     $manuscript->message_id = $channelMessageId;
@@ -93,7 +109,20 @@ trait UpdateReviewGroupMessageButtonService
 
                 if ($manuscript->type != Manuscript::TYPE_TEXT) {
                     $params['caption'] = $text;
-                    $telegram->editMessageCaption($params);
+                    //如果是多媒体
+                    if (isset($message['reply_to_message'])){
+                        $reply_to_message_id=$message['reply_to_message']['message_id'];
+                        $params['message_id']=$reply_to_message_id;
+                        unset($params['reply_markup']);
+                        $telegram->editMessageCaption($params);
+                        unset($params['parse_mode']);
+                        unset($params['caption']);
+                        $params['message_id']=$messageId;
+                        $params['reply_markup']=json_encode($inline_keyboard_reject);
+                        $telegram->editMessageReplyMarkup($params);
+                    }else{
+                        $telegram->editMessageCaption($params);
+                    }
                 } else {
                     $params['text'] = $text;
                     $telegram->editMessageText($params);
@@ -203,7 +232,20 @@ trait UpdateReviewGroupMessageButtonService
 
                 if ($complaint->type != Manuscript::TYPE_TEXT) {
                     $params['caption'] = $text;
-                    $telegram->editMessageCaption($params);
+                    //如果是多媒体
+                    if (isset($message['reply_to_message'])){
+                        $reply_to_message_id=$message['reply_to_message']['message_id'];
+                        $params['message_id']=$reply_to_message_id;
+                        unset($params['reply_markup']);
+                        $telegram->editMessageCaption($params);
+                        unset($params['parse_mode']);
+                        unset($params['caption']);
+                        $params['message_id']=$messageId;
+                        $params['reply_markup']=json_encode($inline_keyboard_approved);
+                        $telegram->editMessageReplyMarkup($params);
+                    }else{
+                        $telegram->editMessageCaption($params);
+                    }
                 } else {
                     $params['text'] = $text;
                     $telegram->editMessageText($params);
@@ -213,6 +255,9 @@ trait UpdateReviewGroupMessageButtonService
                     $complaint->status = ManuscriptStatus::APPROVED;
 
                     $channelMessageId = $this->sendChannelMessage($telegram, $botInfo, $complaint);
+                    if (!isset($channelMessageId['message_id'])){
+                        $channelMessageId=$channelMessageId[0];
+                    }
                     $this->sendPostedByMessage($telegram, $complaint, $botInfo, ManuscriptStatus::APPROVED);
 
                     $complaint->message_id = $channelMessageId;
@@ -241,7 +286,20 @@ trait UpdateReviewGroupMessageButtonService
 
                 if ($complaint->type != Manuscript::TYPE_TEXT) {
                     $params['caption'] = $text;
-                    $telegram->editMessageCaption($params);
+                    //如果是多媒体
+                    if (isset($message['reply_to_message'])){
+                        $reply_to_message_id=$message['reply_to_message']['message_id'];
+                        $params['message_id']=$reply_to_message_id;
+                        unset($params['reply_markup']);
+                        $telegram->editMessageCaption($params);
+                        unset($params['parse_mode']);
+                        unset($params['caption']);
+                        $params['message_id']=$messageId;
+                        $params['reply_markup']=json_encode($inline_keyboard_reject);
+                        $telegram->editMessageReplyMarkup($params);
+                    }else{
+                        $telegram->editMessageCaption($params);
+                    }
                 } else {
                     $params['text'] = $text;
                     $telegram->editMessageText($params);
