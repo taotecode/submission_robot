@@ -7,6 +7,7 @@ use App\Admin\Repositories\Bot;
 use App\Services\CallBackQueryService;
 use App\Services\SaveBotUserService;
 use App\Services\StartService;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Telegram\Bot\Api;
@@ -66,7 +67,7 @@ class HookController extends Controller
         // 处理更新数据
         try {
             $updateData = $telegram->commandsHandler(true);
-        } catch (TelegramOtherException $e) {
+        } catch (Exception $e) {
             logger(json_encode($e));
             // 检查错误代码并返回 "ok"
             if ($e->getCode() === 403 && strpos($e->getMessage(), 'bot was blocked by the user') !== false) {
