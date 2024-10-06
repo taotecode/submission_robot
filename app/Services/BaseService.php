@@ -14,10 +14,10 @@ class BaseService
      */
     public function setWebHook($botId, $token): bool
     {
-        $url = config('app.url').'/api/bots/hook/'.$botId;
+        $url = config('app.url') . '/api/bots/hook/' . $botId;
 
         if (config('app.env') == 'local') {
-            $url = 'https://bot.modg.asia/api/bots/hook/'.$botId;
+            $url = 'https://bot.modg.asia/api/bots/hook/' . $botId;
         }
 
         try {
@@ -73,13 +73,6 @@ class BaseService
                     'description' => '帮助中心',
                 ],
             ];
-            $scope = [
-                'type' => 'default',
-            ];
-            $params = [
-                'commands' => $commands,
-                'scope' => $scope,
-            ];
             $telegram = new Api($token);
             $telegram->setMyCommands([
                 'commands' => json_encode([]),
@@ -88,7 +81,12 @@ class BaseService
                 ],
             ]);
             $telegram->setMyCommands([
-                'commands' => json_encode([]),
+                'commands' => json_encode([
+                    [
+                        'command' => 'get_group_id',
+                        'description' => '获取群组ID',
+                    ],
+                ]),
                 'scope' => json_encode([
                     'type' => 'all_group_chats',
                 ]),
@@ -103,12 +101,17 @@ class BaseService
                         'command' => 'help',
                         'description' => '帮助中心',
                     ],
+                    [
+                        'command' => 'get_me_id',
+                        'description' => '获取我的ID',
+                    ],
                 ]),
                 'scope' => json_encode([
                     'type' => 'all_private_chats',
                 ]),
             ]);
 
+//            return true;
             return $telegram->setMyCommands([
                 'commands' => json_encode($commands),
                 'scope' => json_encode([

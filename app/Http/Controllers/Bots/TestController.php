@@ -53,10 +53,9 @@ class TestController extends Controller
 
     public function setCommands()
     {
-        //        ini_set('memory_limit', '100M');
-        $telegram = new Api(env('TELEGRAM_BOT_TOKEN'));
-        //        $data=(new BaseService)->setCommands(env('TELEGRAM_BOT_TOKEN'));
-        //        dump($data);BotCommandScopeAllPrivateChats
+        $data=(new BaseService)->setCommands(env('TELEGRAM_BOT_TOKEN'));
+        dd($data);
+        /*$telegram = new Api(env('TELEGRAM_BOT_TOKEN'));
         $commands = [
             [
                 'command' => 'start',
@@ -108,7 +107,7 @@ class TestController extends Controller
             'scope' => json_encode([
                 'type' => 'default',
             ]),
-        ]);
+        ]);*/
     }
 
     public function webapp()
