@@ -522,6 +522,9 @@ class SubmissionService
             if (!$channelMessageId) {
                 return 'ok';
             }
+            if (!isset($channelMessageId['message_id'])){
+                $channelMessageId=$channelMessageId[0];
+            }
             $manuscript->message_id = $channelMessageId['message_id'] ?? null;
             $manuscript->save();
             Cache::tags(CacheKey::Submission . '.' . $chatId)->flush();

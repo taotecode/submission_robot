@@ -30,6 +30,7 @@ class GetUpdateController extends Controller
             dd($e->getMessage());
         }
 
+
         foreach ($response as $updateData) {
             dump($updateData);
             if ($updateData->hasCommand()&&$updateData->objectType()!=='callback_query'){
@@ -40,7 +41,7 @@ class GetUpdateController extends Controller
             }elseif (
                 $updateData->getChat()->type === 'private'
             ) {
-                return $startService->index($botInfo, $updateData, $telegram);
+                $startService->index($botInfo, $updateData, $telegram);
             }
         }
 

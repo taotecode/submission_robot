@@ -35,13 +35,13 @@ class SubmissionService
     ){
         switch ($command) {
             case 's_r_g_m_r_approved'://submission_review_group_manuscript_review_approved；审核群组的稿件审核通过
-                return $this->approved_and_rejected_submission($telegram, $botInfo, $manuscript, $chatId, $from, $messageId, true, $callbackQuery);
+                return $this->approved_and_rejected_submission($telegram, $botInfo, $manuscript, $chatId, $from, $messageId,$message, true, $callbackQuery);
             case 's_r_g_m_r_reject'://submission_review_group_manuscript_review_reject；审核群组的稿件审核拒绝
-                return $this->approved_and_rejected_submission($telegram, $botInfo, $manuscript, $chatId, $from, $messageId, false, $callbackQuery);
+                return $this->approved_and_rejected_submission($telegram, $botInfo, $manuscript, $chatId, $from, $messageId,$message, false, $callbackQuery);
             case 's_r_g_m_r_approved_quick'://submission_review_group_manuscript_review_approved_quick；审核群组的稿件快速审核通过
-                return $this->submission_quick($telegram, $botInfo, $manuscript, $chatId, $from, $messageId, true, $callbackQuery);
+                return $this->submission_quick($telegram, $botInfo, $manuscript, $chatId, $from, $messageId,$message, true, $callbackQuery);
             case 's_r_g_m_r_reject_quick'://submission_review_group_manuscript_review_reject_quick；审核群组的稿件快速审核拒绝
-                return $this->submission_quick($telegram, $botInfo, $manuscript, $chatId, $from, $messageId, false, $callbackQuery);
+                return $this->submission_quick($telegram, $botInfo, $manuscript, $chatId, $from, $messageId,$message, false, $callbackQuery);
             case 's_r_g_m_e_approved'://submission_review_group_manuscript_end_approved；审核群组的稿件审核结束-通过
                 return $this->approvedOrRejectSubmission($telegram, true, $callbackQuery);
             case 's_r_g_m_e_reject'://submission_review_group_manuscript_end_reject；审核群组的稿件审核结束-拒绝
@@ -110,20 +110,20 @@ class SubmissionService
         }
     }
 
-    private function approved_and_rejected_submission(Api $telegram, Bot $botInfo, $manuscript, $chatId, User $from, $messageId, bool $isApproved, CallbackQuery $callbackQuery): string
+    private function approved_and_rejected_submission(Api $telegram, Bot $botInfo, $manuscript, $chatId, User $from, $messageId,$message, bool $isApproved, CallbackQuery $callbackQuery): string
     {
         $textSubmissionService = new ApprovedAndRejectedSubmissionService();
         //通过
         if ($isApproved) {
-            return $textSubmissionService->approved($telegram, $botInfo, $manuscript, $chatId, $from, $messageId, $callbackQuery);
+            return $textSubmissionService->approved($telegram, $botInfo, $manuscript, $chatId, $from, $messageId,$message, $callbackQuery);
         } else {
-            return $textSubmissionService->rejected($telegram, $botInfo, $manuscript, $chatId, $from, $messageId, $callbackQuery);
+            return $textSubmissionService->rejected($telegram, $botInfo, $manuscript, $chatId, $from, $messageId,$message, $callbackQuery);
         }
     }
 
-    private function submission_quick(Api $telegram, Bot $botInfo, Manuscript $manuscript, $chatId, User $from, $messageId, bool $isApproved, CallbackQuery $callbackQuery): string
+    private function submission_quick(Api $telegram, Bot $botInfo, Manuscript $manuscript, $chatId, User $from, $messageId,$message, bool $isApproved, CallbackQuery $callbackQuery): string
     {
-        return (new QuickSubmissionStatusService())->quick_submission($telegram, $callbackQuery, $from, $botInfo, $manuscript, $chatId, $messageId, $isApproved);
+        return (new QuickSubmissionStatusService())->quick_submission($telegram, $callbackQuery, $from, $botInfo, $manuscript, $chatId, $messageId,$message, $isApproved);
     }
 
     private function approvedOrRejectSubmission(Api $telegram, bool $isApproved, CallbackQuery $callbackQuery): string
