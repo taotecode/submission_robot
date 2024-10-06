@@ -67,6 +67,7 @@ class HookController extends Controller
         try {
             $updateData = $telegram->commandsHandler(true);
         } catch (TelegramOtherException $e) {
+            logger(json_encode($e));
             // 检查错误代码并返回 "ok"
             if ($e->getCode() === 403 && strpos($e->getMessage(), 'bot was blocked by the user') !== false) {
                 // 返回 "ok" 给 Telegram
