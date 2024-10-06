@@ -68,7 +68,7 @@ class HookController extends Controller
         try {
             $updateData = $telegram->commandsHandler(true);
         } catch (Exception $e) {
-            logger(json_encode($e));
+            logger("updateData接受异常：".json_encode($e));
             // 检查错误代码并返回 "ok"
             return 'ok';
             // 处理其他类型的异常（如果需要）
