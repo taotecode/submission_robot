@@ -240,7 +240,7 @@ class InlineKeyBoardData
             [
                 ['text' => KeyBoardName::Approved, 'callback_data' => 's_r_g_m_r_approved'],
                 ['text' => KeyBoardName::Rejected, 'callback_data' => 's_r_g_m_r_reject'],
-                ['text' => KeyBoardName::PrivateChat, 'callback_data' => 'private_message'],
+                ['text' => KeyBoardName::PrivateChat, 'callback_data' => 'private_message_start'],
             ],
             [
                 ['text' => KeyBoardName::QuickApproved, 'callback_data' => 's_r_g_m_r_approved_quick'],
@@ -257,7 +257,7 @@ class InlineKeyBoardData
             [
                 ['text' => KeyBoardName::Approved, 'callback_data' => 'approved_complaint'],
                 ['text' => KeyBoardName::Rejected, 'callback_data' => 'reject_complaint'],
-                ['text' => KeyBoardName::PrivateChat, 'callback_data' => 'private_message'],
+                ['text' => KeyBoardName::PrivateChat, 'callback_data' => 'private_message_start'],
             ],
             [
                 ['text' => KeyBoardName::QuickApproved, 'callback_data' => 'approved_complaint_quick'],
