@@ -7,14 +7,14 @@ use Telegram\Bot\Api;
 
 class GetUpdateController extends Controller
 {
-    public function index($id)
+    public function index()
     {
         $startService = new \App\Services\StartService();
         $callBackQueryService = new \App\Services\CallBackQueryService();
-        $botInfo = (new \App\Models\Bot())->with('review_group')->find(2);
+        $botInfo = (new \App\Models\Bot())->with(['review_group','bot_command'])->find(2);
 
         try {
-            $telegram = new Api(env('TELEGRAM_BOT_TOKEN'));
+            $telegram = new Api($botInfo->token);
             $telegram->addCommands([
                 \App\Telegram\Commands\StartCommand::class,
                 \App\Telegram\Commands\GetGroupIdCommand::class,
