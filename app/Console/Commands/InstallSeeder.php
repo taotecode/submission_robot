@@ -28,6 +28,7 @@ class InstallSeeder extends Command
     protected $seeders = [
         \Database\Seeders\ConfigSeeder::class,
         \Database\Seeders\KeyboardNameConfigSeeder::class,
+        \Dcat\Admin\Models\AdminTablesSeeder::class,
         \Database\Seeders\AdminMenuAddSeeder::class,
         \Database\Seeders\BotCommandsSeeder::class,
         \Database\Seeders\BackupChannelMenuSeeder::class,
