@@ -40,15 +40,19 @@ class SetCommandsForm extends Form implements LazyRenderable
             $token = $bot->token;
             $telegram = new Api($token);
 
+            // 确保default和all_group_chats字段至少为空数组
+            $input['default'] = $input['default'] ?? [];
+            $input['all_group_chats'] = $input['all_group_chats'] ?? [];
+
             // 保存默认命令
-            $this->saveCommands($botId, 'default', $input['default'] ?? []);
+            $this->saveCommands($botId, 'default', $input['default']);
 
             // 保存群组命令
-            $this->saveCommands($botId, 'all_group_chats', $input['all_group_chats'] ?? []);
+            $this->saveCommands($botId, 'all_group_chats', $input['all_group_chats']);
 
             // 发送命令到Telegram
-            $this->sendCommandsToTelegram($telegram, 'default', $input['default'] ?? []);
-            $this->sendCommandsToTelegram($telegram, 'all_group_chats', $input['all_group_chats'] ?? []);
+            $this->sendCommandsToTelegram($telegram, 'default', $input['default']);
+            $this->sendCommandsToTelegram($telegram, 'all_group_chats', $input['all_group_chats']);
 
             return $this->response()->success('命令设置成功')->refresh();
         } catch (\Exception $e) {
@@ -159,15 +163,26 @@ class SetCommandsForm extends Form implements LazyRenderable
 
         $this->listbox('default', '私聊命令')
             ->options(Commands::DEFAULT_OPTIONS)
-            ->required()
             ->default($defaultCommands)
             ->help('将您需要展示给用户的命令点击添加到右侧列表中。不需要的展示的可以点击右侧列表添加到左侧列表中。');
             
         $this->listbox('all_group_chats', '群组命令')
             ->options(Commands::ALL_GROUP_OPTIONS)
-            ->required()
             ->default($allGroupCommands)
             ->help('将您需要展示给用户的命令点击添加到右侧列表中。不需要的展示的可以点击右侧列表添加到左侧列表中。');
+    }
+
+    /**
+     * 自定义表单验证规则
+     *
+     * @return array
+     */
+    public function rules()
+    {
+        return [
+            'default' => 'nullable|array',
+            'all_group_chats' => 'nullable|array',
+        ];
     }
 
     /**

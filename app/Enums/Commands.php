@@ -12,7 +12,9 @@ class Commands
     const DEFAULT_OPTIONS = [
         0 => 'start - 开始投稿',
         1 => 'help - 帮助中心',
-        1 => 'help - 帮助中心',
+        2 => 'get_me_id - 获取用户自己的ID',
+        3 => 'my_submission - 我的投稿',
+        4 => 'my_setting - 个人设置',
     ];
 
     const ALL_GROUP = [
