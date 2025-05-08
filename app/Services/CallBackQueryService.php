@@ -2,10 +2,12 @@
 
 namespace App\Services;
 
+use App\Enums\CacheKey;
 use App\Models\Complaint;
 use App\Models\Manuscript;
 use App\Services\CallBackQuery\PrivateMessageService;
 use App\Services\CallBackQuery\SettingsServices;
+use Illuminate\Support\Facades\Cache;
 use Telegram\Bot\Api;
 use Telegram\Bot\Objects\Update;
 
@@ -49,6 +51,12 @@ class CallBackQueryService
         }
 
         switch ($command) {
+            case 'home'://初始菜单
+                return $this->home($telegram,$botInfo,$chatId,$messageId,$callbackQueryId);
+            case 'start_submission':
+                return (new \App\Services\CallBackQuery\Submission\SubmissionService())->start(
+                    $telegram,$botInfo,$chatId,$messageId,$callbackQueryId,$chat
+                );
             //投稿
             case 's_r_g_m_r_approved'://submission_review_group_manuscript_review_approved；审核群组的稿件审核通过
             case 's_r_g_m_r_reject'://submission_review_group_manuscript_review_reject；审核群组的稿件审核拒绝
@@ -89,15 +97,36 @@ class CallBackQueryService
                 return (new PrivateMessageService())->index(
                     $telegram,$botInfo,$updateData, $command,$commandArray,$chat,$chatId,$messageId,$callbackQuery,$callbackQueryId,$message,$from,$replyToMessage,$manuscript,$manuscriptId
                 );
-            case 'c_c_s_anonymous'://common_command_setting_anonymous；公共-命令-设置-匿名
-            case 'c_c_s_d_m_p'://common_command_setting_disable_message_preview；公共-命令-设置-消息预览
-            case 'c_c_s_d_n'://common_command_setting_disable_notification；公共-命令-设置-消息通知
-            case 's_p_m_s_f_o'://common_command_setting_forward_origin；公共-命令-设置-转发来源
+            case 'my_setting'://common_command_setting；公共-命令-设置
+            case 'my_setting_anonymous'://common_command_setting_anonymous；公共-命令-设置-匿名
+            case 'my_setting_disable_message_preview'://common_command_setting_disable_message_preview；公共-命令-设置-消息预览
+            case 'my_setting_disable_notification'://common_command_setting_disable_notification；公共-命令-设置-消息通知
+            case 'my_setting_forward_origin'://common_command_setting_forward_origin；公共-命令-设置-转发来源
                 return (new SettingsServices())->index(
                     $telegram,$botInfo, $command,$commandArray,$chatId,$messageId,$callbackQueryId
                 );
             default:
                 return 'error';
         }
+    }
+
+    private function home(Api $telegram,$botInfo,$chatId,$messageId,$callbackQueryId)
+    {
+        Cache::tags(CacheKey::Submission . '.' . $chatId)->flush();
+        Cache::tags(CacheKey::Complaint . '.' . $chatId)->flush();
+        Cache::tags(CacheKey::Suggestion . '.' . $chatId)->flush();
+
+        $telegram->editMessageText([
+            'chat_id' => $chatId,
+            'message_id' => $messageId,
+            'text' => get_command($botInfo,'start')['data']['text'],
+            'reply_markup' => command_start_inline_keyboard($botInfo),
+        ]);
+
+        return $telegram->answerCallbackQuery([
+            'callback_query_id' => $callbackQueryId,
+            'text' => '加载完成',
+            'show_alert' => false,
+        ]);
     }
 }

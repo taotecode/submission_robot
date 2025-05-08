@@ -94,7 +94,7 @@ trait SendTelegramMessageService
         if (empty($manuscript->text)) {
             $text .= '已自动通过审核。';
         } else {
-            $text .= "<a href='https://t.me/" . $channel->name . '/' . $manuscript->message_id . "'>“ " . get_text_title($manuscript->text) . ' ”</a> 已自动通过审核。';
+            $text .= "<a href='https://t.me/" . $channel->name . '/' . $manuscript->message_id . "'>" . get_text_title($manuscript->text) . '</a> 已自动通过审核。';
         }
 
         return $this->sendTelegramMessage($telegram, 'sendMessage', [
@@ -110,14 +110,113 @@ trait SendTelegramMessageService
      */
     public function sendChannelMessage(Api $telegram, $botInfo, Manuscript $manuscript): mixed
     {
-
         $message = $manuscript->data;
-
         $objectType = $manuscript->type;
+        $result = [];
+        $backupResults = [];
 
-        //频道ID
+        // 发送到主频道
         if (!empty($manuscript->channel->name)) {
             $chatId = '@' . $manuscript->channel->name;
+            
+            $mainChannelResult = $this->objectTypeHandle(
+                $telegram,
+                $botInfo,
+                $chatId,
+                $objectType,
+                $message,
+                null,
+                false,
+                true,
+                false,
+                true,
+                $manuscript,
+            );
+            
+            if (!$mainChannelResult) {
+                $this->sendTelegramMessage($telegram, 'sendMessage', [
+                    'chat_id' => $manuscript->posted_by,
+                    'text' => '发送至主频道失败，请联系管理员',
+                ]);
+                return false;
+            }
+            
+            $result = $mainChannelResult;
+            
+            // 获取备份频道并循环发送
+            $backupChannels = $manuscript->channel->backupChannels()->orderBy('sort_order')->get();
+            
+            if ($backupChannels->count() > 0) {
+                foreach ($backupChannels as $backupChannel) {
+                    if ($backupChannel->is_public == 1) {
+                        // 公开频道
+                        if (!empty($backupChannel->backup_name)) {
+                            $backupChatId = '@' . $backupChannel->backup_name;
+                            
+                            $backupResult = $this->objectTypeHandle(
+                                $telegram,
+                                $botInfo,
+                                $backupChatId,
+                                $objectType,
+                                $message,
+                                null,
+                                false,
+                                true,
+                                false,
+                                true,  // 更改为true以获取返回消息ID
+                                $manuscript,
+                            );
+                            
+                            if ($backupResult && is_array($backupResult)) {
+                                // 保存备份频道消息ID
+                                $backupResults[$backupChannel->id] = [
+                                    'channel_id' => $backupChannel->id,
+                                    'chat_id' => $backupChatId,
+                                    'message_id' => isset($backupResult['message_id']) ? $backupResult['message_id'] : 
+                                        (isset($backupResult[0]['message_id']) ? $backupResult[0]['message_id'] : null),
+                                    'is_public' => 1
+                                ];
+                            }
+                        }
+                    } else {
+                        // 私有频道
+                        if (!empty($backupChannel->chat_id)) {
+                            $backupResult = $this->objectTypeHandle(
+                                $telegram,
+                                $botInfo,
+                                $backupChannel->chat_id,
+                                $objectType,
+                                $message,
+                                null,
+                                false,
+                                true,
+                                false,
+                                true,  // 更改为true以获取返回消息ID
+                                $manuscript,
+                            );
+                            
+                            if ($backupResult && is_array($backupResult)) {
+                                // 保存备份频道消息ID
+                                $backupResults[$backupChannel->id] = [
+                                    'channel_id' => $backupChannel->id,
+                                    'chat_id' => $backupChannel->chat_id,
+                                    'message_id' => isset($backupResult['message_id']) ? $backupResult['message_id'] : 
+                                        (isset($backupResult[0]['message_id']) ? $backupResult[0]['message_id'] : null),
+                                    'is_public' => 0
+                                ];
+                            }
+                        }
+                    }
+                }
+            }
+            
+            // 更新稿件的备份消息ID
+            if (!empty($backupResults)) {
+                $manuscript->backup_message_ids = $backupResults;
+                $manuscript->save();
+            }
+            
+            return $result;
         } else {
             $this->sendTelegramMessage($telegram, 'sendMessage', [
                 'chat_id' => $manuscript->posted_by,
@@ -126,20 +225,6 @@ trait SendTelegramMessageService
 
             return false;
         }
-
-        return $this->objectTypeHandle(
-            $telegram,
-            $botInfo,
-            $chatId,
-            $objectType,
-            $message,
-            null,
-            false,
-            true,
-            false,
-            true,
-            $manuscript,
-        );
     }
 
     /**

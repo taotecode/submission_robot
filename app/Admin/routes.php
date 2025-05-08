@@ -25,6 +25,7 @@ Route::group([
     $router->resource('review_groups', 'ReviewGroupController');
     //频道
     $router->resource('channel', 'ChannelController');
+    $router->resource('backup_channel', 'BackupChannelController');
 
     //配置表
     $router->resource('config', 'ConfigController');
@@ -32,11 +33,16 @@ Route::group([
 
     //稿件列表
     $router->resource('manuscript', 'ManuscriptController');
+    // 稿件管理自定义路由
+    $router->post('manuscript/publish/{id}', 'ManuscriptController@publish');
+    $router->post('manuscript/update-channel/{id}', 'ManuscriptController@updateChannel');
+    $router->get('admin/api/channels', 'ManuscriptController@channels');
 
     $router->resource('submission_user', 'SubmissionUserController');
 
     //机器人用户群
     $router->resource('bot_user', 'BotUserController');
     $router->resource('bot_message', 'BotMessageController');
+    $router->resource('bot_commands', 'BotCommandController');
 
 });

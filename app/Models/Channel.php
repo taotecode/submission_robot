@@ -16,4 +16,12 @@ class Channel extends Model
         'created_at',
         'updated_at',
     ];
+
+    /**
+     * 获取该频道的所有备份频道
+     */
+    public function backupChannels()
+    {
+        return $this->hasMany(BackupChannel::class, 'channel_id', 'id');
+    }
 }

@@ -1,15 +1,62 @@
 <?php
 
+use App\Enums\Commands;
 use App\Enums\KeyBoardData;
 use App\Enums\KeyBoardName;
 
 function getCacheMessageData($objectType, $chatId, $tag): array
 {
-    $messageCache = Cache::tags($tag.'.'.$chatId)->get($objectType);
+    $messageCache = Cache::tags($tag . '.' . $chatId)->get($objectType);
     $messageId = $messageCache['message_id'] ?? '';
     $messageText = $messageCache['text'] ?? $messageCache['caption'] ?? '';
 
     return [$messageCache, $messageId, $messageText];
+}
+
+function command_start_inline_keyboard($botInfo)
+{
+    $commands = $botInfo->bot_command;
+    foreach ($commands as $command){
+        if ($command->command==='start'){
+            $commands=$command;
+        }
+    }
+    $commandData=$commands->data;
+    $commandData['button']=json_decode($commandData['button'],true);
+
+    $button=[
+        [
+            ['text' => $commandData['button']['text11'], 'callback_data' => $commandData['button']['key11']],
+            ['text' => $commandData['button']['text12'], 'callback_data' => $commandData['button']['key12']],
+        ],
+        [
+            ['text' => $commandData['button']['text21'], 'callback_data' => $commandData['button']['key21']],
+            ['text' => $commandData['button']['text22'], 'callback_data' => $commandData['button']['key22']],
+        ],
+    ];
+
+    if ($botInfo['is_submission'] == 0) {
+        if ($botInfo['is_complaint'] == 0 && $botInfo['is_suggestion'] == 0) {
+            unset($button[0]);
+        } elseif ($botInfo['is_complaint'] == 0) {
+            unset($button[0][1]);
+        } elseif ($botInfo['is_suggestion'] == 0) {
+            unset($button[0][1]);
+        } else {
+            unset($button[0][0]);
+        }
+    } elseif ($botInfo['is_complaint'] == 0) {
+        if ($botInfo['is_suggestion'] == 0) {
+            unset($button[0][1]);
+        }
+    } elseif ($botInfo['is_suggestion'] == 0) {
+        unset($button[0][1]);
+    }
+
+    $inline_keyboard = [
+        'inline_keyboard' => $button,
+    ];
+    return json_encode($inline_keyboard);
 }
 
 /**
@@ -50,7 +97,7 @@ function service_isOpen_check_return_keyboard($botInfo): array
     // 将键盘配置名称转换为具体的键盘名称
     $keyboard = array_map(function ($row) {
         return array_map(function ($key) {
-            return get_keyboard_name_config($key, constant('App\Enums\KeyBoardName::'.explode('.', $key)[1]));
+            return get_keyboard_name_config($key, constant('App\Enums\KeyBoardName::' . explode('.', $key)[1]));
         }, $row);
     }, $keyboard);
 

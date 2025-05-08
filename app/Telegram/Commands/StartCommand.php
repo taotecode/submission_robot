@@ -30,19 +30,19 @@ class StartCommand extends Command
         }
 
         $message = $this->getUpdate()->getMessage();
-        if ($message->from->is_bot){
+        if ($message->from->is_bot) {
             return;
         }
 
         $chatId = $this->getUpdate()->getChat()->id;
-        Cache::tags(CacheKey::Submission.'.'.$chatId)->flush();
-        Cache::tags(CacheKey::Complaint.'.'.$chatId)->flush();
-        Cache::tags(CacheKey::Suggestion.'.'.$chatId)->flush();
+        Cache::tags(CacheKey::Submission . '.' . $chatId)->flush();
+        Cache::tags(CacheKey::Complaint . '.' . $chatId)->flush();
+        Cache::tags(CacheKey::Suggestion . '.' . $chatId)->flush();
 
         //回复消息
         $this->replyWithMessage([
-            'text' => get_config('command.start'),
-            'reply_markup' => json_encode(service_isOpen_check_return_keyboard($botInfo)),
+            'text' => get_command($botInfo,'start')['data']['text'],
+            'reply_markup' => command_start_inline_keyboard($botInfo),
             'reply_to_message_id' => $message->id,
         ]);
     }

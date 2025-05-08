@@ -41,9 +41,6 @@ class SetCommandsForm extends Form implements LazyRenderable
         $this->listbox('all_group_chats', '群组命令')->options(Commands::ALL_GROUP_OPTIONS)->required()->default([
             0,
         ])->help('将您需要展示给用户的命令点击添加到右侧列表中。不需要的展示的可以点击右侧列表添加到左侧列表中。');
-        $this->listbox('all_group_chats', '群组命令')->options(Commands::ALL_GROUP_OPTIONS)->required()->default([
-            0,
-        ])->help('将您需要展示给用户的命令点击添加到右侧列表中。不需要的展示的可以点击右侧列表添加到左侧列表中。');
     }
 
     /**

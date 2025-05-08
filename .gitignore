@@ -20,3 +20,6 @@ yarn-error.log
 .htaccess
 404.html
 index.html
+*.code-workspace
+.cursor
+.DS_Store

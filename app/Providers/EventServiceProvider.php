@@ -2,6 +2,12 @@
 
 namespace App\Providers;
 
+use App\Models\BotCommand;
+use App\Models\BotUser;
+use App\Models\Bot;
+use App\Observers\BotCommandObserver;
+use App\Observers\BotObserver;
+use App\Observers\BotUserObserver;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
@@ -18,6 +24,17 @@ class EventServiceProvider extends ServiceProvider
         Registered::class => [
             SendEmailVerificationNotification::class,
         ],
+    ];
+
+    /**
+     * 应用程序的模型观察者。
+     *
+     * @var array
+     */
+    protected $observers = [
+        Bot::class => [BotObserver::class],
+        BotUser::class => [BotUserObserver::class],
+        BotCommand::class=>[BotCommandObserver::class],
     ];
 
     /**

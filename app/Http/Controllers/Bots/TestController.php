@@ -17,38 +17,9 @@ class TestController extends Controller
 {
     public function pa()
     {
-        $telegram = new Api(env('TELEGRAM_BOT_TOKEN'));
 
-        /*$reply_markup = Keyboard::make()
-            ->inline()
-            ->row([
-                Keyboard::button([
-                    'text' => 'Google',
-                    'url' => 'https://www.google.com',
-                ]),
-            ]);
-        dd($telegram->sendMessage([
-            'chat_id' => '6247385123',
-            'text' => 'ceshi',
-            'parse_mode' => 'HTML',
-            'reply_markup'=>$reply_markup,
-        ]));*/
-
-        //        dd($telegram->deleteWebhook());
-
-        //        $text=new Entities("zhelsa <b>zhelsa</b>");
-        //        dump($text->toMarkdown());
-        $entity_decoder = new EntityDecoder('HTML');
-        $response = $telegram->getUpdates([
-            //            'offset'=>1,
-        ]);
-        dump($response);
-        foreach ($response as $item) {
-            dump($item->getMessage());
-            $decoded_text = $entity_decoder->decode($item->getMessage());
-            dump($decoded_text);
-        }
-        //        dd($response);
+        $botInfo = (new \App\Admin\Repositories\Bot())->findInfo(2);
+        command_start_inline_keyboard($botInfo);
     }
 
     public function setCommands()

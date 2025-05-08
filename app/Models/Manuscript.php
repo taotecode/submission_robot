@@ -28,6 +28,7 @@ class Manuscript extends Model
         'one_approved',
         'one_reject',
         'status',
+        'backup_message_ids',
         'created_at',
         'updated_at',
     ];
@@ -40,6 +41,7 @@ class Manuscript extends Model
         'reject' => 'json',
         'one_approved' => 'json',
         'one_reject' => 'json',
+        'backup_message_ids' => 'json',
     ];
 
     const TYPE_TEXT = 'text';
