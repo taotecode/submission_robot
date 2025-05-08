@@ -20,5 +20,14 @@ class DatabaseSeeder extends Seeder
         //     'name' => 'Test User',
         //     'email' => 'test@example.com',
         // ]);
+
+        // 注册所有的种子文件
+        $this->call([
+            ConfigSeeder::class,
+            KeyboardNameConfigSeeder::class,
+            AdminMenuAddSeeder::class,
+            BotCommandsSeeder::class,
+            BackupChannelMenuSeeder::class,
+        ]);
     }
 }

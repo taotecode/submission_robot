@@ -58,14 +58,41 @@ cp .env.example .env
 
 具体配置内容可以参照laravel官网[配置](https://learnku.com/docs/laravel/10.x/configuration/14836)
 
-## 数据库迁移
+## 数据库迁移和初始化
 
-执行命令进行数据库迁移
+### 方式一：一键安装（推荐）
+
+使用我们提供的一键安装命令来完成所有数据库迁移和种子文件的加载：
+
 ```bash
+php artisan app:install
+```
+
+这个命令将会自动执行：
+- 所有数据库迁移
+- 所有必要的种子文件，包括系统配置、菜单、键盘设置等
+
+### 方式二：分步骤安装
+
+如果你想分步骤执行，可以使用以下命令：
+
+```bash
+# 执行数据库迁移
 php artisan migrate
+
+# 加载系统配置
 php artisan db:seed --class=ConfigSeeder
+
+# 加载管理员表
 php artisan db:seed --class="Dcat\Admin\Models\AdminTablesSeeder"
+
+# 加载菜单配置
 php artisan db:seed --class=AdminMenuAddSeeder
+
+# 加载其他必要配置
+php artisan db:seed --class=KeyboardNameConfigSeeder
+php artisan db:seed --class=BotCommandsSeeder
+php artisan db:seed --class=BackupChannelMenuSeeder
 ```
 
 ## 配置网站伪静态
@@ -107,7 +134,41 @@ systemctl restart nginx
 
 ## 版本更新
 
-如果是更新版本，可以使用下面命令进行更新
+### 方式一：一键更新（推荐）
+
+使用我们提供的更新命令快速完成系统更新：
+
+```bash
+# 更新代码
+git pull
+composer install
+
+# 使用一键更新命令（包含数据库迁移）
+php artisan app:update --migrate --all
+```
+
+### 高级更新选项
+
+你可以按需选择只更新特定部分：
+
+```bash
+# 只执行数据库迁移
+php artisan app:update --migrate
+
+# 只更新系统配置
+php artisan app:update --config
+
+# 只更新菜单和备份频道设置
+php artisan app:update --menu --backup
+
+# 查看所有可用选项
+php artisan app:update
+```
+
+### 方式二：分步骤更新
+
+如果你希望手动控制更新过程，可以使用以下命令：
+
 ```bash
 git pull
 composer install
