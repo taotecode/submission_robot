@@ -28,7 +28,13 @@ class GetUpdateController extends Controller
             ]);
             $response = $telegram->commandsHandler(false);
         } catch (\Exception $e) {
-            dd($e->getMessage());
+            dd([
+                'message' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'trace' => $e->getTraceAsString(),
+                'update' => $telegram->getWebhookUpdate()
+            ]);
         }
 
 

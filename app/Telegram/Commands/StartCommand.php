@@ -42,7 +42,7 @@ class StartCommand extends Command
         //回复消息
         $this->replyWithMessage([
             'text' => get_config('submission.start'),
-            'reply_markup' => [],
+            'reply_markup' => json_encode(service_isOpen_check_return_keyboard($botInfo)),
             'reply_to_message_id' => $message->id,
         ]);
     }
