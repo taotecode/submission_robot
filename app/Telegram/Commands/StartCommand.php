@@ -42,7 +42,7 @@ class StartCommand extends Command
         //回复消息
         $this->replyWithMessage([
             'text' => get_config('submission.start'),
-            'reply_markup' => command_start_inline_keyboard($botInfo),
+            'reply_markup' => [],
             'reply_to_message_id' => $message->id,
         ]);
     }
