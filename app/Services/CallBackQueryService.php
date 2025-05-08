@@ -119,7 +119,7 @@ class CallBackQueryService
         $telegram->editMessageText([
             'chat_id' => $chatId,
             'message_id' => $messageId,
-            'text' => get_command($botInfo,'start')['data']['text'],
+            'text' => get_config('submission.start'),
             'reply_markup' => command_start_inline_keyboard($botInfo),
         ]);
 
