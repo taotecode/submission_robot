@@ -12,6 +12,15 @@ class BotCommand extends Model
 
     protected $table = 'bot_commands';
 
+    protected $fillable = [
+        'bot_id',
+        'command',
+        'scope',
+        'chat_id',
+        'description',
+        'data',
+    ];
+
     protected $casts = [
         'data' => 'json',
     ];
